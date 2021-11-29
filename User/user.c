@@ -14,12 +14,14 @@ int main(int argc, char** argv) {
 			case 'n':
 				DSip = optarg;
 				break;
+
 			case 'p':
 				if ((tmp = strtol(optarg, NULL, 10)) == 0) {
 					exit(1);
 				}
 				DSport = tmp;
 				break;
+
 			default:
 				break;
 		}
