@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define DSPORT_DEFAULT 58000 // TODO: update default number
+#define DSPORT_DEFAULT 58013
 
 int main(int argc, char** argv) {
 	char flag;
