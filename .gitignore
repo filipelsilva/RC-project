@@ -1,3 +1,6 @@
+### Custom
+*.yaml
+
 ### C
 # Prerequisites
 *.d
