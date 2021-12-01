@@ -1,6 +1,6 @@
 .PHONY: all ds user clean
 
-all: server client
+all: ds user
 
 ds: server/ds.c
 	gcc server/ds.c -o DS
