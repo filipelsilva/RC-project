@@ -1,6 +1,7 @@
 ### Custom
 *.yaml
 *.pptx
+bin
 
 ### C
 # Prerequisites
