@@ -12,4 +12,4 @@ clean: bin/DS bin/user
 	rm bin/DS bin/user
 
 entr:
-	find . -name "*.c" ! -name "*.h" | entr make
+	find . -name "*.cpp" !-name "*.c" ! -name "*.h" | entr make
