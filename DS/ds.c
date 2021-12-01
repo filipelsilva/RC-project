@@ -7,7 +7,7 @@
 int main(int argc, char** argv) {
 	char flag;
 	char* DSip = "localhost";
-	int tmp, verbose = 0, DSport = DSPORT_DEFAULT;
+	int tmp, DSport = DSPORT_DEFAULT, verbose = 0;
 
 	while ((flag = getopt(argc, argv, "p:v")) != -1) {
 		switch (flag) {
