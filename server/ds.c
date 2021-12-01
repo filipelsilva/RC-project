@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define DSPORT_DEFAULT 58013
 
@@ -13,6 +15,7 @@ int main(int argc, char** argv) {
 		switch (flag) {
 			case 'p':
 				if ((tmp = strtol(optarg, NULL, 10)) == 0) {
+					fprintf(stderr, "error converting number: %s\n", strerror(errno));
 					exit(1);
 				}
 				DSport = tmp;
