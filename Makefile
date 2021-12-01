@@ -1,4 +1,4 @@
-.PHONY: all ds user clean
+.PHONY: all ds user clean entr
 
 all: ds user
 
@@ -10,3 +10,6 @@ user: client/user.c
 
 clean: bin/DS bin/user
 	rm bin/DS bin/user
+
+entr:
+	find . -name "*.c" ! -name "*.h" | entr make
