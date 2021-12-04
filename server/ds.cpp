@@ -7,14 +7,14 @@
 #define DSPORT_DEFAULT 58013
 
 int main(int argc, char** argv) {
-	char* usage = "Usage: %s [-p DSport] [-v]\n"
+	const char* usage = "Usage: %s [-p DSport] [-v]\n"
 		"\t-p PORT\t\tPort where the DS server accepts requests\n"
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	char flag;
-	char* DSip = "localhost";
+	const char* DSip = "localhost";
 	int tmp, DSport = DSPORT_DEFAULT, verbose = 0;
+	char flag;
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "p:v")) != -1) {

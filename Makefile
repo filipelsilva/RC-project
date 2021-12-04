@@ -1,12 +1,15 @@
 .PHONY: all ds user clean entr
 
+CC=g++
+CFLAGS=
+
 all: ds user
 
-ds: server/ds.c
-	gcc server/ds.c -o bin/DS
+ds: server/ds.cpp
+	$(CC) $(CFLAGS) server/ds.cpp -o bin/DS
 
-user: client/user.c
-	gcc client/user.c -o bin/user
+user: client/user.cpp
+	$(CC) $(CFLAGS) client/user.cpp -o bin/user
 
 clean: bin/DS bin/user
 	rm bin/DS bin/user
