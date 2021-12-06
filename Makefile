@@ -14,5 +14,8 @@ user: client/user.cpp
 clean: bin/DS bin/user
 	rm bin/DS bin/user
 
-entr:
+zip: # Uses git, not very portable in zip
+	git archive -o proj_58013.zip HEAD
+
+entr: # Uses entr, not very portable
 	find . -name "*.cpp" !-name "*.c" ! -name "*.h" | entr make
