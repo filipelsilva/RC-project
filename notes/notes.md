@@ -5,3 +5,4 @@
 - não há grupo 0 (significa criar grupo novo, com nome à frente)
 - cliente: abrir, enviar, receber, fechar (para tcp)
 - página 11 em binário desta coisa
+- tejo.ist.utl.pt porta 58011
