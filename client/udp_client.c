@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
 	socklen_t addrlen;
 	struct addrinfo hints, *res;
 	struct sockaddr_in addr;
-	char buffer[128];
+	char buffer[128], host[NI_MAXHOST], service[NI_MAXSERV];
 	char* server;
 
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -37,6 +38,11 @@ int main(int argc, char **argv) {
 	if (n == -1) /* error */ exit(1);
 
 	write(1, "echo: ", 6); write(1, buffer, n);
+
+	if((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host, sizeof(host), service, sizeof(service), 0))!=0)
+		fprintf(stderr, "Error: getnameinfo: %s\n", gai_strerror(errcode));
+	else
+		printf("Sent by [%s:%s]\n", host, service);
 
 	freeaddrinfo(res);
 	close(fd);

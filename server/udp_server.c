@@ -9,14 +9,14 @@
 
 #define PORT "58001"
 
-int fd, errcode;
-ssize_t n;
-socklen_t addrlen;
-struct addrinfo hints, *res;
-struct sockaddr_in addr;
-char buffer[128];
-
 int main(int argc, char **argv) {
+	int fd, errcode;
+	ssize_t n;
+	socklen_t addrlen;
+	struct addrinfo hints, *res;
+	struct sockaddr_in addr;
+	char buffer[128];
+
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (fd == -1) /* error */ exit(1);
 
