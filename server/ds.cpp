@@ -1,8 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
+extern "C" { // For C libraries, to avoid namespace cluttering
 #include <unistd.h>
-#include <errno.h>
+}
 
 #define DSPORT_DEFAULT 58013
 
