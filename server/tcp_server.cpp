@@ -20,16 +20,16 @@ class TCPServer {
 	char *ptr, buffer[128];
 
 	public:
-	void handleSIGPIPE() {
+	void setupServer() {
+		// Handling of SIGPIPE signal
 		memset(&act, 0, sizeof(act));
 		act.sa_handler = SIG_IGN;
 		if (sigaction(SIGPIPE, &act, NULL) == -1) exit(1);
-	}
 
-	void setupServer() {
+		// Server setup
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) exit(1);
 
-		memset(&hints, 0, sizeof hints);
+		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_flags = AI_PASSIVE;
