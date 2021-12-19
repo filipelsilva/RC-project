@@ -15,7 +15,7 @@ clean: bin/DS bin/user
 	rm bin/DS bin/user
 
 zip: # Uses git, not very portable in zip
-	git archive -o proj_58013.zip HEAD
+	git archive -o projeto_rc.zip HEAD
 
 entr: # Uses entr, not very portable
 	find . -name "*.cpp" ! -name "*.c" ! -name "*.h" | entr make
