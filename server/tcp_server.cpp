@@ -1,10 +1,10 @@
 #include <cstdlib>
-#include <netdb.h>
 #include <cstring>
 #include <csignal>
 extern "C" {
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <unistd.h>
 }
 
