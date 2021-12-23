@@ -12,7 +12,6 @@ extern "C" {
 }
 
 class UDPServer {
-	public:
 	int fd, errcode;
 	ssize_t n;
 	socklen_t addrlen;
@@ -21,6 +20,7 @@ class UDPServer {
 	char buffer[128];
 	const char *port;
 
+	public:
 	UDPServer(const char *port) {
 		this->port = port;
 

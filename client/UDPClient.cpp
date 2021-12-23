@@ -11,7 +11,6 @@ extern "C" {
 }
 
 class UDPClient {
-	public:
 	int fd, errcode;
 	ssize_t n;
 	socklen_t addrlen;
@@ -20,6 +19,7 @@ class UDPClient {
 	char buffer[128], host[NI_MAXHOST], service[NI_MAXSERV];
 	const char *server, *port;
 
+	public:
 	UDPClient(const char *server, const char *port) {
 		this->server = server;
 		this->port = port;
