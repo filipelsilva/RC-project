@@ -18,7 +18,7 @@ class UDPServer {
 	struct addrinfo hints, *res;
 	struct sockaddr_in addr;
 	char buffer[128];
-	const char *port;
+	const char *port, *message;
 
 	public:
 	UDPServer(const char *port) {
