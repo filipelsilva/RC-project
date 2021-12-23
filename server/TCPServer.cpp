@@ -58,7 +58,7 @@ class TCPServer {
 		}
 	}
 
-	void getData() {
+	const char *getData() {
 		while (1) {
 			addrlen = sizeof(addr);
 
@@ -88,6 +88,7 @@ class TCPServer {
 			}
 			close(newfd);
 		}
+		return buffer;
 	}
 
 	~TCPServer() {

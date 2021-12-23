@@ -1,7 +1,7 @@
 .PHONY: all ds user clean entr
 
 CC=g++
-CFLAGS=
+CFLAGS=-Wall -Wextra
 
 all: ds user
 

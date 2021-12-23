@@ -45,7 +45,7 @@ class UDPServer {
 		}
 	}
 
-	void getData() {
+	const char *getData() {
 		while (1) {
 			addrlen = sizeof(addr);
 			if ((n = recvfrom(fd, buffer, 128, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
@@ -61,6 +61,7 @@ class UDPServer {
 				exit(1);
 			}
 		}
+		return buffer;
 	}
 
 	~UDPServer() {

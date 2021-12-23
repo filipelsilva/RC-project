@@ -22,6 +22,7 @@ int main(void) {
 	fd_set mask;
 	TCPServer tcp = TCPServer(PORT);
 	UDPServer udp = UDPServer(PORT);
+	const char *message;
 
 	// Set mask and maxfd to select
 	FD_ZERO(&mask);
@@ -38,12 +39,14 @@ int main(void) {
 		}
 
 		if (FD_ISSET(tcp.fd, &mask)) {
-			tcp.getData();
+			message = tcp.getData();
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
-			udp.getData();
+			message = udp.getData();
 		}
+		write(1, "INSIDE SERVER:\n", strlen("INSIDE SERVER:\n"));
+		write(1, message, strlen(message));
 	}
 
 	exit(0);

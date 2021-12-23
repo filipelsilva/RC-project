@@ -14,7 +14,6 @@ int main(int argc, char** argv) {
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	const char* DSip = "localhost";
 	int tmp, DSport = DSPORT_DEFAULT, verbose = 0;
 	char flag;
 
