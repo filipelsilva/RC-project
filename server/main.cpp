@@ -45,7 +45,7 @@ int main(void) {
 		if (FD_ISSET(udp.fd, &mask)) {
 			message = udp.getData();
 		}
-		write(1, "INSIDE SERVER:\n", strlen("INSIDE SERVER:\n"));
+		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
 		write(1, message, strlen(message));
 	}
 

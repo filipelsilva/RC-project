@@ -59,35 +59,33 @@ class TCPServer {
 	}
 
 	const char *getData() {
-		while (1) {
-			addrlen = sizeof(addr);
+		addrlen = sizeof(addr);
 
-			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
+		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
+			fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
+			exit(1);
+		}
+
+		while ((n = read(newfd, buffer, 128)) != 0) {
+			if (n == -1) {
+				fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
 				exit(1);
 			}
+			ptr = &buffer[0];
 
-			while ((n = read(newfd, buffer, 128)) != 0) {
-				if (n == -1) {
-					fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
+			write(1, "received: ", 10);
+			write(1, ptr, n);
+
+			while (n > 0) {
+				if ((nw = write(newfd, ptr, n)) == -1) {
+					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
 					exit(1);
 				}
-				ptr = &buffer[0];
-
-				write(1, "received: ", 10);
-				write(1, ptr, n);
-
-				while (n > 0) {
-					if ((nw = write(newfd, ptr, n)) == -1) {
-						fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
-						exit(1);
-					}
-					n -= nw;
-					ptr += nw;
-				}
+				n -= nw;
+				ptr += nw;
 			}
-			close(newfd);
 		}
+		close(newfd);
 		return buffer;
 	}
 
