@@ -1,12 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <csignal>
+extern "C" {
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <string.h>
 #include <unistd.h>
-#include <signal.h>
+}
 
 #define max(A,B) (A >= B ? A : B)
 

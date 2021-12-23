@@ -10,6 +10,7 @@ extern "C" {
 }
 
 class TCPServer {
+	public:
 	struct sigaction act;
 	struct addrinfo hints, *res;
 	int fd, newfd, errcode;
@@ -19,7 +20,6 @@ class TCPServer {
 	char *ptr, buffer[128];
 	const char *port, *message;
 
-	public:
 	TCPServer(const char *port) {
 		// Handling of SIGPIPE signal
 		memset(&act, 0, sizeof(act));
@@ -96,7 +96,7 @@ class TCPServer {
 	}
 };
 
-int main(int argc, char **argv) {
-	TCPServer server = TCPServer("58001");
-	server.getData();
-}
+// int main(int argc, char **argv) {
+// 	TCPServer server = TCPServer("58001");
+// 	server.getData();
+// }
