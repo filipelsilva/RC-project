@@ -82,5 +82,5 @@ class TCPClient {
 
 int main(int argc, char **argv) {
 	TCPClient client = TCPClient("localhost", "58001");
-	client.sendData("Teste de servidor UDP\n");
+	client.sendData("Teste de servidor TCP\n");
 }
