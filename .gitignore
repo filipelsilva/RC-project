@@ -1,6 +1,8 @@
 ### Custom
 *.yaml
 *.pptx
+assignment/
+tests/
 
 ### C
 # Prerequisites
