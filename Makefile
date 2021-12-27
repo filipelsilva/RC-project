@@ -11,8 +11,19 @@ ds: server/ds.cpp
 user: client/user.cpp
 	$(CC) $(CFLAGS) client/user.cpp -o bin/user
 
-clean: bin/DS bin/user
-	rm bin/DS bin/user
+# TO REMOVE LATER {{{
+main: server/main.cpp
+	$(CC) $(CFLAGS) server/main.cpp -o bin/main
+
+tcp: client/TCPClient.cpp
+	$(CC) $(CFLAGS) client/TCPClient.cpp -o bin/tcp
+
+udp: client/UDPClient.cpp
+	$(CC) $(CFLAGS) client/UDPClient.cpp -o bin/udp
+# }}}
+
+clean:
+	rm bin/*
 
 zip: # Uses git, not very portable in zip
 	git archive -o projeto_rc.zip HEAD

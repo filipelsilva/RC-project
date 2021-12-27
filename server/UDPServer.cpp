@@ -45,7 +45,10 @@ class UDPServer {
 		}
 	}
 
-	const char *getData() {
+	char *getData() {
+		// Preventing broken messages
+		bzero(buffer, 128);
+
 		addrlen = sizeof(addr);
 		if ((n = recvfrom(fd, buffer, 128, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
 			fprintf(stderr, "Error: recvfrom: %s\n", gai_strerror(n));

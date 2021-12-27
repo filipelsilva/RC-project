@@ -58,7 +58,7 @@ class TCPServer {
 		}
 	}
 
-	const char *getData() {
+	char *getData() {
 		addrlen = sizeof(addr);
 
 		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {

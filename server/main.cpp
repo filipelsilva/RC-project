@@ -22,7 +22,7 @@ int main(void) {
 	fd_set mask;
 	TCPServer tcp = TCPServer(PORT);
 	UDPServer udp = UDPServer(PORT);
-	const char *message;
+	char *message;
 
 	// Set mask and maxfd to select
 	FD_ZERO(&mask);

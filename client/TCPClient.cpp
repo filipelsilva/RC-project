@@ -82,5 +82,10 @@ class TCPClient {
 
 int main(int argc, char **argv) {
 	TCPClient client = TCPClient("localhost", "58001");
-	client.sendData("Teste de servidor TCP\n");
+	char message[128];
+	while (1) {
+		if (fgets(message, 128, stdin) != NULL) {
+			client.sendData(message);
+		}
+	}
 }

@@ -75,5 +75,10 @@ class UDPClient {
 
 int main(int argc, char **argv) {
 	UDPClient client = UDPClient("localhost", "58001");
-	client.sendData("Teste de servidor UDP\n");
+	char message[128];
+	while (1) {
+		if (fgets(message, 128, stdin) != NULL) {
+			client.sendData(message);
+		}
+	}
 }
