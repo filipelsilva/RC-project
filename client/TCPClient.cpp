@@ -60,7 +60,7 @@ class TCPClient {
 		nleft = nbytes;
 		ptr = buffer;
 
-		while (nleft > 0){
+		while (nleft > 0) {
 			nread = read(fd, ptr, nleft);
 			if(nread == -1) exit(1);
 			else if (nread == 0) break;

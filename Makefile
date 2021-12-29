@@ -20,6 +20,10 @@ tcp: client/TCPClient.cpp
 
 udp: client/UDPClient.cpp
 	$(CC) $(CFLAGS) client/UDPClient.cpp -o bin/udp
+
+servers: server/TCPServer.cpp server/UDPServer.cpp
+	$(CC) $(CFLAGS) server/UDPServer.cpp -o bin/udp_server
+	$(CC) $(CFLAGS) server/TCPServer.cpp -o bin/tcp_server
 # }}}
 
 clean:

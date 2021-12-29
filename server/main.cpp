@@ -17,7 +17,7 @@ extern "C" {
 
 #define PORT "58001"
 
-int main(void) {
+int main() {
 	int maxfd, counter;
 	fd_set mask;
 	TCPServer tcp = TCPServer(PORT);

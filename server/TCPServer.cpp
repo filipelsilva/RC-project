@@ -18,7 +18,7 @@ class TCPServer {
 	struct sockaddr_in addr;
 	socklen_t addrlen;
 	char *ptr, buffer[128];
-	const char *port, *message;
+	const char *port;
 
 	TCPServer(const char *port) {
 		// Handling of SIGPIPE signal
@@ -71,6 +71,7 @@ class TCPServer {
 				fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
 				exit(1);
 			}
+
 			ptr = &buffer[0];
 
 			write(1, "received: ", 10);
@@ -85,6 +86,7 @@ class TCPServer {
 				ptr += nw;
 			}
 		}
+
 		close(newfd);
 		return buffer;
 	}
@@ -95,7 +97,7 @@ class TCPServer {
 	}
 };
 
-// int main(int argc, char **argv) {
-// 	TCPServer server = TCPServer("58001");
-// 	server.getData();
-// }
+int main(int argc, char **argv) {
+	TCPServer server = TCPServer("58001");
+	char *message = server.getData();
+}
