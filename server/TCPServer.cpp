@@ -72,13 +72,11 @@ class TCPServer {
 				exit(1);
 			}
 
-			ptr = &buffer[0];
-
 			write(1, "received: ", 10);
-			write(1, ptr, n);
+			write(1, buffer, n);
 
 			while (n > 0) {
-				if ((nw = write(newfd, ptr, n)) == -1) {
+				if ((nw = write(newfd, buffer, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
 					exit(1);
 				}
