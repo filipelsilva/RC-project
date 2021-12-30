@@ -72,11 +72,13 @@ class TCPServer {
 				exit(1);
 			}
 
+			ptr = &buffer[0];
+
 			write(1, "received: ", 10);
-			write(1, buffer, n);
+			write(1, ptr, n);
 
 			while (n > 0) {
-				if ((nw = write(newfd, buffer, n)) == -1) {
+				if ((nw = write(newfd, ptr, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
 					exit(1);
 				}
@@ -98,4 +100,6 @@ class TCPServer {
 int main(int argc, char **argv) {
 	TCPServer server = TCPServer("58001");
 	char *message = server.getData();
+	write(1, "received: ", 10);
+	write(1, message, strlen(message));
 }
