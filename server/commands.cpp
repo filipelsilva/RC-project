@@ -536,7 +536,7 @@ void gur(std::string UID, std::string GID){
 		std::cout << "E_USR: Invalid UID.\n";
 }
 
-/*Groups subscribed by a specific user*/
+/*List of Groups subscribed by a specific user*/
 void glm(std::string UID){
 	DIR *dir;
 	struct dirent *diread;
@@ -583,8 +583,55 @@ void glm(std::string UID){
 		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";	
 }
 
+/*List of users subscribed to a given group (TCP)*/
+void uls(std::string GID){
+	DIR *dir;
+	struct dirent *diread;
+	std::string path = "../GROUPS/";	
+	std::vector<std::string> list;
+	int i;
+
+	if(validGID(GID)){
+			
+		path.append(GID);
+
+		dir = opendir(path.c_str());
+		
+		while((diread = readdir(dir)) != nullptr){
+			std::string uid;
+			std::string gname;
+			std::stringstream message;
+			if(diread->d_name[0]=='.')
+				continue;
+			if(strlen(diread->d_name) != 9)
+				continue;
+
+
+			/*Removing '.txt'*/
+			std::string is_uid = diread->d_name;
+			is_uid.erase(5, 4);
+
+			if(validUID(is_uid) && !UID_free(is_uid)){
+				uid = is_uid;
+
+				message << " [" << uid << "]";
+				list.push_back(message.str());
+			}
+			
+		}
+		std::sort(list.begin(), list.end());
+		std::cout << "RGM " << get_group_name(GID) << std::endl;
+		for(i = 0; i < list.size(); i++)
+			std::cout << list[i] << std::endl;
+		
+		closedir(dir);
+	}
+	else
+		std::cout << "NOK: Invalid GID or group doesn't exist.\n";	
+}
+
 int main(void){
-	glm("95662");
+	uls("02");
 
 	exit(0);
 }
@@ -592,5 +639,5 @@ int main(void){
 
 /*TODO:
 	- Does the user have to be log on to subscribe/unsubscribe?
-	- Finish the group listing
-	- special UIDs and GROUPs*/
+	- special UIDs and GROUPs
+	- How to deal with files when they are sent*/
