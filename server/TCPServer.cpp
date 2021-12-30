@@ -67,7 +67,7 @@ class TCPServer {
 		}
 	}
 
-	ssize_t getData() {
+	ssize_t readData() {
 		if ((n = read(newfd, buffer, 128)) == -1) {
 			fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
 			exit(1);
@@ -75,8 +75,13 @@ class TCPServer {
 		return n;
 	}
 
-	void printData() {
-		ptr = &buffer[0];
+	char *getData() {
+		return buffer;
+	}
+
+	void sendData(char *message) {
+		ptr = &message[0];
+		n = strlen(message);
 
 		write(1, "received: ", 10);
 		write(1, ptr, n);
@@ -101,15 +106,15 @@ class TCPServer {
 	}
 };
 
-int main(int argc, char **argv) {
+int main() {
 	TCPServer server = TCPServer("58001");
 	server.acceptConnection();
-	while ((server.getData()) != 0) {
-		server.printData();
+	while ((server.readData()) != 0) {
+		char *message = server.getData();
+		server.sendData(message);
 	}
 	server.terminateConnection();
 	// char *message = server.getData();
 	// write(1, "received: ", 10);
 	// write(1, message, strlen(message));
-	server.terminateConnection();
 }

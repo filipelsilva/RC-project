@@ -73,7 +73,7 @@ class UDPClient {
 	}
 };
 
-int main(int argc, char **argv) {
+int main() {
 	UDPClient client = UDPClient("localhost", "58001");
 	char message[128];
 	while (1) {

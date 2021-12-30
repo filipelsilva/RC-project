@@ -71,7 +71,7 @@ class UDPServer {
 	}
 };
 
-int main(int argc, char **argv) {
+int main() {
 	UDPServer server = UDPServer("58001");
 	server.getData();
 }
