@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 extern "C" {
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -135,9 +136,12 @@ bool groupExists(std::string GID){
 			continue;
 		if(strlen(diread->d_name)>2)
 			continue;
-		if(diread->d_name == GID)
+		if(diread->d_name == GID){
+			closedir(dir);
 			return true;
+		}
 	}
+	closedir(dir);
 	return false;	
 }
 
@@ -179,6 +183,115 @@ bool validGroupName(std::string gname){
 	if(i == 0)
 		return false;	
 	return true;
+}
+
+void unsubscribe_groups(std::string UID){
+	std::string path = "../GROUPS";
+	DIR *dir;
+	struct dirent *diread;
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+		if(strlen(diread->d_name)>2)
+			continue;
+
+		std::string new_path = path;
+		new_path.append("/"); new_path.append(diread->d_name);
+		new_path.append("/"); new_path.append(UID); new_path.append(".txt");
+
+		remove(new_path.c_str());
+	}	
+	closedir(dir);	
+}
+
+std::string get_group_name(std::string GID){
+	std::string path = "../GROUPS/";
+
+	path.append(GID);path.append("/");
+	path.append(GID);path.append("_name.txt");
+
+	std::ifstream gnameFile;
+	std::string gname;
+
+	gnameFile.open(path.c_str());
+	getline(gnameFile, gname);
+
+	return gname;
+}
+
+std::string get_mid(std::string GID){
+	std::string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	std::string mid = "0000";
+
+	path.append(GID);path.append("/");
+	path.append("MSG");
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+		if(strlen(diread->d_name)>4)
+			continue;
+
+		if(atoi(mid.c_str()) < atoi(diread->d_name))
+			mid = diread->d_name;
+	}
+	closedir(dir);
+	return mid;	
+}
+
+bool user_logon(std::string UID){
+	std::string path = "../USERS/";
+	std::string loginFile = "_login.txt";	
+	DIR *dir;
+	struct dirent *diread;
+
+	loginFile.insert(0, UID);
+
+	path.append(UID);
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+
+		if(loginFile == diread->d_name)
+			closedir(dir);
+			return true;
+	}
+	closedir(dir);
+	return false;	
+}
+
+bool UID_in_group(std::string UID, std::string GID){
+	std::string path = "../GROUPS/";
+	std::string UIDsubscribed = ".txt";
+	DIR *dir;
+	struct dirent *diread;
+
+	path.append(GID);
+	UIDsubscribed.insert(0, UID);
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+
+		if(UIDsubscribed == diread->d_name){
+			closedir(dir);
+			return true;
+		}
+	}
+	closedir(dir);
+	return false;
 }
 
 /*REGISTER*/
@@ -231,6 +344,8 @@ void unr(std::string UID, std::string pass){
 
 				delete_files(path);
 				rmdir(path.c_str());
+
+				unsubscribe_groups(UID);
 
 				std::cout << "OK: Unregistered successfully!" << std::endl;
 			}
@@ -306,15 +421,16 @@ void gls(){
 			continue;
 
 		gid = diread->d_name;
-		/*gname = get_group_name(diread->d_name);
-		mid = get_mid(diread->d_name);*/
+		gname = get_group_name(diread->d_name);
+		mid = get_mid(diread->d_name);
 
-		message << " [ " << gid << " " << "]";
+		message << " [ " << gid << " " << gname << " " << mid << "]";
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0)
 		std::cout << "RGL 0: No existing groups\n";
 	else{
+		std::sort(list.begin(), list.end());
 		std::cout << "RGL " << numberOfGroups(path) << std::endl;
 		for(i = 0; i < list.size(); i++)
 			std::cout << list[i] << std::endl;
@@ -398,14 +514,83 @@ void gsr(std::string UID, std::string GID, std::string gname){
 
 }
 
+/*Unsubscribe from group*/
+void gur(std::string UID, std::string GID){
+	std::string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+
+	if(validUID(UID) && !UID_free(UID)){
+		if(validGID(GID) && groupExists(GID)){
+			path.append(GID);path.append("/");
+			path.append(UID);path.append(".txt");
+
+			if(remove(path.c_str()) != 0)
+				std::cout << "NOK: User doesn't susbscribe to this group!\n";
+	
+		}
+		else
+			std::cout << "E_GRP: Invalid GID.\n";
+	}
+	else
+		std::cout << "E_USR: Invalid UID.\n";
+}
+
+/*Groups subscribed by a specific user*/
+void glm(std::string UID){
+	DIR *dir;
+	struct dirent *diread;
+	std::string path = "../GROUPS";	
+	int i = 0;
+	std::vector<std::string> list;
+
+	if(validUID(UID) && !UID_free(UID) && user_logon(UID)){
+			
+		dir = opendir(path.c_str());
+
+		while((diread = readdir(dir)) != nullptr){
+			std::string gid;
+			std::string gname;
+			std::string mid;
+			std::stringstream message;
+
+			if(diread->d_name[0]=='.')
+				continue;
+			if(strlen(diread->d_name)>2)
+				continue;
+			
+			if(UID_in_group(UID, diread->d_name)){
+				i++;
+				gid = diread->d_name;
+				gname = get_group_name(diread->d_name);
+				mid = get_mid(diread->d_name);
+
+				message << " [ " << gid << " " << gname << " " << mid << "]";
+				list.push_back(message.str());
+			}
+		}
+		if(i == 0)
+			std::cout << "RGM 0: No groups subscribed\n";
+		else{
+			std::sort(list.begin(), list.end());
+			std::cout << "RGM " << i << std::endl;
+			for(i = 0; i < list.size(); i++)
+				std::cout << list[i] << std::endl;
+		}
+		closedir(dir);
+	}
+	else
+		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";	
+}
 
 int main(void){
-	reg("95663", "qwertyui");
+	glm("95662");
 
 	exit(0);
 }
 
 
 /*TODO:
-	- Unsubscribe -> Unregister
-	- Finish the group listing*/
+	- Does the user have to be log on to subscribe/unsubscribe?
+	- Finish the group listing
+	- special UIDs and GROUPs*/
