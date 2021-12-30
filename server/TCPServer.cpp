@@ -58,37 +58,41 @@ class TCPServer {
 		}
 	}
 
-	char *getData() {
+	void acceptConnection() {
 		addrlen = sizeof(addr);
 
 		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
 			fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
 			exit(1);
 		}
+	}
 
-		while ((n = read(newfd, buffer, 128)) != 0) {
-			if (n == -1) {
-				fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
+	ssize_t getData() {
+		if ((n = read(newfd, buffer, 128)) == -1) {
+			fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
+			exit(1);
+		}
+		return n;
+	}
+
+	void printData() {
+		ptr = &buffer[0];
+
+		write(1, "received: ", 10);
+		write(1, ptr, n);
+
+		while (n > 0) {
+			if ((nw = write(newfd, ptr, n)) == -1) {
+				fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
 				exit(1);
 			}
-
-			ptr = &buffer[0];
-
-			write(1, "received: ", 10);
-			write(1, ptr, n);
-
-			while (n > 0) {
-				if ((nw = write(newfd, ptr, n)) == -1) {
-					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
-					exit(1);
-				}
-				n -= nw;
-				ptr += nw;
-			}
+			n -= nw;
+			ptr += nw;
 		}
+	}
 
+	void terminateConnection() {
 		close(newfd);
-		return buffer;
 	}
 
 	~TCPServer() {
@@ -99,7 +103,13 @@ class TCPServer {
 
 int main(int argc, char **argv) {
 	TCPServer server = TCPServer("58001");
-	char *message = server.getData();
-	write(1, "received: ", 10);
-	write(1, message, strlen(message));
+	server.acceptConnection();
+	while ((server.getData()) != 0) {
+		server.printData();
+	}
+	server.terminateConnection();
+	// char *message = server.getData();
+	// write(1, "received: ", 10);
+	// write(1, message, strlen(message));
+	server.terminateConnection();
 }
