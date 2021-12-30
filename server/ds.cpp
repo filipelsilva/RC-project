@@ -1,12 +1,21 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cerrno>
-extern "C" { // For C libraries, to avoid namespace cluttering
+#include <csignal>
+extern "C" {
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <unistd.h>
 }
 
-#define DSPORT_DEFAULT 58013
+#include "../server/TCPServer.cpp"
+#include "../server/UDPServer.cpp"
+
+#define max(A,B) (A >= B ? A : B)
+
+#define PORT "58013"
 
 int main(int argc, char** argv) {
 	const char* usage = "Usage: %s [-p DSport] [-v]\n"
@@ -14,7 +23,7 @@ int main(int argc, char** argv) {
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	int tmp, DSport = DSPORT_DEFAULT, verbose = 0;
+	int tmp, DSport = atoi(PORT), verbose = 0;
 	char flag;
 
 	// Argument parser
@@ -42,5 +51,40 @@ int main(int argc, char** argv) {
 
 	printf("DSport: %d\nVerbose mode: %d\n", DSport, verbose);
 
-	return 0;
+	int maxfd, counter;
+	fd_set mask;
+	TCPServer tcp = TCPServer(PORT);
+	UDPServer udp = UDPServer(PORT);
+	const char *message;
+
+	// Set mask and maxfd to select
+	FD_ZERO(&mask);
+	maxfd = max(tcp.fd, udp.fd) + 1;
+
+	while (1) {
+		FD_SET(tcp.fd, &mask);
+		FD_SET(udp.fd, &mask);
+		printf("%d\n", tcp.fd);
+		printf("%d\n", udp.fd);
+		printf("%d\n", maxfd);
+
+		if ((counter = select(maxfd, &mask, (fd_set*)NULL, (fd_set*)NULL,
+						(struct timeval*)NULL)) <= 0) {
+			fprintf(stderr, "Error: socket: %s\n", gai_strerror(counter));
+			exit(1);
+		}
+
+		if (FD_ISSET(tcp.fd, &mask)) {
+			message = tcp.getData();
+		}
+
+		if (FD_ISSET(udp.fd, &mask)) {
+			message = udp.getData();
+		}
+
+		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
+		write(1, message, strlen(message));
+	}
+
+	exit(0);
 }

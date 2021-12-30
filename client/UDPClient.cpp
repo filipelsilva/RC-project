@@ -72,8 +72,3 @@ class UDPClient {
 		close(fd);
 	}
 };
-
-int main(int argc, char **argv) {
-	UDPClient client = UDPClient("localhost", "58001");
-	client.sendData("Teste de servidor UDP\n");
-}

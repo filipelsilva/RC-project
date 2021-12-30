@@ -79,8 +79,3 @@ class TCPClient {
 		close(fd);
 	}
 };
-
-int main(int argc, char **argv) {
-	TCPClient client = TCPClient("localhost", "58001");
-	client.sendData("Teste de servidor TCP\n");
-}
