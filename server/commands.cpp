@@ -109,13 +109,17 @@ int numberOfGroups(std::string path){
 	dir = opendir(path.c_str());
 
 	while((diread = readdir(dir))!= nullptr){
+
 		if(diread->d_name[0]=='.')
 			continue;
 		if(strlen(diread->d_name)>2)
 			continue;
+
 		i++;
 	}	
+
 	closedir(dir);
+
 	return i;
 }
 
@@ -144,7 +148,7 @@ bool validGID(std::string GID){
 	return false;
 }
 
-bool verifyGroupName(std::string GID, std::string gname){
+bool existingGroupName(std::string GID, std::string gname){
 	std::string path = "../GROUPS/";
 	std::string gname_file = "_name.txt";
 
@@ -166,6 +170,17 @@ bool verifyGroupName(std::string GID, std::string gname){
 
 }
 
+bool validGroupName(std::string gname){
+	int i;
+
+	for (i=0; gname[i] != '\0'; i++)
+		if ((!isalnum(gname[i]) && gname[i] != '-' && gname[i] != '_') || i >= 24)
+				return false;
+	if(i == 0)
+		return false;	
+	return true;
+}
+
 /*REGISTER*/
 /*Falta enviar os códigos, aka dar returns*/
 void reg(std::string UID, std::string pass){
@@ -176,31 +191,33 @@ void reg(std::string UID, std::string pass){
 	if (validUID(UID)){
 
 		/*verifica se NÃO existe uma diretoria com o mesmso UID, FALTA DAR RETURN*/
-		if(!UID_free(UID))
-			std::cout << "UID used already" << std::endl;
-
-		/*Cria o ficheiro com a passe*/ 
-		if(validPass(pass)){
-
-			path.append("/"); path.append(UID);
-
-			/*Cria nova diretoria*/
-			mkdir(path.c_str(), 0777);
-			path.append("/");
-
-			passFile_name.insert(0, UID);
-			std::ofstream passFile(path.append(passFile_name));
-			passFile << pass << std::endl;
-
-			passFile.close();
-
-			std::cout << "Registered successfully!" << std::endl;			
+		if(!UID_free(UID)){
+			std::cout << "DUP: UID used already" << std::endl;
 		}
-		else 
-			std::cout << "Invalid password" << std::endl;	
+		else{
+			/*Cria o ficheiro com a passe*/ 
+			if(validPass(pass)){
+
+				path.append("/"); path.append(UID);
+
+				/*Cria nova diretoria*/
+				mkdir(path.c_str(), 0777);
+				path.append("/");
+
+				passFile_name.insert(0, UID);
+				std::ofstream passFile(path.append(passFile_name));
+				passFile << pass << std::endl;
+
+				passFile.close();
+
+				std::cout << "OK: Registered successfully!" << std::endl;			
+			}
+			else 
+				std::cout << "NOK: Invalid password" << std::endl;
+		}	
 	}
 	else
-		std::cout << "Invalid UID" << std::endl;
+		std::cout << "NOK: Invalid UID" << std::endl;
 }
 
 /*UNREGISTER*/
@@ -215,16 +232,16 @@ void unr(std::string UID, std::string pass){
 				delete_files(path);
 				rmdir(path.c_str());
 
-				std::cout << "Unregistered successfully!" << std::endl;
+				std::cout << "OK: Unregistered successfully!" << std::endl;
 			}
 			else
-				std::cout << "Wrong password" << std::endl;
+				std::cout << "NOK: Wrong password" << std::endl;
 		}
 		else
-			std::cout << "No registration for that UID" << std::endl;
+			std::cout << "NOK: No registration for that UID" << std::endl;
 	}
 	else
-		std::cout << "Invalid UID or password" << std::endl;	
+		std::cout << "NOK: Invalid UID or password" << std::endl;	
 }
 
 /*LOGIN*/
@@ -241,10 +258,10 @@ void login(std::string UID, std::string pass){
 
 		loginFile.close();
 
-		std::cout << "Logged in successfully!" << std::endl;
+		std::cout << "OK: Logged in successfully!" << std::endl;
 	}
 	else
-		std::cout << "Incorrect UID or password" << std::endl;
+		std::cout << "NOK: Incorrect UID or password" << std::endl;
 }
 
 /*LOGOUT*/
@@ -260,10 +277,10 @@ void logout(std::string UID, std::string pass){
 		path.append(loginFile_name);
 		remove(path.c_str());
 
-		std::cout << "Logged out successfully!" << std::endl;
+		std::cout << "OK: Logged out successfully!" << std::endl;
 	}
 	else
-		std::cout << "Incorrect UID or password" << std::endl;
+		std::cout << "NOK: Incorrect UID or password" << std::endl;
 }
 
 /*GROUP LIST*/
@@ -312,16 +329,66 @@ void gsr(std::string UID, std::string GID, std::string gname){
 	if(validUID(UID) && !UID_free(UID)){
 		if (validGID(GID)){
 			if(GID != "00"){
-				if(verifyGroupName(GID, gname)){
-					/*CREATE USER FILE*/
+				if(existingGroupName(GID, gname)){
+					path.append("/"); path.append(GID); path.append("/");
+					path.append(UID); path.append(".txt");
+
+					std::ofstream UID_File(path);
+
+					UID_File.close();
+
+					std::cout << "OK: User successfully subscribed group!\n";
 				}
+
 				else
 					std::cout << "E_GNAME: Invalid Group Name\n";
 			}
+
 			else{
+				if(validGroupName(gname)){
+					int i;
+					i = numberOfGroups(path);
+					if(i < 99){
+						i++;
 
+						std::string newGID;
+						std::string gname_path;
+						std::string uid_path;
+						std::string msg_path;
+
+						if(i <= 9)
+							newGID.append("0");
+
+						newGID.append(std::to_string(i));
+
+						path.append("/"); path.append(newGID);
+						mkdir(path.c_str(), 0777);
+
+						path.append("/");
+
+						gname_path = path;
+						gname_path.append(newGID); gname_path.append("_name.txt");
+						std::ofstream new_Gname_file(gname_path);
+						new_Gname_file << gname << std::endl;
+						new_Gname_file.close();
+
+						uid_path = path;
+						uid_path.append(UID); uid_path.append(".txt");
+						std::ofstream new_uid_file(uid_path);
+						new_uid_file.close();
+
+						msg_path = path;
+						msg_path.append("MSG");
+						mkdir(msg_path.c_str(), 0777);
+
+						std::cout << "NEW GID: New group created!\n";	
+					}
+					else
+						std::cout << "E_FULL: Number of groups has reached it's limit...\n";
+				}
+				else
+					std::cout << "E_GNAME: Invalid group name\n";
 			}
-
 		}
 		else
 			std::cout << "E_GRP: Invalid GID\n";
@@ -333,7 +400,12 @@ void gsr(std::string UID, std::string GID, std::string gname){
 
 
 int main(void){
-	gsr("95662", "99", "wtf");
+	reg("95663", "qwertyui");
 
 	exit(0);
 }
+
+
+/*TODO:
+	- Unsubscribe -> Unregister
+	- Finish the group listing*/
