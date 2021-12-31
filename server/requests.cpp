@@ -17,9 +17,9 @@ extern "C" {
 #include <unistd.h>
 #include <dirent.h>
 }
+using namespace std;
 
-
-bool isNumber(std::string str){
+bool isNumber(string str){
 	for(int i = 0; i < str.length(); i++)
       	if(! (str[i] >= '0' && str[i] <= '9') ) 
       		return false;
@@ -27,7 +27,7 @@ bool isNumber(std::string str){
 	return true;
 }
 
-bool isAlNum(std::string str){
+bool isAlNum(string str){
 	int i;
 
 	for (i=0; i<8; i++)
@@ -36,20 +36,20 @@ bool isAlNum(std::string str){
 	return true;
 }
 
-bool validPass(std::string pass){
+bool validPass(string pass){
 	if (pass.length()==8 && isAlNum(pass))
 		return true;
 	return false;
 }
 
-bool validUID(std::string UID){
+bool validUID(string UID){
 	if (isNumber(UID) && UID.length()==5)
 		return true;
 	return false;
 }
 
-bool UID_free(std::string UID){
-	std::string path = "../USERS";
+bool UID_free(string UID){
+	string path = "../USERS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -66,7 +66,7 @@ bool UID_free(std::string UID){
 	return true;
 }
 
-void delete_files(std::string path){
+void delete_files(string path){
 	DIR *dir;
 	struct dirent *diread;	
 	dir = opendir(path.c_str());
@@ -74,24 +74,24 @@ void delete_files(std::string path){
 	while((diread = readdir(dir)) != nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-		std::string current_path = path;
+		string current_path = path;
 		current_path.append("/"); current_path.append(diread->d_name);
 
 		remove(current_path.c_str());
 	}
 }
 
-bool correct_pass(std::string UID, std::string pass){
-	std::string path="../USERS/";
+bool correct_pass(string UID, string pass){
+	string path="../USERS/";
 	path.append(UID);
 
-	std::string passFile_name = "_pass.txt";
+	string passFile_name = "_pass.txt";
 	passFile_name.insert(0, UID);
 
 	path.append("/"); path.append(passFile_name);
 
-	std::ifstream passwordFile;
-	std::string password;
+	ifstream passwordFile;
+	string password;
 
 	passwordFile.open(path.c_str());
 	getline(passwordFile, password);
@@ -102,7 +102,7 @@ bool correct_pass(std::string UID, std::string pass){
 
 }
 
-int numberOfGroups(std::string path){
+int numberOfGroups(string path){
 	int i = 0;
 	DIR *dir;
 	struct dirent *diread;
@@ -124,8 +124,8 @@ int numberOfGroups(std::string path){
 	return i;
 }
 
-bool groupExists(std::string GID){
-	std::string path = "../GROUPS";
+bool groupExists(string GID){
+	string path = "../GROUPS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -145,16 +145,16 @@ bool groupExists(std::string GID){
 	return false;	
 }
 
-bool validGID(std::string GID){
+bool validGID(string GID){
 	if(GID.length() == 2 && isNumber(GID))
 		if(GID == "00" || groupExists(GID))
 			return true;
 	return false;
 }
 
-bool existingGroupName(std::string GID, std::string gname){
-	std::string path = "../GROUPS/";
-	std::string gname_file = "_name.txt";
+bool existingGroupName(string GID, string gname){
+	string path = "../GROUPS/";
+	string gname_file = "_name.txt";
 
 	path.append(GID); path.append("/");
 
@@ -162,8 +162,8 @@ bool existingGroupName(std::string GID, std::string gname){
 
 	path.append(gname_file);
 
-	std::ifstream gNameFile;
-	std::string name;
+	ifstream gNameFile;
+	string name;
 
 	gNameFile.open(path.c_str());
 	getline(gNameFile, name);	
@@ -174,7 +174,7 @@ bool existingGroupName(std::string GID, std::string gname){
 
 }
 
-bool validGroupName(std::string gname){
+bool validGroupName(string gname){
 	int i;
 
 	for (i=0; gname[i] != '\0'; i++)
@@ -185,8 +185,8 @@ bool validGroupName(std::string gname){
 	return true;
 }
 
-void unsubscribe_groups(std::string UID){
-	std::string path = "../GROUPS";
+void unsubscribe_groups(string UID){
+	string path = "../GROUPS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -198,7 +198,7 @@ void unsubscribe_groups(std::string UID){
 		if(strlen(diread->d_name)>2)
 			continue;
 
-		std::string new_path = path;
+		string new_path = path;
 		new_path.append("/"); new_path.append(diread->d_name);
 		new_path.append("/"); new_path.append(UID); new_path.append(".txt");
 
@@ -207,14 +207,14 @@ void unsubscribe_groups(std::string UID){
 	closedir(dir);	
 }
 
-std::string get_group_name(std::string GID){
-	std::string path = "../GROUPS/";
+string get_group_name(string GID){
+	string path = "../GROUPS/";
 
 	path.append(GID);path.append("/");
 	path.append(GID);path.append("_name.txt");
 
-	std::ifstream gnameFile;
-	std::string gname;
+	ifstream gnameFile;
+	string gname;
 
 	gnameFile.open(path.c_str());
 	getline(gnameFile, gname);
@@ -222,11 +222,11 @@ std::string get_group_name(std::string GID){
 	return gname;
 }
 
-std::string get_mid(std::string GID){
-	std::string path = "../GROUPS/";
+string get_mid(string GID){
+	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	std::string mid = "0000";
+	string mid = "0000";
 
 	path.append(GID);path.append("/");
 	path.append("MSG");
@@ -246,9 +246,9 @@ std::string get_mid(std::string GID){
 	return mid;	
 }
 
-bool user_logon(std::string UID){
-	std::string path = "../USERS/";
-	std::string loginFile = "_login.txt";	
+bool user_logon(string UID){
+	string path = "../USERS/";
+	string loginFile = "_login.txt";	
 	DIR *dir;
 	struct dirent *diread;
 
@@ -262,17 +262,18 @@ bool user_logon(std::string UID){
 		if(diread->d_name[0]=='.')
 			continue;
 
-		if(loginFile == diread->d_name)
+		if(loginFile == diread->d_name){
 			closedir(dir);
 			return true;
+		}
 	}
 	closedir(dir);
 	return false;	
 }
 
-bool UID_in_group(std::string UID, std::string GID){
-	std::string path = "../GROUPS/";
-	std::string UIDsubscribed = ".txt";
+bool UID_in_group(string UID, string GID){
+	string path = "../GROUPS/";
+	string UIDsubscribed = ".txt";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -296,16 +297,26 @@ bool UID_in_group(std::string UID, std::string GID){
 
 /*REGISTER*/
 /*Falta enviar os códigos, aka dar returns*/
-void reg(std::string UID, std::string pass){
-	std::string path="../USERS";
-	std::string passFile_name = "_pass.txt";
+string reg(string command){
+	string reply = "reg\n";
+	string cmd, UID, pass;
+	string path="../USERS";
+	string passFile_name = "_pass.txt";
+	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("REG") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 	
 	/*Provavelmente pode tornanr-se num && uma vez que a exceção é a mesma nos dois casos*/
 	if (validUID(UID)){
 
 		/*verifica se NÃO existe uma diretoria com o mesmso UID, FALTA DAR RETURN*/
 		if(!UID_free(UID)){
-			std::cout << "DUP: UID used already" << std::endl;
+			std::cout << "DUP: UID used already" << endl;
 		}
 		else{
 			/*Cria o ficheiro com a passe*/ 
@@ -318,24 +329,35 @@ void reg(std::string UID, std::string pass){
 				path.append("/");
 
 				passFile_name.insert(0, UID);
-				std::ofstream passFile(path.append(passFile_name));
-				passFile << pass << std::endl;
+				ofstream passFile(path.append(passFile_name));
+				passFile << pass << endl;
 
 				passFile.close();
 
-				std::cout << "OK: Registered successfully!" << std::endl;			
+				std::cout << "OK: Registered successfully!" << endl;			
 			}
 			else 
-				std::cout << "NOK: Invalid password" << std::endl;
+				std::cout << "NOK: Invalid password" << endl;
 		}	
 	}
 	else
-		std::cout << "NOK: Invalid UID" << std::endl;
+		std::cout << "NOK: Invalid UID" << endl;
+	return reply;
 }
 
 /*UNREGISTER*/
-void unr(std::string UID, std::string pass){
-	std::string path="../USERS";
+string unr(string command){
+	string reply = "unr\n";
+	string cmd, UID, pass;
+	string path="../USERS";
+	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("UNR") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validUID(UID) && validPass(pass)){
 		if(!UID_free(UID)){
@@ -347,42 +369,64 @@ void unr(std::string UID, std::string pass){
 
 				unsubscribe_groups(UID);
 
-				std::cout << "OK: Unregistered successfully!" << std::endl;
+				std::cout << "OK: Unregistered successfully!" << endl;
 			}
 			else
-				std::cout << "NOK: Wrong password" << std::endl;
+				std::cout << "NOK: Wrong password" << endl;
 		}
 		else
-			std::cout << "NOK: No registration for that UID" << std::endl;
+			std::cout << "NOK: No registration for that UID" << endl;
 	}
 	else
-		std::cout << "NOK: Invalid UID or password" << std::endl;	
+		std::cout << "NOK: Invalid UID or password" << endl;	
+	return reply;
 }
 
 /*LOGIN*/
-void login(std::string UID, std::string pass){
-	std::string path="../USERS";
-	std::string loginFile_name = "_login.txt";
+string log(string command){
+	string reply = "log\n";
+	string cmd, UID, pass;
+	string path="../USERS";
+	string loginFile_name = "_login.txt";
+	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("LOG") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validUID(UID) &&  validPass(pass) 
 		 && !UID_free(UID) && correct_pass(UID,pass)){
 
 		path.append("/"); path.append(UID); path.append("/");
 		loginFile_name.insert(0, UID);
-		std::ofstream loginFile(path.append(loginFile_name));
+		ofstream loginFile(path.append(loginFile_name));
 
 		loginFile.close();
 
-		std::cout << "OK: Logged in successfully!" << std::endl;
+		std::cout << "OK: Logged in successfully!" << endl;
 	}
 	else
-		std::cout << "NOK: Incorrect UID or password" << std::endl;
+		std::cout << "NOK: Incorrect UID or password" << endl;
+	return reply;
 }
 
 /*LOGOUT*/
-void logout(std::string UID, std::string pass){
-	std::string path="../USERS";
-	std::string loginFile_name = "_login.txt";
+string out(string command){
+	string reply = "out\n";
+	string cmd, UID, pass;
+	string path="../USERS";
+	string loginFile_name = "_login.txt";
+	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("OUT") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validUID(UID) &&  validPass(pass) 
 		 && !UID_free(UID) && correct_pass(UID,pass)){
@@ -392,28 +436,34 @@ void logout(std::string UID, std::string pass){
 		path.append(loginFile_name);
 		remove(path.c_str());
 
-		std::cout << "OK: Logged out successfully!" << std::endl;
+		std::cout << "OK: Logged out successfully!" << endl;
 	}
 	else
-		std::cout << "NOK: Incorrect UID or password" << std::endl;
+		std::cout << "NOK: Incorrect UID or password" << endl;
+	return reply;
 }
 
 /*GROUP LIST*/
-void gls(){
+string gls(string command){
+	string reply = "gls\n";
 	DIR *dir;
 	struct dirent *diread;
-	std::string path = "../GROUPS";	
+	string path = "../GROUPS";	
 	int i;
+	if(command.compare("GLS") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
-	std::vector<std::string> list;
+	vector<string> list;
 
 	dir = opendir(path.c_str());
 
 	while((diread = readdir(dir)) != nullptr){
-		std::string gid;
-		std::string gname;
-		std::string mid;
-		std::stringstream message;
+		string gid;
+		string gname;
+		string mid;
+		stringstream message;
 
 		if(diread->d_name[0]=='.')
 			continue;
@@ -430,17 +480,28 @@ void gls(){
 	if(numberOfGroups(path) == 0)
 		std::cout << "RGL 0: No existing groups\n";
 	else{
-		std::sort(list.begin(), list.end());
-		std::cout << "RGL " << numberOfGroups(path) << std::endl;
+		sort(list.begin(), list.end());
+		std::cout << "RGL " << numberOfGroups(path) << endl;
 		for(i = 0; i < list.size(); i++)
-			std::cout << list[i] << std::endl;
+			std::cout << list[i] << endl;
 	}
-	closedir(dir);	
+	closedir(dir);
+	return reply;
 }
 
 /*GROUP SUBSCRIBE*/
-void gsr(std::string UID, std::string GID, std::string gname){
-	std::string path = "../GROUPS";
+string gsr(string command){
+	string reply = "gsr\n";
+	string cmd, UID, GID, gname;
+	string path = "../GROUPS";
+	if(sscanf(command.c_str(), "%s %s %s %s\n", cmd, UID, GID, gname) != 4){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("GSR") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validUID(UID) && !UID_free(UID)){
 		if (validGID(GID)){
@@ -449,7 +510,7 @@ void gsr(std::string UID, std::string GID, std::string gname){
 					path.append("/"); path.append(GID); path.append("/");
 					path.append(UID); path.append(".txt");
 
-					std::ofstream UID_File(path);
+					ofstream UID_File(path);
 
 					UID_File.close();
 
@@ -467,15 +528,15 @@ void gsr(std::string UID, std::string GID, std::string gname){
 					if(i < 99){
 						i++;
 
-						std::string newGID;
-						std::string gname_path;
-						std::string uid_path;
-						std::string msg_path;
+						string newGID;
+						string gname_path;
+						string uid_path;
+						string msg_path;
 
 						if(i <= 9)
 							newGID.append("0");
 
-						newGID.append(std::to_string(i));
+						newGID.append(to_string(i));
 
 						path.append("/"); path.append(newGID);
 						mkdir(path.c_str(), 0777);
@@ -484,13 +545,13 @@ void gsr(std::string UID, std::string GID, std::string gname){
 
 						gname_path = path;
 						gname_path.append(newGID); gname_path.append("_name.txt");
-						std::ofstream new_Gname_file(gname_path);
-						new_Gname_file << gname << std::endl;
+						ofstream new_Gname_file(gname_path);
+						new_Gname_file << gname << endl;
 						new_Gname_file.close();
 
 						uid_path = path;
 						uid_path.append(UID); uid_path.append(".txt");
-						std::ofstream new_uid_file(uid_path);
+						ofstream new_uid_file(uid_path);
 						new_uid_file.close();
 
 						msg_path = path;
@@ -511,14 +572,25 @@ void gsr(std::string UID, std::string GID, std::string gname){
 	}
 	else
 		std::cout << "E_USR: Invalid UID\n";
-
+	return reply;
 }
 
 /*Unsubscribe from group*/
-void gur(std::string UID, std::string GID){
-	std::string path = "../GROUPS/";
+string gur(string command){
+	string reply = "gur\n";
+	string cmd, UID, GID;
+	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
+	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, GID) != 3){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("GUR") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	
 
 	if(validUID(UID) && !UID_free(UID)){
 		if(validGID(GID) && groupExists(GID)){
@@ -534,25 +606,36 @@ void gur(std::string UID, std::string GID){
 	}
 	else
 		std::cout << "E_USR: Invalid UID.\n";
+	return reply;
 }
 
 /*List of Groups subscribed by a specific user*/
-void glm(std::string UID){
+string glm(string command){
+	string reply = "glm\n";
+	string cmd, UID;
 	DIR *dir;
 	struct dirent *diread;
-	std::string path = "../GROUPS";	
+	string path = "../GROUPS";	
 	int i = 0;
-	std::vector<std::string> list;
+	vector<string> list;
+	if(sscanf(command.c_str(), "%s %s\n", cmd, UID) != 2){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("GLM") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validUID(UID) && !UID_free(UID) && user_logon(UID)){
 			
 		dir = opendir(path.c_str());
 
 		while((diread = readdir(dir)) != nullptr){
-			std::string gid;
-			std::string gname;
-			std::string mid;
-			std::stringstream message;
+			string gid;
+			string gname;
+			string mid;
+			stringstream message;
 
 			if(diread->d_name[0]=='.')
 				continue;
@@ -572,24 +655,35 @@ void glm(std::string UID){
 		if(i == 0)
 			std::cout << "RGM 0: No groups subscribed\n";
 		else{
-			std::sort(list.begin(), list.end());
-			std::cout << "RGM " << i << std::endl;
+			sort(list.begin(), list.end());
+			std::cout << "RGM " << i << endl;
 			for(i = 0; i < list.size(); i++)
-				std::cout << list[i] << std::endl;
+				std::cout << list[i] << endl;
 		}
 		closedir(dir);
 	}
 	else
-		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";	
+		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";
+	return reply;
 }
 
 /*List of users subscribed to a given group (TCP)*/
-void uls(std::string GID){
+string uls(string command){
+	string reply = "uls\n";
+	string cmd, GID;
 	DIR *dir;
 	struct dirent *diread;
-	std::string path = "../GROUPS/";	
-	std::vector<std::string> list;
+	string path = "../GROUPS/";	
+	vector<string> list;
 	int i;
+	if(sscanf(command.c_str(), "%s %s\n", cmd, GID) != 2){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("ULS") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
 	if(validGID(GID)){
 			
@@ -598,9 +692,9 @@ void uls(std::string GID){
 		dir = opendir(path.c_str());
 		
 		while((diread = readdir(dir)) != nullptr){
-			std::string uid;
-			std::string gname;
-			std::stringstream message;
+			string uid;
+			string gname;
+			stringstream message;
 			if(diread->d_name[0]=='.')
 				continue;
 			if(strlen(diread->d_name) != 9)
@@ -608,7 +702,7 @@ void uls(std::string GID){
 
 
 			/*Removing '.txt'*/
-			std::string is_uid = diread->d_name;
+			string is_uid = diread->d_name;
 			is_uid.erase(5, 4);
 
 			if(validUID(is_uid) && !UID_free(is_uid)){
@@ -619,25 +713,49 @@ void uls(std::string GID){
 			}
 			
 		}
-		std::sort(list.begin(), list.end());
-		std::cout << "RGM " << get_group_name(GID) << std::endl;
+		sort(list.begin(), list.end());
+		std::cout << "RGM " << get_group_name(GID) << endl;
 		for(i = 0; i < list.size(); i++)
-			std::cout << list[i] << std::endl;
+			std::cout << list[i] << endl;
 		
 		closedir(dir);
 	}
 	else
-		std::cout << "NOK: Invalid GID or group doesn't exist.\n";	
+		std::cout << "NOK: Invalid GID or group doesn't exist.\n";
+	return reply;
 }
 
-/*
-int main(void){
-	uls("02");
+string pst(string command){
+	string reply = "pst\n";
+	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
+	int nArgs = sscanf(command.c_str(), "%s %s %s %s %s %s %s %s\n", cmd, UID, GID, Tsize, text, Fname, Fsize, data);
+	if(nArgs != 5 && nArgs != 8){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
 
-	exit(0);
+	if(cmd.compare("PST") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+
+	return reply;
 }
-*/
 
+string rtv(string command){
+	string reply = "rtv\n";
+	string cmd, UID, GID, MID;
+	if(sscanf(command.c_str(), "%s %s\n", cmd, GID) != 4){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+	if(cmd.compare("RTV") != 0){
+		fprintf(stderr, "ERR");
+		return "ERR\n";
+	}
+
+	return reply;
+}
 
 /*TODO:
 	- Does the user have to be log on to subscribe/unsubscribe?

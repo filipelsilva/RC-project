@@ -54,7 +54,7 @@ class UDPClient {
 			exit(1);
 		}
 
-		write(1, "echo: ", 6);
+		write(1, "Server: ", 6);
 		write(1, buffer, n);
 
 		if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,

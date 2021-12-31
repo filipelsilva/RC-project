@@ -10,12 +10,38 @@ extern "C" {
 #include <unistd.h>
 }
 
-#include "../server/TCPServer.cpp"
-#include "../server/UDPServer.cpp"
+#include "TCPServer.cpp"
+#include "UDPServer.cpp"
+#include "requests.cpp"
+using namespace std;
 
 #define max(A,B) (A >= B ? A : B)
 
 #define PORT "58013"
+
+string functionCaller(string command){
+	string cmd = command.substr(0, 3);
+	if(cmd.compare("REG") == 0)
+		return reg(command);
+	if(cmd.compare("UNR") == 0)
+		return unr(command);
+	if(cmd.compare("LOG") == 0)
+		return log(command);
+	if(cmd.compare("OUT") == 0)
+		return out(command);
+	if(cmd.compare("GLS") == 0)
+		return gls(command);
+	if(cmd.compare("GSR") == 0)
+		return gsr(command);
+	if(cmd.compare("GUR") == 0)
+		return gur(command);
+	if(cmd.compare("GLM") == 0)
+		return glm(command);
+	if(cmd.compare("PST") == 0)
+		return pst(command);
+	if(cmd.compare("RTV") == 0)
+		return rtv(command);
+}
 
 int main(int argc, char** argv) {
 	const char* usage = "Usage: %s [-p DSport] [-v]\n"
@@ -55,13 +81,16 @@ int main(int argc, char** argv) {
 	fd_set mask;
 	TCPServer tcp = TCPServer(PORT);
 	UDPServer udp = UDPServer(PORT);
-	const char *message;
 
 	// Set mask and maxfd to select
 	FD_ZERO(&mask);
 	maxfd = max(tcp.fd, udp.fd) + 1;
 
+	string command;
+
 	while (1) {
+		const char *request = "";
+		string reply;
 		FD_SET(tcp.fd, &mask);
 		FD_SET(udp.fd, &mask);
 
@@ -72,15 +101,17 @@ int main(int argc, char** argv) {
 		}
 
 		if (FD_ISSET(tcp.fd, &mask)) {
-			message = tcp.getData();
+			request = tcp.getData();
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
-			message = udp.getData();
+			request = udp.getData();
 		}
 
 		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
-		write(1, message, strlen(message));
+		write(1, request, strlen(request));
+
+		reply = functionCaller(command.assign(request));
 	}
 
 	exit(0);

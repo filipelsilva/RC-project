@@ -60,6 +60,7 @@ class TCPServer {
 
 	const char *getData() {
 		addrlen = sizeof(addr);
+		memset(buffer, 0, sizeof(buffer));
 
 		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
 			fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
