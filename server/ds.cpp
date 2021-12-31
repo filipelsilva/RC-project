@@ -49,19 +49,20 @@ int main(int argc, char** argv) {
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	int tmp, DSport = atoi(PORT), verbose = 0;
+	int verbose = 0;
 	char flag;
+	const char *DSport = PORT;
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "p:v")) != -1) {
 		switch (flag) {
 			case 'p':
-				if ((tmp = strtol(optarg, NULL, 10)) == 0) {
+				if (strtol(optarg, NULL, 10) == 0) {
 					fprintf(stderr, "Error: invalid value for -p flag\n");
 					fprintf(stderr, usage, argv[0]);
 					exit(1);
 				}
-				DSport = tmp;
+				DSport = optarg;
 				break;
 
 			case 'v':

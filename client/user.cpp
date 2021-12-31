@@ -57,7 +57,6 @@ int main(int argc, char** argv) {
 	// Default initialization of variables and flags
 	const char* DSIP = "localhost";
 	const char* DSport = DSPORT_DEFAULT;
-	int tmp;
 	char flag;
 
 	// Argument parser
@@ -68,12 +67,12 @@ int main(int argc, char** argv) {
 				break;
 
 			case 'p':
-				if ((tmp = strtol(optarg, NULL, 10)) == 0) {
+				if (strtol(optarg, NULL, 10) == 0) {
 					fprintf(stderr, "Error: invalid value for -p flag\n");
 					fprintf(stderr, usage, argv[0]);
 					exit(1);
 				}
-				DSport = to_string(tmp).c_str();
+				DSport = optarg;
 				break;
 
 			default:
