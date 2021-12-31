@@ -94,8 +94,3 @@ class TCPServer {
 		close(fd);
 	}
 };
-
-// int main(int argc, char **argv) {
-// 	TCPServer server = TCPServer("58001");
-// 	server.getData();
-// }

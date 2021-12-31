@@ -67,8 +67,3 @@ class UDPServer {
 		close(fd);
 	}
 };
-
-// int main(int argc, char **argv) {
-// 	UDPServer server = UDPServer("58001");
-// 	server.getData();
-// }

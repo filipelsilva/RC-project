@@ -64,9 +64,6 @@ int main(int argc, char** argv) {
 	while (1) {
 		FD_SET(tcp.fd, &mask);
 		FD_SET(udp.fd, &mask);
-		printf("%d\n", tcp.fd);
-		printf("%d\n", udp.fd);
-		printf("%d\n", maxfd);
 
 		if ((counter = select(maxfd, &mask, (fd_set*)NULL, (fd_set*)NULL,
 						(struct timeval*)NULL)) <= 0) {

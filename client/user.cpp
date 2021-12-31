@@ -43,11 +43,10 @@ int main(int argc, char** argv) {
 
 	printf("DSIP: %s\nDSport: %d\n", DSIP, DSport);
 
-	while(1){
+	while(1){	
 		TCPClient tcp = TCPClient("localhost", "58013");
-		tcp.sendData("Teste de servidor TCP\n");
-
 		UDPClient udp = UDPClient("localhost", "58013");
+		tcp.sendData("Teste de servidor TCP\n");
 		udp.sendData("Teste de servidor UDP\n");
 	}
 

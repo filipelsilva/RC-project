@@ -40,7 +40,7 @@ class TCPClient {
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 
-		n = getaddrinfo("localhost", "58001", &hints, &res);
+		n = getaddrinfo("localhost", port, &hints, &res);
 		if (n != 0) exit(1);
 		n = connect(fd, res->ai_addr, res->ai_addrlen);
 		if (n == -1) exit(1);
@@ -72,10 +72,10 @@ class TCPClient {
 
 		write(1, "echo: ", 6);
 		write(1, buffer, nread);
+		close(fd);
 	}
 
 	~TCPClient() {
 		freeaddrinfo(res);
-		close(fd);
 	}
 };
