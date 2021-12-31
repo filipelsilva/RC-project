@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	printf("DSport: %d\nVerbose mode: %d\n", DSport, verbose);
+	printf("DSport: %s\nVerbose mode: %d\n", DSport, verbose);
 
 	int maxfd, counter;
 	fd_set mask;
