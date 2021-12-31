@@ -30,6 +30,9 @@ servers: server/TCPServer.cpp server/UDPServer.cpp server/clean.cpp
 clean:
 	rm bin/*
 
+format:
+	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp
+
 zip: # Uses git, not very portable in zip
 	git archive -o projeto_rc.zip HEAD
 
