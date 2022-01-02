@@ -40,7 +40,7 @@ class TCPServer : public Server {
 			}
 		}
 
-		const char *getData() {
+		char *getData() {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 

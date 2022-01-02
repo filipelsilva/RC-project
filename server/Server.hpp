@@ -28,7 +28,7 @@ class Server {
 	public:
 		int fd;
 
-		virtual const char *getData() = 0;
+		virtual char *getData() = 0;
 		virtual void sendData(const char *message) = 0;
 		virtual ~Server() {};
 };
