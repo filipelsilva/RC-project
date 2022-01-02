@@ -14,7 +14,7 @@ using namespace std;
 
 bool isTCP(string command){
 	command = command.substr(0, 3);
-	string cmds[] = {"PST", "RPT", "RTV", "RRT"};
+	string cmds[] = {"tcp", "PST", "RPT", "RTV", "RRT"};
 	for(string cmd: cmds){
 		if(command.compare(cmd) == 0){
 			return true;
@@ -93,10 +93,12 @@ int main(int argc, char** argv) {
 		}
 
 		if(isTCP(cmd.assign(command))){
+			write(1, "TCP\n", strlen("TCP\n"));
 			TCPClient tcp = TCPClient(DSIP, DSport);
 			tcp.sendData(command);
 		}
 		else{
+			write(1, "UDP\n", strlen("UDP\n"));
 			UDPClient udp = UDPClient(DSIP, DSport);
 			udp.sendData(command);
 		}

@@ -31,22 +31,23 @@ class TCPClient {
 		this->server = server;
 		this->port = port;
 
-		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
-			exit(1);
-		}
-
 		memset(&hints, 0, sizeof hints);
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 
 		n = getaddrinfo("localhost", port, &hints, &res);
 		if (n != 0) exit(1);
-		n = connect(fd, res->ai_addr, res->ai_addrlen);
-		if (n == -1) exit(1);
 	}
 
 	void sendData(const char *message) {
+		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			exit(1);
+		}
+
+		n = connect(fd, res->ai_addr, res->ai_addrlen);
+		if (n == -1) exit(1);
+
 		ptr = strcpy(buffer, message);
 		nbytes = strlen(message);
 
@@ -59,6 +60,16 @@ class TCPClient {
 		}
 		nleft = nbytes;
 		ptr = buffer;
+
+		close(fd);
+
+		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			exit(1);
+		}
+
+		n = connect(fd, res->ai_addr, res->ai_addrlen);
+		if (n == -1) exit(1);
 
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);

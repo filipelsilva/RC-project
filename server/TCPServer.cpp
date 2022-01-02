@@ -18,7 +18,7 @@ class TCPServer {
 	struct sockaddr_in addr;
 	socklen_t addrlen;
 	char *ptr, buffer[128];
-	const char *port, *message;
+	const char *port;
 
 	TCPServer(const char *port) {
 		// Handling of SIGPIPE signal
@@ -76,18 +76,32 @@ class TCPServer {
 
 			write(1, "received: ", 10);
 			write(1, ptr, n);
-
-			while (n > 0) {
-				if ((nw = write(newfd, ptr, n)) == -1) {
-					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
-					exit(1);
-				}
-				n -= nw;
-				ptr += nw;
-			}
 		}
 		close(newfd);
 		return buffer;
+	}
+
+	void sendData(const char *message) {
+		write(1, "before addrlen\n", strlen("before addrlen\n"));
+		addrlen = sizeof(addr);
+
+		write(1, "before newfd\n", strlen("before newfd\n"));
+		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
+			fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
+			exit(1);
+		}
+
+		write(1, "before send\n", strlen("before send\n"));
+		n = strlen(message);
+		while (n > 0) {
+			if ((nw = write(newfd, message, n)) == -1) {
+				fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
+				exit(1);
+			}
+			n -= nw;
+			ptr += nw;
+		}
+		close(newfd);
 	}
 
 	~TCPServer() {
