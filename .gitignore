@@ -3,6 +3,7 @@
 *.pptx
 assignment/
 tests/
+.vscode/
 
 ### C
 # Prerequisites
