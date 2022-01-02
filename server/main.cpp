@@ -10,8 +10,8 @@ extern "C" {
 #include <unistd.h>
 }
 
-#include "../server/TCPServer.cpp"
-#include "../server/UDPServer.cpp"
+#include "./TCPServer.cpp"
+#include "./UDPServer.cpp"
 
 #define max(A,B) (A >= B ? A : B)
 
