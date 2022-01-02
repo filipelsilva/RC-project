@@ -53,7 +53,7 @@ class TCPServer {
 		}
 
 		if ((errcode = listen(fd, 5)) == -1) {
-			fprintf(stderr, "Error: bind: %s\n", gai_strerror(n));
+			fprintf(stderr, "Error: listen: %s\n", gai_strerror(n));
 			exit(1);
 		}
 	}
@@ -82,16 +82,13 @@ class TCPServer {
 	}
 
 	void sendData(const char *message) {
-		write(1, "before addrlen\n", strlen("before addrlen\n"));
 		addrlen = sizeof(addr);
 
-		write(1, "before newfd\n", strlen("before newfd\n"));
 		if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
 			fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
 			exit(1);
 		}
 
-		write(1, "before send\n", strlen("before send\n"));
 		n = strlen(message);
 		while (n > 0) {
 			if ((nw = write(newfd, message, n)) == -1) {

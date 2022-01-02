@@ -35,8 +35,10 @@ class TCPClient {
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 
-		n = getaddrinfo("localhost", port, &hints, &res);
-		if (n != 0) exit(1);
+		if ((n = getaddrinfo("localhost", port, &hints, &res)) != 0) {
+			fprintf(stderr, "Error: getaddrinfo: %s\n", gai_strerror(n));
+			exit(1);
+		}
 	}
 
 	void sendData(const char *message) {
@@ -45,8 +47,10 @@ class TCPClient {
 			exit(1);
 		}
 
-		n = connect(fd, res->ai_addr, res->ai_addrlen);
-		if (n == -1) exit(1);
+		if ((n = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(n));
+			exit(1);
+		}
 
 		ptr = strcpy(buffer, message);
 		nbytes = strlen(message);
@@ -68,8 +72,10 @@ class TCPClient {
 			exit(1);
 		}
 
-		n = connect(fd, res->ai_addr, res->ai_addrlen);
-		if (n == -1) exit(1);
+		if ((n = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(n));
+			exit(1);
+		}
 
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);
