@@ -1,18 +1,9 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "./Client.hpp"
 
-class TCPClient {
+class TCPClient : public Client {
 	struct sigaction act;
 	struct addrinfo hints, *res;
-	int fd, n, errcode;
+	int fd, errcode;
 	ssize_t nbytes, nleft, nwritten, nread;
 	char *ptr, buffer[128];
 	const char *server, *port;
@@ -31,22 +22,27 @@ class TCPClient {
 		this->server = server;
 		this->port = port;
 
+		memset(&hints, 0, sizeof hints);
+		hints.ai_family = AF_INET;
+		hints.ai_socktype = SOCK_STREAM;
+
+		if ((errcode = getaddrinfo("localhost", port, &hints, &res)) != 0) {
+			fprintf(stderr, "Error: getaddrinfo: %s\n", gai_strerror(errcode));
+			exit(1);
+		}
+	}
+
+	void sendData(const char *message) {
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
 			exit(1);
 		}
 
-		memset(&hints, 0, sizeof hints);
-		hints.ai_family = AF_INET;
-		hints.ai_socktype = SOCK_STREAM;
+		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
+			exit(1);
+		}
 
-		n = getaddrinfo("localhost", "58001", &hints, &res);
-		if (n != 0) exit(1);
-		n = connect(fd, res->ai_addr, res->ai_addrlen);
-		if (n == -1) exit(1);
-	}
-
-	void sendData(const char *message) {
 		ptr = strcpy(buffer, message);
 		nbytes = strlen(message);
 
@@ -60,7 +56,19 @@ class TCPClient {
 		nleft = nbytes;
 		ptr = buffer;
 
-		while (nleft > 0) {
+		close(fd);
+
+		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			exit(1);
+		}
+
+		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
+			exit(1);
+		}
+
+		while (nleft > 0){
 			nread = read(fd, ptr, nleft);
 			if(nread == -1) exit(1);
 			else if (nread == 0) break;
@@ -70,22 +78,12 @@ class TCPClient {
 
 		nread = nbytes - nleft;
 
-		write(1, "echo: ", 6);
+		write(1, "Server: ", 6);
 		write(1, buffer, nread);
+		close(fd);
 	}
 
 	~TCPClient() {
 		freeaddrinfo(res);
-		close(fd);
 	}
 };
-
-int main() {
-	TCPClient client = TCPClient("localhost", "58001");
-	char message[128];
-	while (1) {
-		if (fgets(message, 128, stdin) != NULL) {
-			client.sendData(message);
-		}
-	}
-}

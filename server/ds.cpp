@@ -1,12 +1,47 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cerrno>
-extern "C" { // For C libraries, to avoid namespace cluttering
+#include <csignal>
+extern "C" {
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <unistd.h>
 }
 
-#define DSPORT_DEFAULT 58013
+#include "TCPServer.cpp"
+#include "UDPServer.cpp"
+#include "requests.cpp"
+using namespace std;
+
+#define max(A,B) (A >= B ? A : B)
+
+#define PORT "58013"
+
+string functionCaller(string command){
+	string cmd = command.substr(0, 3);
+	if(cmd.compare("REG") == 0)
+		return reg(command);
+	if(cmd.compare("UNR") == 0)
+		return unr(command);
+	if(cmd.compare("LOG") == 0)
+		return log(command);
+	if(cmd.compare("OUT") == 0)
+		return out(command);
+	if(cmd.compare("GLS") == 0)
+		return gls(command);
+	if(cmd.compare("GSR") == 0)
+		return gsr(command);
+	if(cmd.compare("GUR") == 0)
+		return gur(command);
+	if(cmd.compare("GLM") == 0)
+		return glm(command);
+	if(cmd.compare("PST") == 0)
+		return pst(command);
+	if(cmd.compare("RTV") == 0)
+		return rtv(command);
+}
 
 int main(int argc, char** argv) {
 	const char* usage = "Usage: %s [-p DSport] [-v]\n"
@@ -14,19 +49,20 @@ int main(int argc, char** argv) {
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	int tmp, DSport = DSPORT_DEFAULT, verbose = 0;
+	int verbose = 0;
 	char flag;
+	const char *DSport = PORT;
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "p:v")) != -1) {
 		switch (flag) {
 			case 'p':
-				if ((tmp = strtol(optarg, NULL, 10)) == 0) {
+				if (strtol(optarg, NULL, 10) == 0) {
 					fprintf(stderr, "Error: invalid value for -p flag\n");
 					fprintf(stderr, usage, argv[0]);
 					exit(1);
 				}
-				DSport = tmp;
+				DSport = optarg;
 				break;
 
 			case 'v':
@@ -40,7 +76,44 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	printf("DSport: %d\nVerbose mode: %d\n", DSport, verbose);
+	printf("DSport: %s\nVerbose mode: %d\n", DSport, verbose);
 
-	return 0;
+	int maxfd, counter;
+	fd_set mask;
+	TCPServer tcp = TCPServer(PORT);
+	UDPServer udp = UDPServer(PORT);
+
+	// Set mask and maxfd to select
+	FD_ZERO(&mask);
+	maxfd = max(tcp.fd, udp.fd) + 1;
+
+	string command;
+
+	while (1) {
+		const char *request = "";
+		string reply;
+		FD_SET(tcp.fd, &mask);
+		FD_SET(udp.fd, &mask);
+
+		if ((counter = select(maxfd, &mask, (fd_set*)NULL, (fd_set*)NULL,
+						(struct timeval*)NULL)) <= 0) {
+			fprintf(stderr, "Error: socket: %s\n", gai_strerror(counter));
+			exit(1);
+		}
+
+		if (FD_ISSET(tcp.fd, &mask)) {
+			request = tcp.getData();
+		}
+
+		if (FD_ISSET(udp.fd, &mask)) {
+			request = udp.getData();
+		}
+
+		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
+		write(1, request, strlen(request));
+
+		reply = functionCaller(command.assign(request));
+	}
+
+	exit(0);
 }

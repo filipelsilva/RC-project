@@ -1,16 +1,6 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-extern "C" {
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "./Client.hpp"
 
-class UDPClient {
+class UDPClient : public Client {
 	int fd, errcode;
 	ssize_t n;
 	socklen_t addrlen;
@@ -54,7 +44,7 @@ class UDPClient {
 			exit(1);
 		}
 
-		write(1, "echo: ", 6);
+		write(1, "Server: ", 6);
 		write(1, buffer, n);
 
 		if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
@@ -72,13 +62,3 @@ class UDPClient {
 		close(fd);
 	}
 };
-
-int main() {
-	UDPClient client = UDPClient("localhost", "58001");
-	char message[128];
-	while (1) {
-		if (fgets(message, 128, stdin) != NULL) {
-			client.sendData(message);
-		}
-	}
-}

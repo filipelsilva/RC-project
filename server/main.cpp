@@ -10,12 +10,12 @@ extern "C" {
 #include <unistd.h>
 }
 
-#include "../server/TCPServer.cpp"
-#include "../server/UDPServer.cpp"
+#include "./TCPServer.cpp"
+#include "./UDPServer.cpp"
 
 #define max(A,B) (A >= B ? A : B)
 
-#define PORT "58001"
+#define PORT "58013"
 
 int main() {
 	int maxfd, counter;
@@ -40,10 +40,12 @@ int main() {
 
 		if (FD_ISSET(tcp.fd, &mask)) {
 			message = tcp.getData();
+			tcp.sendData(message);
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
 			message = udp.getData();
+			udp.sendData(message);
 		}
 
 		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
