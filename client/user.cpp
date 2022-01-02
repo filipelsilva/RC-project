@@ -4,13 +4,15 @@
 extern "C" { // For C libraries, to avoid namespace cluttering
 #include <unistd.h>
 }
-#include "TCPClient.cpp"
-#include "UDPClient.cpp"
-#include "replies.cpp"
-using namespace std;
+
+#include "./TCPClient.cpp"
+#include "./UDPClient.cpp"
+#include "./replies.cpp"
 
 #define DSPORT_DEFAULT "58013"
 #define COMMAND_SIZE 128
+
+using namespace std;
 
 bool isTCP(string command){
 	command = command.substr(0, 3);
