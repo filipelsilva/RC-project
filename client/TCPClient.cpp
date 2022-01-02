@@ -1,18 +1,9 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "./Client.hpp"
 
-class TCPClient {
+class TCPClient : public Client {
 	struct sigaction act;
 	struct addrinfo hints, *res;
-	int fd, n, errcode;
+	int fd, errcode;
 	ssize_t nbytes, nleft, nwritten, nread;
 	char *ptr, buffer[128];
 	const char *server, *port;
@@ -35,8 +26,8 @@ class TCPClient {
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 
-		if ((n = getaddrinfo("localhost", port, &hints, &res)) != 0) {
-			fprintf(stderr, "Error: getaddrinfo: %s\n", gai_strerror(n));
+		if ((errcode = getaddrinfo("localhost", port, &hints, &res)) != 0) {
+			fprintf(stderr, "Error: getaddrinfo: %s\n", gai_strerror(errcode));
 			exit(1);
 		}
 	}
@@ -47,8 +38,8 @@ class TCPClient {
 			exit(1);
 		}
 
-		if ((n = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", gai_strerror(n));
+		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
 			exit(1);
 		}
 
@@ -72,8 +63,8 @@ class TCPClient {
 			exit(1);
 		}
 
-		if ((n = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", gai_strerror(n));
+		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
 			exit(1);
 		}
 

@@ -1,5 +1,5 @@
-#ifndef SERVER
-#define SERVER
+#ifndef CLIENT
+#define CLIENT
 
 #include <cstdio>
 #include <cstdlib>
@@ -14,23 +14,20 @@ extern "C" {
 #include <unistd.h>
 }
 
-class Server {
+class Client {
 	protected:
 		struct sigaction act;
-		struct addrinfo hints, *res;
-		int newfd, errcode;
-		ssize_t n, nw;
-		struct sockaddr_in addr;
+		int fd, errcode;
+		ssize_t n, nbytes, nleft, nwritten, nread;
 		socklen_t addrlen;
-		char *ptr, buffer[128];
-		const char *port;
+		struct addrinfo hints, *res;
+		struct sockaddr_in addr;
+		char *ptr, buffer[128], host[NI_MAXHOST], service[NI_MAXSERV];
+		const char *server, *port;
 
 	public:
-		int fd;
-
-		virtual const char *getData() = 0;
 		virtual void sendData(const char *message) = 0;
-		virtual ~Server() {};
+		virtual ~Client() {};
 };
 
 #endif

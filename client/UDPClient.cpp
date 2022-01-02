@@ -1,16 +1,6 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-extern "C" {
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "./Client.hpp"
 
-class UDPClient {
+class UDPClient : public Client {
 	int fd, errcode;
 	ssize_t n;
 	socklen_t addrlen;
