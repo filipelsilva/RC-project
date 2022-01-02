@@ -40,10 +40,12 @@ int main(void) {
 
 		if (FD_ISSET(tcp.fd, &mask)) {
 			message = tcp.getData();
+			tcp.sendData(message);
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
 			message = udp.getData();
+			udp.sendData(message);
 		}
 
 		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));

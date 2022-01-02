@@ -56,11 +56,14 @@ class UDPServer {
 		write(1, "received: ", 10);
 		write(1, buffer, n);
 
-		if ((n = sendto(fd, buffer, n, 0, (struct sockaddr*)&addr, addrlen)) == -1) {
+		return buffer;
+	}
+
+	void sendData(const char *message) {
+		if ((n = sendto(fd, message, strlen(message), 0, (struct sockaddr*)&addr, addrlen)) == -1) {
 			fprintf(stderr, "Error: sendto: %s\n", gai_strerror(n));
 			exit(1);
 		}
-		return buffer;
 	}
 
 	~UDPServer() {

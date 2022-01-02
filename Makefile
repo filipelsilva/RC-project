@@ -11,6 +11,9 @@ ds: server/ds.cpp
 user: client/user.cpp
 	$(CC) $(CFLAGS) client/user.cpp -o bin/user
 
+main: server/main.cpp
+	$(CC) $(CFLAGS) server/main.cpp -o bin/main
+
 clean:
 	rm bin/*
 
