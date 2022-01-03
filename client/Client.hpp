@@ -1,18 +1,7 @@
 #ifndef CLIENT
 #define CLIENT
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "../Constants.hpp"
 
 class Client {
 	protected:
@@ -22,7 +11,7 @@ class Client {
 		socklen_t addrlen;
 		struct addrinfo hints, *res;
 		struct sockaddr_in addr;
-		char *ptr, buffer[128], host[NI_MAXHOST], service[NI_MAXSERV];
+		char *ptr, buffer[COMMAND_SIZE], host[NI_MAXHOST], service[NI_MAXSERV];
 		const char *server, *port;
 
 	public:

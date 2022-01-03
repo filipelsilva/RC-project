@@ -1,27 +1,12 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
-
+#include "../Constants.hpp"
 #include "./TCPServer.cpp"
 #include "./UDPServer.cpp"
-
-#define max(A,B) (A >= B ? A : B)
-
-#define PORT "58013"
 
 int main() {
 	int maxfd, counter;
 	fd_set mask;
-	TCPServer tcp = TCPServer(PORT);
-	UDPServer udp = UDPServer(PORT);
+	TCPServer tcp = TCPServer(DSPORT_DEFAULT);
+	UDPServer udp = UDPServer(DSPORT_DEFAULT);
 	char *message;
 
 	// Set mask and maxfd to select

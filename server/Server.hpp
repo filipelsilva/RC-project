@@ -1,18 +1,7 @@
 #ifndef SERVER
 #define SERVER
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "../Constants.hpp"
 
 class Server {
 	protected:
@@ -22,7 +11,7 @@ class Server {
 		ssize_t n, nw;
 		struct sockaddr_in addr;
 		socklen_t addrlen;
-		char *ptr, buffer[128];
+		char *ptr, buffer[COMMAND_SIZE];
 		const char *port;
 
 	public:

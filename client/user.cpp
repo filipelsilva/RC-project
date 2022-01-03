@@ -1,16 +1,7 @@
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-extern "C" { // For C libraries, to avoid namespace cluttering
-#include <unistd.h>
-}
-
+#include "../Constants.hpp"
 #include "./TCPClient.cpp"
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
-
-#define DSPORT_DEFAULT "58013"
-#define COMMAND_SIZE 128
 
 using namespace std;
 

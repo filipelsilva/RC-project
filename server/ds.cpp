@@ -1,23 +1,9 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <csignal>
-extern "C" {
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-}
+#include "../Constants.hpp"
+#include "./TCPServer.cpp"
+#include "./UDPServer.cpp"
+#include "./requests.cpp"
 
-#include "TCPServer.cpp"
-#include "UDPServer.cpp"
-#include "requests.cpp"
 using namespace std;
-
-#define max(A,B) (A >= B ? A : B)
-
-#define PORT "58013"
 
 string functionCaller(string command){
 	string cmd = command.substr(0, 3);
@@ -51,7 +37,7 @@ int main(int argc, char** argv) {
 	// Default initialization of variables and flags
 	int verbose = 0;
 	char flag;
-	const char *DSport = PORT;
+	const char *DSport = DSPORT_DEFAULT;
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "p:v")) != -1) {
@@ -80,8 +66,8 @@ int main(int argc, char** argv) {
 
 	int maxfd, counter;
 	fd_set mask;
-	TCPServer tcp = TCPServer(PORT);
-	UDPServer udp = UDPServer(PORT);
+	TCPServer tcp = TCPServer(DSport);
+	UDPServer udp = UDPServer(DSport);
 
 	// Set mask and maxfd to select
 	FD_ZERO(&mask);
