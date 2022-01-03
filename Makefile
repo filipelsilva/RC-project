@@ -1,4 +1,4 @@
-.PHONY: all ds user clean entr
+.PHONY: all ds user main clean format zip entr
 
 CC=g++
 CFLAGS=-Wall -Wextra
@@ -24,4 +24,4 @@ zip: # Uses git, not very portable in zip
 	git archive -o projeto_rc.zip HEAD
 
 entr: # Uses entr, not very portable
-	find . -name "*.cpp" ! -name "*.c" ! -name "*.h" | entr make
+	find . -name "*.cpp" ! -name "*.hpp" ! -name "*.c" ! -name "*.h" | entr make
