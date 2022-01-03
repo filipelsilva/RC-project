@@ -3,16 +3,11 @@
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
 
-using namespace std;
-
 bool isTCP(string command){
-	command = command.substr(0, 3);
-	string cmds[] = {"tcp", "PST", "RPT", "RTV", "RRT"};
-	for(string cmd: cmds){
-		if(command.compare(cmd) == 0){
+	for (string cmd: ClientUser_TCP)
+		if (command.rfind(cmd, 0) != string::npos)
 			return true;
-		}
-	}
+
 	return false;
 }
 
@@ -48,7 +43,7 @@ int main(int argc, char** argv) {
 		"\t-p PORT\t\tPort where the DS server accepts requests\n";
 
 	// Default initialization of variables and flags
-	const char* DSIP = "localhost";
+	const char* DSIP = DSIP_DEFAULT;
 	const char* DSport = DSPORT_DEFAULT;
 	char flag;
 
