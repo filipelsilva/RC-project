@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
 		string cmd;
 		if(fgets(command, COMMAND_SIZE, stdin) == NULL){
 			fprintf(stderr, "Error: something went wrong while getting user input\n");
+			exit(1);
 		}
 
 		if(isTCP(cmd.assign(command))){
