@@ -82,12 +82,10 @@ int main(int argc, char** argv) {
 		}
 
 		if(isTCP(cmd.assign(command))){
-			write(1, "TCP\n", strlen("TCP\n"));
 			TCPClient tcp = TCPClient(DSIP, DSport);
 			tcp.sendData(command);
 		}
 		else{
-			write(1, "UDP\n", strlen("UDP\n"));
 			UDPClient udp = UDPClient(DSIP, DSport);
 			udp.sendData(command);
 		}

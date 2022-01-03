@@ -36,7 +36,9 @@ bool UID_free(string UID){
 	DIR *dir;
 	struct dirent *diread;
 
-	dir = opendir(path.c_str());
+	if((dir = opendir(path.c_str())) == NULL){
+		fprintf(stderr, "Error: Couldn't open USERS directory\n");
+	}
 
 	while((diread = readdir(dir)) != nullptr){
 		if(diread->d_name[0]=='.')
@@ -45,7 +47,6 @@ bool UID_free(string UID){
 			return false;
 	}
 	closedir(dir);
-
 	return true;
 }
 
@@ -281,14 +282,15 @@ bool UID_in_group(string UID, string GID){
 /*REGISTER*/
 /*Falta enviar os códigos, aka dar returns*/
 string reg(string command){
+	stringstream ss;
 	string reply = "reg\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string passFile_name = "_pass.txt";
-	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, pass);
 	if(cmd.compare("REG") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -330,13 +332,14 @@ string reg(string command){
 
 /*UNREGISTER*/
 string unr(string command){
+	stringstream ss;
 	string reply = "unr\n";
 	string cmd, UID, pass;
 	string path="../USERS";
-	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, pass, '\n');
 	if(cmd.compare("UNR") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -367,14 +370,15 @@ string unr(string command){
 
 /*LOGIN*/
 string log(string command){
+	stringstream ss;
 	string reply = "log\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
-	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, pass, '\n');
 	if(cmd.compare("LOG") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -398,14 +402,15 @@ string log(string command){
 
 /*LOGOUT*/
 string out(string command){
+	stringstream ss;
 	string reply = "out\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
-	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, pass) != 3){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, pass, '\n');
 	if(cmd.compare("OUT") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -474,13 +479,15 @@ string gls(string command){
 
 /*GROUP SUBSCRIBE*/
 string gsr(string command){
+	stringstream ss;
 	string reply = "gsr\n";
 	string cmd, UID, GID, gname;
 	string path = "../GROUPS";
-	if(sscanf(command.c_str(), "%s %s %s %s\n", cmd, UID, GID, gname) != 4){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, GID, ' ');
+	getline(ss, gname, '\n');
 	if(cmd.compare("GSR") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -560,15 +567,16 @@ string gsr(string command){
 
 /*Unsubscribe from group*/
 string gur(string command){
+	stringstream ss;
 	string reply = "gur\n";
 	string cmd, UID, GID;
 	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	if(sscanf(command.c_str(), "%s %s %s\n", cmd, UID, GID) != 3){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, GID, '\n');
 	if(cmd.compare("GUR") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -594,6 +602,7 @@ string gur(string command){
 
 /*List of Groups subscribed by a specific user*/
 string glm(string command){
+	stringstream ss;
 	string reply = "glm\n";
 	string cmd, UID;
 	DIR *dir;
@@ -601,10 +610,9 @@ string glm(string command){
 	string path = "../GROUPS";	
 	int i = 0;
 	vector<string> list;
-	if(sscanf(command.c_str(), "%s %s\n", cmd, UID) != 2){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, '\n');
 	if(cmd.compare("GLM") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -652,6 +660,7 @@ string glm(string command){
 
 /*List of users subscribed to a given group (TCP)*/
 string uls(string command){
+	stringstream ss;
 	string reply = "uls\n";
 	string cmd, GID;
 	DIR *dir;
@@ -659,10 +668,9 @@ string uls(string command){
 	string path = "../GROUPS/";	
 	vector<string> list;
 	int i;
-	if(sscanf(command.c_str(), "%s %s\n", cmd, GID) != 2){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, GID, '\n');
 	if(cmd.compare("ULS") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";
@@ -709,13 +717,24 @@ string uls(string command){
 }
 
 string pst(string command){
+	stringstream ss;
 	string reply = "pst\n";
 	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
-	int nArgs = sscanf(command.c_str(), "%s %s %s %s %s %s %s %s\n", cmd, UID, GID, Tsize, text, Fname, Fsize, data);
-	if(nArgs != 5 && nArgs != 8){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	/*TODO: FIX THIS*/
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, GID, ' ');
+	getline(ss, Tsize, ' ');
+	getline(ss, text, ' '); //ler texto de acordo com size e o mm para o file
+	getline(ss, Fname, ' ');
+	getline(ss, Fsize, ' ');
+	getline(ss, data, '\n');
+	//int nArgs = count_args(... ver quais nao sao '')
+	//if(nArgs != 5 && nArgs != 8){
+	//	fprintf(stderr, "ERR");
+	//	return "ERR\n";
+	//}
 
 	if(cmd.compare("PST") != 0){
 		fprintf(stderr, "ERR");
@@ -726,12 +745,14 @@ string pst(string command){
 }
 
 string rtv(string command){
+	stringstream ss;
 	string reply = "rtv\n";
 	string cmd, UID, GID, MID;
-	if(sscanf(command.c_str(), "%s %s\n", cmd, GID) != 4){
-		fprintf(stderr, "ERR");
-		return "ERR\n";
-	}
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, UID, ' ');
+	getline(ss, GID, ' ');
+	getline(ss, MID, '\n');
 	if(cmd.compare("RTV") != 0){
 		fprintf(stderr, "ERR");
 		return "ERR\n";

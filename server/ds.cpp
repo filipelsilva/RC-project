@@ -94,8 +94,6 @@ int main(int argc, char** argv) {
 		if (FD_ISSET(udp.fd, &mask)) {
 			request = udp.getData();
 		}
-
-		write(1, "INSIDE SERVER: ", strlen("INSIDE SERVER: "));
 		write(1, request, strlen(request));
 
 		reply = functionCaller(command.assign(request));
