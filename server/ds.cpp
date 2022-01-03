@@ -29,7 +29,7 @@ string functionCaller(string command){
 		return rtv(command);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	const char* usage = "Usage: %s [-p DSport] [-v]\n"
 		"\t-p PORT\t\tPort where the DS server accepts requests\n"
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";

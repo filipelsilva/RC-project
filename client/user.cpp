@@ -37,7 +37,7 @@ void functionCaller(string command){
 	*/
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	const char* usage = "Usage: %s [-n DSIP] [-p DSport]\n"
 		"\t-n DSIP\t\tIP address of the machine where the DS is running\n"
 		"\t-p PORT\t\tPort where the DS server accepts requests\n";
