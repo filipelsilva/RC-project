@@ -10,6 +10,8 @@ const char *processCommand(const char *message) {
 
 	if (tmp.compare("select") == 0)
 		return "ta";
+	if (tmp.compare("sag") == 0)
+		return "ta";
 	if (tmp.compare("exit") == 0)
 		return "ta";
 
