@@ -11,6 +11,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <regex>
 extern "C" { // For C libraries, to avoid namespace cluttering
 #include <netinet/in.h>
 #include <arpa/inet.h>
