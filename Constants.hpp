@@ -38,21 +38,25 @@ static vector<string> ClientUser_UDP = {
 	"unregister",
 	"login",
 	"logout",
-	"exit",
 	"groups",
 	"subscribe",
 	"unsubscribe",
 	"my_groups",
 	"select",
+	"exit",
 };
 
 static vector<string> ClientUser_UDP_abrev = {
+	"reg",
 	"unr",
+	"login",
+	"logout",
 	"gl",
 	"s",
 	"u",
 	"mgl",
 	"sag",
+	"exit",
 };
 
 static vector<string> ClientUser_TCP = {
@@ -61,6 +65,7 @@ static vector<string> ClientUser_TCP = {
 };
 
 static vector<string> ClientUser_TCP_abrev = {
+	"post",
 	"r",
 };
 
