@@ -33,7 +33,7 @@ extern "C" { // For C libraries, to avoid namespace cluttering
 
 using namespace std;
 
-static string ClientUser_UDP[] = {
+static vector<string> ClientUser_UDP = {
 	"reg",
 	"unregister",
 	"login",
@@ -46,7 +46,7 @@ static string ClientUser_UDP[] = {
 	"select",
 };
 
-static string ClientUser_UDP_abrev[] = {
+static vector<string> ClientUser_UDP_abrev = {
 	"unr",
 	"gl",
 	"s",
@@ -55,16 +55,16 @@ static string ClientUser_UDP_abrev[] = {
 	"sag",
 };
 
-static string ClientUser_TCP[] = {
+static vector<string> ClientUser_TCP = {
 	"post",
 	"retrieve",
 };
 
-static string ClientUser_TCP_abrev[] = {
+static vector<string> ClientUser_TCP_abrev = {
 	"r",
 };
 
-static string UserDS_UDP[] = {
+static vector<string> UserDS_UDP = {
 	"REG",
 	"UNR",
 	"LOG",
@@ -75,7 +75,7 @@ static string UserDS_UDP[] = {
 	"GLM",
 };
 
-static string UserDS_UDP_response[] = {
+static vector<string> UserDS_UDP_response = {
 	"RRG",
 	"RUN",
 	"RLO",
@@ -86,12 +86,12 @@ static string UserDS_UDP_response[] = {
 	"RGM",
 };
 
-static string UserDS_TCP[] = {
+static vector<string> UserDS_TCP = {
 	"PST",
 	"RTV",
 };
 
-static string UserDS_TCP_response[] = {
+static vector<string> UserDS_TCP_response = {
 	"RPT",
 	"RRT",
 };
