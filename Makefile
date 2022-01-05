@@ -1,12 +1,12 @@
-.PHONY: all ds user main clean format zip
+.PHONY: all DS user main clean format zip
 
 CC=g++
 CFLAGS=-Wall -Wextra
 
-all: ds user
+all: DS user
 
-ds: server/ds.cpp
-	$(CC) $(CFLAGS) $< -o bin/$@ && mv bin/ds bin/DS
+DS: server/ds.cpp
+	$(CC) $(CFLAGS) $< -o bin/$@
 
 user: client/user.cpp
 	$(CC) $(CFLAGS) $< -o bin/$@
