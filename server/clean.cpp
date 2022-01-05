@@ -61,7 +61,7 @@ int main(void) {
 			addrlen = sizeof(addr);
 			if ((newfd = accept(tcpfd, (struct sockaddr*)&addr, &addrlen)) == -1)
 				exit(1);
-			while ((n = read(newfd, buffer, 128)) != 0) {
+			while ((n = read(newfd, buffer, COMMAND_SIZE)) != 0) {
 				if (n == -1) exit(1);
 				ptr = &buffer[0];
 				write(1, "received: ", 10);
@@ -78,7 +78,7 @@ int main(void) {
 		if (FD_ISSET(udpfd, &mask)) {
 			write(1, "UDPPPPPPP\n", strlen("UDPPPPPPP\n"));
 			addrlen = sizeof(addr);
-			n = recvfrom(udpfd, buffer, 128, 0, (struct sockaddr*)&addr, &addrlen);
+			n = recvfrom(udpfd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr, &addrlen);
 			if (n == -1) /* error */ exit(1);
 			write(1, "received: ", 10);
 			write(1, buffer, n);

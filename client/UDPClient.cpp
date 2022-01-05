@@ -6,7 +6,7 @@ class UDPClient : public Client {
 	socklen_t addrlen;
 	struct addrinfo hints, *res;
 	struct sockaddr_in addr;
-	char buffer[128], host[NI_MAXHOST], service[NI_MAXSERV];
+	char buffer[COMMAND_SIZE], host[NI_MAXHOST], service[NI_MAXSERV];
 	const char *server, *port;
 
 	public:
@@ -42,7 +42,7 @@ class UDPClient : public Client {
 
 		addrlen = sizeof(addr);
 
-		if ((n = recvfrom(fd, buffer, 128, 0, (struct sockaddr*)&addr,
+		if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr,
 						&addrlen)) == -1) {
 			fprintf(stderr, "Error: recvfrom: %s\n", gai_strerror(n));
 			exit(1);

@@ -5,7 +5,7 @@ class TCPClient : public Client {
 	struct addrinfo hints, *res;
 	int fd, errcode;
 	ssize_t nbytes, nleft, nwritten, nread;
-	char *ptr, buffer[128];
+	char *ptr, buffer[COMMAND_SIZE];
 	const char *server, *port;
 
 	public:

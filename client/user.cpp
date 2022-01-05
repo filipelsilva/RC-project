@@ -108,29 +108,29 @@ string functionCaller(string command){
 int main(int argc, char **argv) {
 	/*
 	for (auto str : ClientUser_TCP) {
-		char command[128];
-		memset(command, 0, 128);
+		char command[COMMAND_SIZE];
+		memset(command, 0, COMMAND_SIZE);
 		strcat(command, processCommand(str.c_str()));
 		// strcat(command, "\n");
 		printf("%s %s\n", str.c_str(), command);
 	}
 	for (auto str : ClientUser_TCP_abrev) {
-		char command[128];
-		memset(command, 0, 128);
+		char command[COMMAND_SIZE];
+		memset(command, 0, COMMAND_SIZE);
 		strcat(command, processCommand(str.c_str()));
 		// strcat(command, "\n");
 		printf("%s %s\n", str.c_str(), command);
 	}
 	for (auto str : ClientUser_UDP) {
-		char command[128];
-		memset(command, 0, 128);
+		char command[COMMAND_SIZE];
+		memset(command, 0, COMMAND_SIZE);
 		strcat(command, processCommand(str.c_str()));
 		// strcat(command, "\n");
 		printf("%s %s\n", str.c_str(), command);
 	}
 	for (auto str : ClientUser_UDP_abrev) {
-		char command[128];
-		memset(command, 0, 128);
+		char command[COMMAND_SIZE];
+		memset(command, 0, COMMAND_SIZE);
 		strcat(command, processCommand(str.c_str()));
 		// strcat(command, "\n");
 		printf("%s %s\n", str.c_str(), command);

@@ -49,7 +49,7 @@ class TCPServer : public Server {
 				exit(1);
 			}
 
-			while ((n = read(newfd, buffer, 128)) != 0) {
+			while ((n = read(newfd, buffer, COMMAND_SIZE)) != 0) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
 					exit(1);
