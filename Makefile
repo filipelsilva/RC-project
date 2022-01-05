@@ -20,8 +20,5 @@ clean:
 format:
 	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
 
-zip: # Uses git, not very portable in zip
-	git archive -o projeto_rc.zip HEAD
-
-entr: # Uses entr, not very portable
-	find . -name "*.cpp" ! -name "*.hpp" ! -name "*.c" ! -name "*.h" | entr make
+zip:
+	git archive -o proj_13.zip HEAD

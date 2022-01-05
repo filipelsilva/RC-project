@@ -1,6 +1,7 @@
 ### Custom
 *.yaml
 *.pptx
+*.zip
 assignment/
 tests/
 .vscode/
