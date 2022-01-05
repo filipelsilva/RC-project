@@ -3,8 +3,6 @@
 #include "./UDPServer.cpp"
 #include "./requests.cpp"
 
-using namespace std;
-
 string functionCaller(string command){
 	stringstream ss;
 	string cmd;

@@ -1,7 +1,5 @@
 #include "../Constants.hpp"
 
-using namespace std;
-
 string current_UID, selected_GID;
 
 string showuid(){
