@@ -283,7 +283,7 @@ bool UID_in_group(string UID, string GID){
 /*Falta enviar os códigos, aka dar returns*/
 string reg(string command){
 	stringstream ss;
-	string reply = "reg\n";
+	string reply = "ERR\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string passFile_name = "_pass.txt";
@@ -292,7 +292,7 @@ string reg(string command){
 	getline(ss, UID, ' ');
 	getline(ss, pass);
 	if(cmd.compare("REG") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 	
@@ -302,6 +302,7 @@ string reg(string command){
 		/*verifica se NÃO existe uma diretoria com o mesmso UID, FALTA DAR RETURN*/
 		if(!UID_free(UID)){
 			std::cout << "DUP: UID used already" << endl;
+			reply = "RRG DUP\n";
 		}
 		else{
 			/*Cria o ficheiro com a passe*/ 
@@ -319,29 +320,34 @@ string reg(string command){
 
 				passFile.close();
 
-				std::cout << "OK: Registered successfully!" << endl;			
+				std::cout << "OK: Registered successfully!" << endl;
+				reply = "RRG OK\n";
 			}
-			else 
+			else{
 				std::cout << "NOK: Invalid password" << endl;
+				reply = "RRG NOK\n";
+			}
 		}	
 	}
-	else
+	else{
 		std::cout << "NOK: Invalid UID" << endl;
+		reply = "RRG NOK\n";
+	}
 	return reply;
 }
 
 /*UNREGISTER*/
 string unr(string command){
 	stringstream ss;
-	string reply = "unr\n";
+	string reply = "ERR\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
-	getline(ss, pass, '\n');
+	getline(ss, pass);
 	if(cmd.compare("UNR") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -356,31 +362,38 @@ string unr(string command){
 				unsubscribe_groups(UID);
 
 				std::cout << "OK: Unregistered successfully!" << endl;
+				reply = "RUN OK\n";
 			}
-			else
+			else{
 				std::cout << "NOK: Wrong password" << endl;
+				reply = "RUN NOK\n";
+			}
 		}
-		else
+		else{
 			std::cout << "NOK: No registration for that UID" << endl;
+			reply = "RUN NOK\n";
+		}
 	}
-	else
-		std::cout << "NOK: Invalid UID or password" << endl;	
+	else{
+		std::cout << "NOK: Invalid UID or password" << endl;
+		reply = "RUN NOK\n";	
+	}
 	return reply;
 }
 
 /*LOGIN*/
 string log(string command){
 	stringstream ss;
-	string reply = "log\n";
+	string reply = "ERR\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
-	getline(ss, pass, '\n');
+	getline(ss, pass);
 	if(cmd.compare("LOG") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -394,25 +407,28 @@ string log(string command){
 		loginFile.close();
 
 		std::cout << "OK: Logged in successfully!" << endl;
+		reply = "RLO OK\n";
 	}
-	else
+	else{
 		std::cout << "NOK: Incorrect UID or password" << endl;
+		reply = "RLO NOK\n";
+	}
 	return reply;
 }
 
 /*LOGOUT*/
 string out(string command){
 	stringstream ss;
-	string reply = "out\n";
+	string reply = "ERR\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
-	getline(ss, pass, '\n');
+	getline(ss, pass);
 	if(cmd.compare("OUT") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -425,21 +441,24 @@ string out(string command){
 		remove(path.c_str());
 
 		std::cout << "OK: Logged out successfully!" << endl;
+		reply = "ROU OK\n";
 	}
-	else
+	else{
 		std::cout << "NOK: Incorrect UID or password" << endl;
+		reply = "ROU NOK\n";
+	}
 	return reply;
 }
 
 /*GROUP LIST*/
 string gls(string command){
-	string reply = "gls\n";
+	string reply = "ERR\n";
 	DIR *dir;
 	struct dirent *diread;
 	string path = "../GROUPS";	
 	int i;
 	if(command.compare("GLS") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -465,13 +484,18 @@ string gls(string command){
 		message << " [ " << gid << " " << gname << " " << mid << "]";
 		list.push_back(message.str());
 	}
-	if(numberOfGroups(path) == 0)
+	if(numberOfGroups(path) == 0){
 		std::cout << "RGL 0: No existing groups\n";
+		reply = "RGL 0\n";
+	}
 	else{
 		sort(list.begin(), list.end());
 		std::cout << "RGL " << numberOfGroups(path) << endl;
-		for(i = 0; i < list.size(); i++)
+		reply = "RGL " + to_string(numberOfGroups(path)) + "\n";
+		for(i = 0; i < list.size(); i++){
 			std::cout << list[i] << endl;
+			reply += list[i] + "\n";
+		}
 	}
 	closedir(dir);
 	return reply;
@@ -480,16 +504,16 @@ string gls(string command){
 /*GROUP SUBSCRIBE*/
 string gsr(string command){
 	stringstream ss;
-	string reply = "gsr\n";
+	string reply = "RGS NOK\n";
 	string cmd, UID, GID, gname;
 	string path = "../GROUPS";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
 	getline(ss, GID, ' ');
-	getline(ss, gname, '\n');
+	getline(ss, gname);
 	if(cmd.compare("GSR") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -505,10 +529,13 @@ string gsr(string command){
 					UID_File.close();
 
 					std::cout << "OK: User successfully subscribed group!\n";
+					reply = "RGS OK\n";
 				}
 
-				else
+				else{
 					std::cout << "E_GNAME: Invalid Group Name\n";
+					reply = "RGS E_GNAME\n";
+				}
 			}
 
 			else{
@@ -548,27 +575,36 @@ string gsr(string command){
 						msg_path.append("MSG");
 						mkdir(msg_path.c_str(), 0777);
 
-						std::cout << "NEW GID: New group created!\n";	
+						std::cout << "NEW GID: New group created!\n";
+						reply = "RGS NEW " + newGID + "\n";	
 					}
-					else
+					else{
 						std::cout << "E_FULL: Number of groups has reached it's limit...\n";
+						reply = "RGS E_FULL\n";
+					}
 				}
-				else
+				else{
 					std::cout << "E_GNAME: Invalid group name\n";
+					reply = "RGS E_GNAME\n";
+				}
 			}
 		}
-		else
+		else{
 			std::cout << "E_GRP: Invalid GID\n";
+			reply = "RGS E_GRP\n";
+		}
 	}
-	else
+	else{
 		std::cout << "E_USR: Invalid UID\n";
+		reply = "RGS E_USR\n";
+	}
 	return reply;
 }
 
 /*Unsubscribe from group*/
 string gur(string command){
 	stringstream ss;
-	string reply = "gur\n";
+	string reply = "NOK\n";
 	string cmd, UID, GID;
 	string path = "../GROUPS/";
 	DIR *dir;
@@ -576,9 +612,9 @@ string gur(string command){
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
-	getline(ss, GID, '\n');
+	getline(ss, GID);
 	if(cmd.compare("GUR") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 	
@@ -588,22 +624,27 @@ string gur(string command){
 			path.append(GID);path.append("/");
 			path.append(UID);path.append(".txt");
 
-			if(remove(path.c_str()) != 0)
+			if(remove(path.c_str()) != 0){
 				std::cout << "NOK: User doesn't susbscribe to this group!\n";
-	
+				reply = "RGU NOK\n";
+			}
 		}
-		else
+		else{
 			std::cout << "E_GRP: Invalid GID.\n";
+			reply = "RGU E_GRP\n";
+		}
 	}
-	else
+	else{
 		std::cout << "E_USR: Invalid UID.\n";
+		reply = "RGU E_USR\n";
+	}
 	return reply;
 }
 
 /*List of Groups subscribed by a specific user*/
 string glm(string command){
 	stringstream ss;
-	string reply = "glm\n";
+	string reply = "ERR\n";
 	string cmd, UID;
 	DIR *dir;
 	struct dirent *diread;
@@ -612,9 +653,9 @@ string glm(string command){
 	vector<string> list;
 	ss << command;
 	getline(ss, cmd, ' ');
-	getline(ss, UID, '\n');
+	getline(ss, UID);
 	if(cmd.compare("GLM") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -643,25 +684,32 @@ string glm(string command){
 				list.push_back(message.str());
 			}
 		}
-		if(i == 0)
+		if(i == 0){
 			std::cout << "RGM 0: No groups subscribed\n";
+			reply = "RGM 0\n";
+		}
 		else{
 			sort(list.begin(), list.end());
 			std::cout << "RGM " << i << endl;
-			for(i = 0; i < list.size(); i++)
+			reply = "RGM ";
+			for(i = 0; i < list.size(); i++){
 				std::cout << list[i] << endl;
+				reply += list[i] + "\n";
+			}
 		}
 		closedir(dir);
 	}
-	else
+	else{
 		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";
+		reply = "RGM E_USR\n";
+	}
 	return reply;
 }
 
 /*List of users subscribed to a given group (TCP)*/
 string uls(string command){
 	stringstream ss;
-	string reply = "uls\n";
+	string reply = "ERR\n";
 	string cmd, GID;
 	DIR *dir;
 	struct dirent *diread;
@@ -670,9 +718,9 @@ string uls(string command){
 	int i;
 	ss << command;
 	getline(ss, cmd, ' ');
-	getline(ss, GID, '\n');
+	getline(ss, GID);
 	if(cmd.compare("ULS") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -705,20 +753,25 @@ string uls(string command){
 			
 		}
 		sort(list.begin(), list.end());
-		std::cout << "RGM " << get_group_name(GID) << endl;
-		for(i = 0; i < list.size(); i++)
+		std::cout << "RUL " << get_group_name(GID) << endl;
+		reply = "RUL " + get_group_name(GID) + "\n";
+		for(i = 0; i < list.size(); i++){
 			std::cout << list[i] << endl;
+			reply += list[i] + "\n";
+		}
 		
 		closedir(dir);
 	}
-	else
+	else{
 		std::cout << "NOK: Invalid GID or group doesn't exist.\n";
+		reply = "RUL NOK\n";
+	}
 	return reply;
 }
 
 string pst(string command){
 	stringstream ss;
-	string reply = "pst\n";
+	string reply = "ERR\n";
 	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
 	/*TODO: FIX THIS*/
 	ss << command;
@@ -729,15 +782,15 @@ string pst(string command){
 	getline(ss, text, ' '); //ler texto de acordo com size e o mm para o file
 	getline(ss, Fname, ' ');
 	getline(ss, Fsize, ' ');
-	getline(ss, data, '\n');
+	getline(ss, data);
 	//int nArgs = count_args(... ver quais nao sao '')
 	//if(nArgs != 5 && nArgs != 8){
-	//	fprintf(stderr, "ERR");
+	//	fprintf(stderr, "ERR\n");
 	//	return "ERR\n";
 	//}
 
 	if(cmd.compare("PST") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 
@@ -746,15 +799,15 @@ string pst(string command){
 
 string rtv(string command){
 	stringstream ss;
-	string reply = "rtv\n";
+	string reply = "ERR\n";
 	string cmd, UID, GID, MID;
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
 	getline(ss, GID, ' ');
-	getline(ss, MID, '\n');
+	getline(ss, MID);
 	if(cmd.compare("RTV") != 0){
-		fprintf(stderr, "ERR");
+		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
 

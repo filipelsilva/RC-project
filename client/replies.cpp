@@ -2,22 +2,56 @@
 
 using namespace std;
 
-void rrg(string command){}
+string current_UID, selected_GID;
 
-void run(string command){}
+string showuid(){
+    return current_UID;
+}
 
-void rlo(string command){}
+string showgid(){
+    return selected_GID;
+}
 
-void rou(string command){}
+string rrg(string command){
+    return "Placeholder\n";
+}
 
-void rgl(string command){}
+string run(string command){
+    return "Placeholder\n";
+}
 
-void rgs(string command){}
+string rlo(string command){
+    return "Placeholder\n";
+}
 
-void rgu(string command){}
+string rou(string command){
+    return "Placeholder\n";
+}
 
-void rgm(string command){}
+string rgl(string command){
+    return "Placeholder\n";
+}
 
-void rpt(string command){}
+string rgs(string command){
+    return "Placeholder\n";
+}
 
-void rrt(string command){}
+string rgu(string command){
+    return "Placeholder\n";
+}
+
+string rgm(string command){
+    return "Placeholder\n";
+}
+
+string rul(string command){
+    return "Placeholder\n";
+}
+
+string rpt(string command){
+    return "Placeholder\n";
+}
+
+string rrt(string command){
+    return "Placeholder\n";
+}

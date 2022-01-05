@@ -3,10 +3,13 @@
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
 
-const char *processCommand(const char *message) {
+string processCommand(const char *message) {
 	int index;
-	string tmp;
-	tmp.assign(message);
+	string tmp, remaining;
+	stringstream ss;
+	ss << message;
+	getline(ss, tmp, ' ');
+	getline(ss, remaining);
 
 	if (tmp.compare("select") == 0)
 		return "ta";
@@ -18,29 +21,38 @@ const char *processCommand(const char *message) {
 	auto location = find(ClientUser_TCP.begin(), ClientUser_TCP.end(), tmp);
 	if (location != ClientUser_TCP.end()) {
 		index = location - ClientUser_TCP.begin();
-		return UserDS_TCP[index].c_str();
+		return UserDS_TCP[index] + " " + remaining + "\n";
 	}
 
 	location = find(ClientUser_TCP_abrev.begin(), ClientUser_TCP_abrev.end(), tmp);
 	if (location != ClientUser_TCP_abrev.end()) {
 		index = location - ClientUser_TCP_abrev.begin();
-		return UserDS_TCP[index].c_str();
+		return UserDS_TCP[index] + " " + remaining + "\n";
 	}
 
 	location = find(ClientUser_UDP.begin(), ClientUser_UDP.end(), tmp);
 	if (location != ClientUser_UDP.end()) {
 		index = location - ClientUser_UDP.begin();
-		return UserDS_UDP[index].c_str();
+		return UserDS_UDP[index] + " " + remaining + "\n";
 	}
 
 	location = find(ClientUser_UDP_abrev.begin(), ClientUser_UDP_abrev.end(), tmp);
 	if (location != ClientUser_UDP_abrev.end()) {
 		index = location - ClientUser_UDP_abrev.begin();
-		return UserDS_UDP[index].c_str();
+		return UserDS_UDP[index] + " " + remaining + "\n";
 	}
 
 	fprintf(stderr, "Error: invalid command\n");
 	return NULL;
+}
+
+string processLocalCommand(string cmd){
+	string reply = "ERR\n";
+	if(cmd.compare("showuid") == 0 || cmd.compare("su") == 0)
+		reply = showuid();
+	if(cmd.compare("showgid") == 0 || cmd.compare("sg") == 0)
+		reply = showgid();
+	return reply;
 }
 
 bool isTCP(string command){
@@ -51,33 +63,44 @@ bool isTCP(string command){
 	return false;
 }
 
-void functionCaller(string command){
+bool isUDP(string command){
+	for (string cmd: ClientUser_UDP)
+		if (command.rfind(cmd, 0) != string::npos)
+			return true;
+
+	return false;
+}
+
+string functionCaller(string command){
 	string cmd = command.substr(0, 3);
 	if(cmd.compare("RRG") == 0)
-		rrg(command);
+		return rrg(command);
 	if(cmd.compare("RUN") == 0)
-		run(command);
+		return run(command);
 	if(cmd.compare("RLO") == 0)
-		rlo(command);
+		return rlo(command);
 	if(cmd.compare("ROU") == 0)
-		rou(command);
+		return rou(command);
 	if(cmd.compare("RGL") == 0)
-		rgl(command);
+		return rgl(command);
 	if(cmd.compare("RGS") == 0)
-		rgs(command);
+		return rgs(command);
 	if(cmd.compare("RGU") == 0)
-		rgu(command);
+		return rgu(command);
 	if(cmd.compare("RGM") == 0)
-		rgm(command);
+		return rgm(command);
+	if(cmd.compare("RUL") == 0)
+		return rul(command);
 	if(cmd.compare("RPT") == 0)
-		rpt(command);
+		return rpt(command);
 	/*
-	   if(cmd.compare("RRT") == 0)
-	   rrt(command);
-	   */
+	if(cmd.compare("RRT") == 0)
+		return rrt(command);
+	*/
 }
 
 int main(int argc, char **argv) {
+	/*
 	for (auto str : ClientUser_TCP) {
 		char command[128];
 		memset(command, 0, 128);
@@ -106,6 +129,7 @@ int main(int argc, char **argv) {
 		// strcat(command, "\n");
 		printf("%s %s\n", str.c_str(), command);
 	}
+	*/
 	const char* usage = "Usage: %s [-n DSIP] [-p DSport]\n"
 		"\t-n DSIP\t\tIP address of the machine where the DS is running\n"
 		"\t-p PORT\t\tPort where the DS server accepts requests\n";
@@ -144,25 +168,33 @@ int main(int argc, char **argv) {
 	while(1){
 		write(1, "> ", strlen("> "));
 		char input[COMMAND_SIZE];
-		string cmd;
+		string cmd, reply;
 		if(fgets(input, COMMAND_SIZE, stdin) == NULL){
 			fprintf(stderr, "Error: something went wrong while getting user input\n");
 			exit(1);
 		}
 
-		memset(&command, 0, sizeof(command));
+		//memset(&command, 0, sizeof(command));
 
 		if(isTCP(cmd.assign(input))){
 			TCPClient tcp = TCPClient(DSIP, DSport);
-			strcat(command, processCommand(input));
-			strcat(command, "\n");
-			tcp.sendData(command);
+			//strcat(command, processCommand(input));
+			cmd = processCommand(input);
+			tcp.sendData(cmd.c_str());
+			reply = functionCaller(tcp.getData());
+			fprintf(stdout, "%s", reply.c_str());
+		}
+		else if(isUDP(cmd)){
+			UDPClient udp = UDPClient(DSIP, DSport);
+			//strcat(command, processCommand(input));
+			cmd = processCommand(input);
+			udp.sendData(cmd.c_str());
+			reply = functionCaller(udp.getData());
+			fprintf(stdout, "%s", reply.c_str());
 		}
 		else{
-			UDPClient udp = UDPClient(DSIP, DSport);
-			strcat(command, processCommand(input));
-			strcat(command, "\n");
-			udp.sendData(input);
+			reply = processLocalCommand(cmd);
+			fprintf(stdout, "%s", reply.c_str());
 		}
 	}
 

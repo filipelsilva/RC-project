@@ -32,6 +32,10 @@ class TCPClient : public Client {
 		}
 	}
 
+	string getData(){
+		return buffer;
+	}
+
 	void sendData(const char *message) {
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
@@ -78,8 +82,8 @@ class TCPClient : public Client {
 
 		nread = nbytes - nleft;
 
-		write(1, "Server: ", 6);
-		write(1, buffer, nread);
+		//write(1, "Server: ", 8);
+		//write(1, buffer, nread);
 		close(fd);
 	}
 

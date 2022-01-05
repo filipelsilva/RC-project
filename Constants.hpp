@@ -34,6 +34,16 @@ extern "C" { // For C libraries, to avoid namespace cluttering
 
 using namespace std;
 
+static vector<string> ClientUser_local = {
+	"showuid",
+	"showgid",
+};
+
+static vector<string> ClientUser_local_abrev = {
+	"su",
+	"sg",
+};
+
 static vector<string> ClientUser_UDP = {
 	"reg",
 	"unregister",
@@ -63,11 +73,13 @@ static vector<string> ClientUser_UDP_abrev = {
 static vector<string> ClientUser_TCP = {
 	"post",
 	"retrieve",
+	"ulist",
 };
 
 static vector<string> ClientUser_TCP_abrev = {
 	"post",
 	"r",
+	"ul",
 };
 
 static vector<string> UserDS_UDP = {
@@ -93,11 +105,13 @@ static vector<string> UserDS_UDP_response = {
 };
 
 static vector<string> UserDS_TCP = {
+	"ULS",
 	"PST",
 	"RTV",
 };
 
 static vector<string> UserDS_TCP_response = {
+	"RUL",
 	"RPT",
 	"RRT",
 };

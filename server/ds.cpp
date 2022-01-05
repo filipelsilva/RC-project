@@ -6,7 +6,10 @@
 using namespace std;
 
 string functionCaller(string command){
-	string cmd = command.substr(0, 3);
+	stringstream ss;
+	string cmd;
+	ss << command;
+	getline(ss, cmd, ' ');
 	if(cmd.compare("REG") == 0)
 		return reg(command);
 	if(cmd.compare("UNR") == 0)
@@ -23,6 +26,8 @@ string functionCaller(string command){
 		return gur(command);
 	if(cmd.compare("GLM") == 0)
 		return glm(command);
+	if(cmd.compare("ULS") == 0)
+		return uls(command);
 	if(cmd.compare("PST") == 0)
 		return pst(command);
 	if(cmd.compare("RTV") == 0)
@@ -89,14 +94,16 @@ int main(int argc, char **argv) {
 
 		if (FD_ISSET(tcp.fd, &mask)) {
 			request = tcp.getData();
+			reply = functionCaller(command.assign(request));
+			tcp.sendData(reply.c_str());
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
 			request = udp.getData();
+			reply = functionCaller(command.assign(request));
+			udp.sendData(reply.c_str());
 		}
-		write(1, request, strlen(request));
-
-		reply = functionCaller(command.assign(request));
+		//write(1, request, strlen(request));
 	}
 
 	exit(0);
