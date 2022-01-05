@@ -37,11 +37,13 @@ using namespace std;
 static vector<string> ClientUser_local = {
 	"showuid",
 	"showgid",
+	"select",
 };
 
 static vector<string> ClientUser_local_abrev = {
 	"su",
 	"sg",
+	"sag",
 };
 
 static vector<string> ClientUser_UDP = {
@@ -53,7 +55,6 @@ static vector<string> ClientUser_UDP = {
 	"subscribe",
 	"unsubscribe",
 	"my_groups",
-	"select",
 	"exit",
 };
 
@@ -66,7 +67,6 @@ static vector<string> ClientUser_UDP_abrev = {
 	"s",
 	"u",
 	"mgl",
-	"sag",
 	"exit",
 };
 

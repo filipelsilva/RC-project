@@ -5,11 +5,16 @@ using namespace std;
 string current_UID, selected_GID;
 
 string showuid(){
-    return current_UID;
+    return "Your UID is " + current_UID + "\n";
 }
 
 string showgid(){
-    return selected_GID;
+    return "Group " + selected_GID + " - is the active group\n"; //TODO: por o nome do grupo?
+}
+
+string select_GID(string GID){
+    selected_GID = GID;
+    return "Group " + GID + " - is now the active group\n"; //TODO: por o nome do grupo?
 }
 
 string rrg(string command){

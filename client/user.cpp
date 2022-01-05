@@ -11,13 +11,12 @@ string processCommand(const char *message) {
 	getline(ss, tmp, ' ');
 	getline(ss, remaining);
 
-	if (tmp.compare("select") == 0)
-		return "ta";
-	if (tmp.compare("sag") == 0)
-		return "ta";
 	if (tmp.compare("exit") == 0)
 		return "ta";
 
+	//TODO: fazer diferente para ulist, post e retrieve
+	//tbh refazer isto e percorrer simplesmente uma lista com todos pq o q esta 
+	//em cima e pq isto nao funciona para o ultimo de cada vetor
 	auto location = find(ClientUser_TCP.begin(), ClientUser_TCP.end(), tmp);
 	if (location != ClientUser_TCP.end()) {
 		index = location - ClientUser_TCP.begin();
@@ -46,12 +45,19 @@ string processCommand(const char *message) {
 	return NULL;
 }
 
-string processLocalCommand(string cmd){
+string processLocalCommand(string command){
+	stringstream ss;
 	string reply = "ERR\n";
+	string cmd, GID;
+	ss << command;
+	getline(ss, cmd, ' ');
+	getline(ss, GID);
 	if(cmd.compare("showuid") == 0 || cmd.compare("su") == 0)
 		reply = showuid();
 	if(cmd.compare("showgid") == 0 || cmd.compare("sg") == 0)
 		reply = showgid();
+	if(cmd.compare("select") == 0 || cmd.compare("sag") == 0)
+		reply = select_GID(GID);
 	return reply;
 }
 
