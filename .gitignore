@@ -4,6 +4,8 @@
 *.zip
 tests/
 .vscode/
+USERS/
+GROUPS/
 
 ### C
 # Prerequisites
@@ -92,7 +94,3 @@ dkms.conf
 *.exe
 *.out
 *.app
-
-# Folders
-USERS
-GROUPS
