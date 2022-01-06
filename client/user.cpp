@@ -3,6 +3,14 @@
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
 
+// TODO:
+// - save UID and password for logout command
+// - subscribe/s recebe UID antes do resto do comando
+// - unsubscribe/u igual
+// - my_groups/mgl igual
+// - ulist/ul leva GID (temos que guardar GID no select)
+// - post leva com 1001 cenas
+// - retrieve leva com outras 1001 cenas
 string processCommand(const char *message) {
 	//int index;
 	string cmd, remaining;
@@ -154,26 +162,28 @@ int main(int argc, char **argv) {
 		}
 
 		if(isTCP(cmd.assign(input))){
-			TCPClient tcp = TCPClient(DSIP, DSport);
+			// TCPClient tcp = TCPClient(DSIP, DSport);
 			cmd = processCommand(input);
 
 			if(cmd.compare("ERR") != 0){
-				tcp.sendData(cmd.c_str());
-				reply = functionCaller(tcp.getData());
-				fprintf(stdout, "%s", reply.c_str());
+				write(1, cmd.c_str(), strlen(cmd.c_str()));
+				// tcp.sendData(cmd.c_str());
+				// reply = functionCaller(tcp.getData());
+				// fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
 				fprintf(stderr, "Error: invalid command\n");
 			}
 		}
 		else if(isUDP(cmd)){
-			UDPClient udp = UDPClient(DSIP, DSport);
+			// UDPClient udp = UDPClient(DSIP, DSport);
 			cmd = processCommand(input);
 
 			if(cmd.compare("ERR") != 0){
-				udp.sendData(cmd.c_str());
-				reply = functionCaller(udp.getData());
-				fprintf(stdout, "%s", reply.c_str());
+				write(1, cmd.c_str(), strlen(cmd.c_str()));
+				// udp.sendData(cmd.c_str());
+				// reply = functionCaller(udp.getData());
+				// fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
 				fprintf(stderr, "Error: invalid command\n");
@@ -183,7 +193,8 @@ int main(int argc, char **argv) {
 			reply = processLocalCommand(cmd);
 
 			if(reply.compare("ERR") != 0){
-				fprintf(stdout, "%s", reply.c_str());
+				write(1, cmd.c_str(), strlen(cmd.c_str()));
+				// fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
 				fprintf(stderr, "Error: invalid command\n");
