@@ -5,7 +5,7 @@
 
 // TODO:
 // - save UID and password for logout command
-// - subscribe/s recebe UID antes do resto do comando
+// - subscribe/s recebe UID antes do resto do comando transformar 0 em 00
 // - unsubscribe/u igual
 // - my_groups/mgl igual
 // - ulist/ul leva GID (temos que guardar GID no select)

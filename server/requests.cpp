@@ -662,7 +662,7 @@ string gls(string command){
 		GName = get_group_name(diread->d_name);
 		MID = get_MID(diread->d_name);
 
-		message << " " << gid << " " << GName << " " << MID;
+		message << gid << " " << GName << " " << MID;
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0){
@@ -672,7 +672,7 @@ string gls(string command){
 	else{
 		sort(list.begin(), list.end());
 		std::cout << "RGL " << numberOfGroups(path) << endl;
-		reply = "RGL " + to_string(numberOfGroups(path));
+		reply = "RGL " + to_string(numberOfGroups(path)) + " ";
 		for(i = 0; i < list.size(); i++){
 			std::cout << list[i] << endl;
 			reply += list[i] + "\n";
@@ -872,7 +872,7 @@ string glm(string command){
 				GName = get_group_name(diread->d_name);
 				MID = get_MID(diread->d_name);
 
-				message << " " << gid << " " << GName << " " << MID;
+				message << gid << " " << GName << " " << MID;
 				list.push_back(message.str());
 			}
 		}
@@ -883,7 +883,7 @@ string glm(string command){
 		else{
 			sort(list.begin(), list.end());
 			std::cout << "RGM " << i << endl;
-			reply = "RGM " + to_string(list.size());
+			reply = "RGM " + to_string(list.size()) + " ";
 			for(i = 0; i < list.size(); i++){
 				std::cout << list[i] << endl;
 				reply += list[i] + "\n";
@@ -943,14 +943,14 @@ string uls(string command){
 			if(validUID(is_uid) && !UID_free(is_uid)){
 				uid = is_uid;
 
-				message << " " << uid;
+				message << uid;
 				list.push_back(message.str());
 			}
 			
 		}
 		sort(list.begin(), list.end());
 		std::cout << "RUL " << get_group_name(GID) << endl;
-		reply = "RUL " + get_group_name(GID) + "\n";
+		reply = "RUL " + get_group_name(GID) + " ";
 		for(i = 0; i < list.size(); i++){
 			std::cout << list[i] << endl;
 			reply += list[i] + "\n";
@@ -1124,7 +1124,7 @@ string rtv(string command){
 			data = getFileData(file_path);
 		}
 
-		message  << currentMID << " " << currentUID << " " <<
+		message << currentMID << " " << currentUID << " " <<
 		Tsize << " " << text << " / " << Fname << " " << Fsize << " "
 		<< data; 
 
@@ -1134,7 +1134,7 @@ string rtv(string command){
 	}
 	sort(list.begin(), list.end());
 	cout << "RRT [" << i << std::endl;
-	reply = "RRT OK " + to_string(i);
+	reply = "RRT OK " + to_string(i) + " ";
 	for(i = 0; i < list.size(); i++){
 		cout << list[i] << endl;
 		reply += list[i] + "\n";
