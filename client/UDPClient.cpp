@@ -1,14 +1,6 @@
 #include "./Client.hpp"
 
 class UDPClient : public Client {
-	int fd, errcode;
-	ssize_t n;
-	socklen_t addrlen;
-	struct addrinfo hints, *res;
-	struct sockaddr_in addr;
-	char buffer[COMMAND_SIZE], host[NI_MAXHOST], service[NI_MAXSERV];
-	const char *server, *port;
-
 	public:
 	UDPClient(const char *server, const char *port) {
 		this->server = server;
