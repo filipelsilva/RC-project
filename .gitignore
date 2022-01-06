@@ -2,7 +2,6 @@
 *.yaml
 *.pptx
 *.zip
-assignment/
 tests/
 .vscode/
 
