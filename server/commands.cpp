@@ -440,16 +440,14 @@ string getFileSize(string path){
 }
 
 string getFileData(string path){
-	string line;
-	string data;
+	char* data;
 
 	ifstream fileFile(path);
-	while(getline(fileFile, line)){
-		data.append(line); data.append("\n"); 
-	}
-	data.pop_back();
+	stringstream ss;
 
-	return data;
+	ss << fileFile.rdbuf();
+
+	return ss.str();
 }
 
 /*REGISTER*/
@@ -906,8 +904,8 @@ void rtv(string UID, string GID, string MID){
 }
 
 int main(void){
-	/*pst("95662", "02", "240", "Hello", "qwerty.txt", "123", "bruh");*/
 	rtv("95662", "02", "0001");
+	
 
 	exit(0);
 }
