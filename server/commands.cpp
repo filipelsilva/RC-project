@@ -227,7 +227,7 @@ std::string get_mid(std::string GID){
 	std::string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	std::string mid = "0000";
+	std::string MID = "0000";
 
 	path.append(GID);path.append("/");
 	path.append("MSG");
@@ -240,11 +240,11 @@ std::string get_mid(std::string GID){
 		if(strlen(diread->d_name)>4)
 			continue;
 
-		if(atoi(mid.c_str()) < atoi(diread->d_name))
-			mid = diread->d_name;
+		if(atoi(MID.c_str()) < atoi(diread->d_name))
+			MID = diread->d_name;
 	}
 	closedir(dir);
-	return mid;	
+	return MID;	
 }
 
 bool user_logon(std::string UID){
@@ -299,12 +299,11 @@ bool validTextSize(string Tsize){
 	return stoi(Tsize) <= 240;
 }
 
-string post_text(string UID, string GID, string text){
+int max_mid(string GID){
 	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	int i = 0;
-	string author, msg;
+	int i=0;
 
 	path.append(GID); path.append("/MSG");
 
@@ -319,6 +318,20 @@ string post_text(string UID, string GID, string text){
 
 		i++;
 	}
+
+	return i;
+}
+
+string post_text(string UID, string GID, string text){
+	string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	int i;
+	string author, msg;
+
+	path.append(GID); path.append("/MSG");
+
+	i = max_mid(GID);
 
 	string new_mid;
 	i++;
@@ -382,11 +395,11 @@ bool validFileInfo(string Fname, string Fsize, string data){
 	return false;
 }
 
-void post_file(string Fname, string data, string GID, string mid){
+void post_file(string Fname, string data, string GID, string MID){
 	string path = "../GROUPS/";
 
 	path.append(GID); path.append("/MSG/");
-	path.append(mid); path.append("/");
+	path.append(MID); path.append("/");
 	path.append(Fname);
 
 	ofstream file(path);
@@ -396,30 +409,47 @@ void post_file(string Fname, string data, string GID, string mid){
 	file.close();
 }
 
-bool max_mid(string GID){
-	string path = "../GROUPS/";
+string getFileName(string path){
 	DIR *dir;
 	struct dirent *diread;
-	int i=0;
+	string name = "";
+	string author = "A U T H O R.txt";
+	string text = "T E X T.txt";
 
-	path.append(GID); path.append("/MSG");
 
 	dir = opendir(path.c_str());
 
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-
-		if(strlen(diread->d_name) != 4)
+		if(strcmp(diread->d_name, author.c_str()) == 0)
 			continue;
-
-		i++;
+		if(strcmp(diread->d_name, text.c_str()) == 0)
+			continue;
+		name = diread->d_name;
 	}
 
-	if(i == 9999)
-		return true;
+	return name;	
+}
 
-	return false;
+string getFileSize(string path){
+
+	ifstream fileSize(path, ios::binary);
+	fileSize.seekg(0, ios::end);
+	return to_string(fileSize.tellg());
+}
+
+string getFileData(string path){
+	string line;
+	string data;
+
+	ifstream fileFile(path);
+	while(getline(fileFile, line)){
+		data.append(line); data.append("\n"); 
+	}
+	data.pop_back();
+
+	return data;
 }
 
 /*REGISTER*/
@@ -540,7 +570,7 @@ void gls(){
 	while((diread = readdir(dir)) != nullptr){
 		std::string gid;
 		std::string gname;
-		std::string mid;
+		std::string MID;
 		std::stringstream message;
 
 		if(diread->d_name[0]=='.')
@@ -550,9 +580,9 @@ void gls(){
 
 		gid = diread->d_name;
 		gname = get_group_name(diread->d_name);
-		mid = get_mid(diread->d_name);
+		MID = get_mid(diread->d_name);
 
-		message << " [ " << gid << " " << gname << " " << mid << "]";
+		message << " [ " << gid << " " << gname << " " << MID << "]";
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0)
@@ -639,7 +669,6 @@ void gsr(std::string UID, std::string GID, std::string gname){
 	}
 	else
 		std::cout << "E_USR: Invalid UID\n";
-
 }
 
 /*Unsubscribe from group*/
@@ -679,7 +708,7 @@ void glm(std::string UID){
 		while((diread = readdir(dir)) != nullptr){
 			std::string gid;
 			std::string gname;
-			std::string mid;
+			std::string MID;
 			std::stringstream message;
 
 			if(diread->d_name[0]=='.')
@@ -691,9 +720,9 @@ void glm(std::string UID){
 				i++;
 				gid = diread->d_name;
 				gname = get_group_name(diread->d_name);
-				mid = get_mid(diread->d_name);
+				MID = get_mid(diread->d_name);
 
-				message << " [ " << gid << " " << gname << " " << mid << "]";
+				message << " [ " << gid << " " << gname << " " << MID << "]";
 				list.push_back(message.str());
 			}
 		}
@@ -758,6 +787,7 @@ void uls(std::string GID){
 		std::cout << "NOK: Invalid GID or group doesn't exist.\n";	
 }
 
+/*Doing a post on a certain group*/
 void pst(string UID, string GID, string Tsize, string text, string Fname = "", string Fsize = "", string data = ""){
 	DIR *dir;
 	struct dirent *diread;
@@ -768,7 +798,7 @@ void pst(string UID, string GID, string Tsize, string text, string Fname = "", s
 	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID,GID)){
 		if(validTextSize(Tsize)){
 			if(Fname == "" && Fsize == "" && data == ""){
-				if(max_mid(GID))
+				if(max_mid(GID) == 9999)
 					cout << "NOK: Maximum number of messages reached (9999).\n";
 				else
 					status = post_text(UID, GID, text);
@@ -777,7 +807,7 @@ void pst(string UID, string GID, string Tsize, string text, string Fname = "", s
 			}
 			else{
 				if(validFileInfo(Fname, Fsize, data)){
-					if(max_mid(GID))
+					if(max_mid(GID) == 9999)
 						cout << "NOK: Maximum number of messages reached (9999).\n";
 					else
 						status = post_text(UID, GID, text);
@@ -795,12 +825,89 @@ void pst(string UID, string GID, string Tsize, string text, string Fname = "", s
 
 	}
 	else
-		cout << "NOK: Invalid arguments.\n";
-		
+		cout << "NOK: Invalid arguments.\n";		
+}
+
+void rtv(string UID, string GID, string MID){
+	string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	int i = 0;
+
+	vector<string> list;
+
+	path.append(GID); path.append("/MSG");
+
+	dir = opendir(path.c_str());
+
+	if(max_mid(GID) == 0){
+		cout << "RRT EOF [0]\n";
+		return;
+	}
+
+	while((diread = readdir(dir))!= nullptr && i < 20){
+		if(diread->d_name[0]=='.')
+			continue;
+		if(strlen(diread->d_name) != 4)
+			continue;
+		if(stoi(diread->d_name) < stoi(MID))
+			continue;
+
+		string currentMID;
+		string currentUID;
+		string Tsize;
+		string text;
+		string Fname = "";
+		string Fsize = "";
+		string data = "";
+		stringstream message;
+
+		string msg_path = path;
+		string author_path;
+		string text_path;
+		string file_path;
+
+		currentMID = diread->d_name;
+
+		msg_path.append("/"); msg_path.append(currentMID); 
+
+		author_path = msg_path;author_path.append("/A U T H O R.txt");
+		ifstream authorFile(author_path);
+		getline(authorFile, currentUID);
+
+		text_path = msg_path;
+		text_path.append("/T E X T.txt");
+		ifstream textFile(text_path);
+		getline(textFile, text);
+
+		Tsize = to_string(strlen(text.c_str()));
+
+		if((Fname = getFileName(msg_path)) != ""){
+			file_path = msg_path; file_path.append("/"); file_path.append(Fname);
+			Fsize = getFileSize(file_path);
+			data = getFileData(file_path);
+		}
+
+		message << "[" << currentMID << ", " << currentUID << ", " <<
+		Tsize << ", " << text << "[ / " << Fname << " " << Fsize << " "
+		<< data << "]]"; 
+
+		list.push_back(message.str());
+
+		i++;
+	}
+	sort(list.begin(), list.end());
+	cout << "RRT [" << i << std::endl;
+	for(i = 0; i < list.size(); i++)
+		cout << list[i] << endl;
+
+	cout << "]\n";
+
 }
 
 int main(void){
-	pst("95662", "02", "240", "Hello", "qwerty.txt", "123", "bruh");
+	/*pst("95662", "02", "240", "Hello", "qwerty.txt", "123", "bruh");*/
+	rtv("95662", "02", "0001");
 
 	exit(0);
 }
@@ -808,5 +915,8 @@ int main(void){
 
 /*TODO:
 	- Does the user have to be log on to subscribe/unsubscribe?
-	- special UIDs and GROUPs
-	- How to deal with files when they are sent*/
+	- special UIDs and GROUPs;
+	- How to deal with non txt files
+	- Sizes um bocado estranhos
+	- '\n'?
+	- f) EOF? No messages or no new messages?*/
