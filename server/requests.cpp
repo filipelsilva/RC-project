@@ -662,7 +662,7 @@ string gls(string command){
 		GName = get_group_name(diread->d_name);
 		MID = get_MID(diread->d_name);
 
-		message << " [ " << gid << " " << GName << " " << MID << "]";
+		message << " " << gid << " " << GName << " " << MID;
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0){
@@ -872,7 +872,7 @@ string glm(string command){
 				GName = get_group_name(diread->d_name);
 				MID = get_MID(diread->d_name);
 
-				message << " [ " << gid << " " << GName << " " << MID << "]";
+				message << " " << gid << " " << GName << " " << MID;
 				list.push_back(message.str());
 			}
 		}
@@ -943,7 +943,7 @@ string uls(string command){
 			if(validUID(is_uid) && !UID_free(is_uid)){
 				uid = is_uid;
 
-				message << " [" << uid << "]";
+				message << " " << uid;
 				list.push_back(message.str());
 			}
 			
@@ -1124,9 +1124,9 @@ string rtv(string command){
 			data = getFileData(file_path);
 		}
 
-		message << "[" << currentMID << ", " << currentUID << ", " <<
-		Tsize << ", " << text << "[ / " << Fname << " " << Fsize << " "
-		<< data << "]]"; 
+		message  << currentMID << " " << currentUID << " " <<
+		Tsize << " " << text << " / " << Fname << " " << Fsize << " "
+		<< data; 
 
 		list.push_back(message.str());
 
@@ -1134,12 +1134,12 @@ string rtv(string command){
 	}
 	sort(list.begin(), list.end());
 	cout << "RRT [" << i << std::endl;
-	reply = "RRT OK " + to_string(i) + "\n";
+	reply = "RRT OK " + to_string(i);
 	for(i = 0; i < list.size(); i++){
 		cout << list[i] << endl;
 		reply += list[i] + "\n";
 	}
-	cout << "]\n";
+	cout << "\n";
 	
 	return reply;
 }
