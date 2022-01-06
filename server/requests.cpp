@@ -470,7 +470,7 @@ string reg(string command){
 
 		/*verifica se NÃO existe uma diretoria com o mesmso UID, FALTA DAR RETURN*/
 		if(!UID_free(UID)){
-			std::cout << "DUP: UID used already" << endl;
+			cout << "DUP: UID used already" << endl;
 			reply = "RRG DUP\n";
 		}
 		else{
@@ -489,17 +489,17 @@ string reg(string command){
 
 				passFile.close();
 
-				std::cout << "OK: Registered successfully!" << endl;
+				cout << "OK: Registered successfully!" << endl;
 				reply = "RRG OK\n";
 			}
 			else{
-				std::cout << "NOK: Invalid password" << endl;
+				cout << "NOK: Invalid password" << endl;
 				reply = "RRG NOK\n";
 			}
 		}	
 	}
 	else{
-		std::cout << "NOK: Invalid UID" << endl;
+		cout << "NOK: Invalid UID" << endl;
 		reply = "RRG NOK\n";
 	}
 	return reply;
@@ -534,21 +534,21 @@ string unr(string command){
 
 				unsubscribe_groups(UID);
 
-				std::cout << "OK: Unregistered successfully!" << endl;
+				cout << "OK: Unregistered successfully!" << endl;
 				reply = "RUN OK\n";
 			}
 			else{
-				std::cout << "NOK: Wrong password" << endl;
+				cout << "NOK: Wrong password" << endl;
 				reply = "RUN NOK\n";
 			}
 		}
 		else{
-			std::cout << "NOK: No registration for that UID" << endl;
+			cout << "NOK: No registration for that UID" << endl;
 			reply = "RUN NOK\n";
 		}
 	}
 	else{
-		std::cout << "NOK: Invalid UID or password" << endl;
+		cout << "NOK: Invalid UID or password" << endl;
 		reply = "RUN NOK\n";	
 	}
 	return reply;
@@ -583,11 +583,11 @@ string log(string command){
 
 		loginFile.close();
 
-		std::cout << "OK: Logged in successfully!" << endl;
+		cout << "OK: Logged in successfully!" << endl;
 		reply = "RLO OK\n";
 	}
 	else{
-		std::cout << "NOK: Incorrect UID or password" << endl;
+		cout << "NOK: Incorrect UID or password" << endl;
 		reply = "RLO NOK\n";
 	}
 	return reply;
@@ -621,11 +621,11 @@ string out(string command){
 		path.append(loginFile_name);
 		remove(path.c_str());
 
-		std::cout << "OK: Logged out successfully!" << endl;
+		cout << "OK: Logged out successfully!" << endl;
 		reply = "ROU OK\n";
 	}
 	else{
-		std::cout << "NOK: Incorrect UID or password" << endl;
+		cout << "NOK: Incorrect UID or password" << endl;
 		reply = "ROU NOK\n";
 	}
 	return reply;
@@ -666,15 +666,15 @@ string gls(string command){
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0){
-		std::cout << "RGL 0: No existing groups\n";
+		cout << "RGL 0: No existing groups\n";
 		reply = "RGL 0\n";
 	}
 	else{
 		sort(list.begin(), list.end());
-		std::cout << "RGL " << numberOfGroups(path) << endl;
+		cout << "RGL " << numberOfGroups(path) << endl;
 		reply = "RGL " + to_string(numberOfGroups(path)) + " ";
 		for(i = 0; i < list.size(); i++){
-			std::cout << list[i] << endl;
+			cout << list[i] << endl;
 			reply += list[i] + "\n";
 		}
 	}
@@ -713,12 +713,12 @@ string gsr(string command){
 
 					UID_File.close();
 
-					std::cout << "OK: User successfully subscribed group!\n";
+					cout << "OK: User successfully subscribed group!\n";
 					reply = "RGS OK\n";
 				}
 
 				else{
-					std::cout << "E_GNAME: Invalid Group Name\n";
+					cout << "E_GNAME: Invalid Group Name\n";
 					reply = "RGS E_GNAME\n";
 				}
 			}
@@ -760,27 +760,27 @@ string gsr(string command){
 						msg_path.append("MSG");
 						mkdir(msg_path.c_str(), 0777);
 
-						std::cout << "NEW GID: New group created!\n";
+						cout << "NEW GID: New group created!\n";
 						reply = "RGS NEW " + newGID + "\n";	
 					}
 					else{
-						std::cout << "E_FULL: Number of groups has reached it's limit...\n";
+						cout << "E_FULL: Number of groups has reached it's limit...\n";
 						reply = "RGS E_FULL\n";
 					}
 				}
 				else{
-					std::cout << "E_GNAME: Invalid group name\n";
+					cout << "E_GNAME: Invalid group name\n";
 					reply = "RGS E_GNAME\n";
 				}
 			}
 		}
 		else{
-			std::cout << "E_GRP: Invalid GID\n";
+			cout << "E_GRP: Invalid GID\n";
 			reply = "RGS E_GRP\n";
 		}
 	}
 	else{
-		std::cout << "E_USR: Invalid UID\n";
+		cout << "E_USR: Invalid UID\n";
 		reply = "RGS E_USR\n";
 	}
 	return reply;
@@ -813,17 +813,17 @@ string gur(string command){
 			path.append(UID);path.append(".txt");
 
 			if(remove(path.c_str()) != 0){
-				std::cout << "NOK: User doesn't susbscribe to this group!\n";
+				cout << "NOK: User doesn't susbscribe to this group!\n";
 				reply = "RGU NOK\n";
 			}
 		}
 		else{
-			std::cout << "E_GRP: Invalid GID.\n";
+			cout << "E_GRP: Invalid GID.\n";
 			reply = "RGU E_GRP\n";
 		}
 	}
 	else{
-		std::cout << "E_USR: Invalid UID.\n";
+		cout << "E_USR: Invalid UID.\n";
 		reply = "RGU E_USR\n";
 	}
 	return reply;
@@ -877,22 +877,22 @@ string glm(string command){
 			}
 		}
 		if(i == 0){
-			std::cout << "RGM 0: No groups subscribed\n";
+			cout << "RGM 0: No groups subscribed\n";
 			reply = "RGM 0\n";
 		}
 		else{
 			sort(list.begin(), list.end());
-			std::cout << "RGM " << i << endl;
+			cout << "RGM " << i << endl;
 			reply = "RGM " + to_string(list.size()) + " ";
 			for(i = 0; i < list.size(); i++){
-				std::cout << list[i] << endl;
+				cout << list[i] << endl;
 				reply += list[i] + "\n";
 			}
 		}
 		closedir(dir);
 	}
 	else{
-		std::cout << "E_USR: Invalid  UID or user isn't logged in.\n";
+		cout << "E_USR: Invalid  UID or user isn't logged in.\n";
 		reply = "RGM E_USR\n";
 	}
 	return reply;
@@ -949,17 +949,17 @@ string uls(string command){
 			
 		}
 		sort(list.begin(), list.end());
-		std::cout << "RUL " << get_group_name(GID) << endl;
+		cout << "RUL " << get_group_name(GID) << endl;
 		reply = "RUL " + get_group_name(GID) + " ";
 		for(i = 0; i < list.size(); i++){
-			std::cout << list[i] << endl;
+			cout << list[i] << endl;
 			reply += list[i] + "\n";
 		}
 		
 		closedir(dir);
 	}
 	else{
-		std::cout << "NOK: Invalid GID or group doesn't exist.\n";
+		cout << "NOK: Invalid GID or group doesn't exist.\n";
 		reply = "RUL NOK\n";
 	}
 	return reply;
@@ -1133,7 +1133,7 @@ string rtv(string command){
 		i++;
 	}
 	sort(list.begin(), list.end());
-	cout << "RRT [" << i << std::endl;
+	cout << "RRT [" << i << endl;
 	reply = "RRT OK " + to_string(i) + " ";
 	for(i = 0; i < list.size(); i++){
 		cout << list[i] << endl;
