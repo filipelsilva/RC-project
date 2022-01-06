@@ -25,35 +25,6 @@ string processCommand(const char *message) {
 	else{
 		return "ERR";
 	}
-
-	//TODO: fazer diferente para ulist, post e retrieve
-	//tbh refazer isto e percorrer simplesmente uma lista com todos pq o q esta 
-	//em cima e pq isto nao funciona para o ultimo de cada vetor
-	/*
-	auto location = find(ClientUser_TCP.begin(), ClientUser_TCP.end(), cmd);
-	if (location != ClientUser_TCP.end()) {
-		index = location - ClientUser_TCP.begin();
-		return UserDS_TCP[index] + " " + remaining + "\n";
-	}
-
-	location = find(ClientUser_TCP_abrev.begin(), ClientUser_TCP_abrev.end(), cmd);
-	if (location != ClientUser_TCP_abrev.end()) {
-		index = location - ClientUser_TCP_abrev.begin();
-		return UserDS_TCP[index] + " " + remaining + "\n";
-	}
-
-	location = find(ClientUser_UDP.begin(), ClientUser_UDP.end(), cmd);
-	if (location != ClientUser_UDP.end()) {
-		index = location - ClientUser_UDP.begin();
-		return UserDS_UDP[index] + " " + remaining + "\n";
-	}
-
-	location = find(ClientUser_UDP_abrev.begin(), ClientUser_UDP_abrev.end(), cmd);
-	if (location != ClientUser_UDP_abrev.end()) {
-		index = location - ClientUser_UDP_abrev.begin();
-		return UserDS_UDP[index] + " " + remaining + "\n";
-	}
-	*/
 }
 
 string processLocalCommand(string command){
@@ -139,36 +110,6 @@ string functionCaller(string command){
 }
 
 int main(int argc, char **argv) {
-	/*
-	for (auto str : ClientUser_TCP) {
-		char command[COMMAND_SIZE];
-		memset(command, 0, COMMAND_SIZE);
-		strcat(command, processCommand(str.c_str()));
-		// strcat(command, "\n");
-		printf("%s %s\n", str.c_str(), command);
-	}
-	for (auto str : ClientUser_TCP_abrev) {
-		char command[COMMAND_SIZE];
-		memset(command, 0, COMMAND_SIZE);
-		strcat(command, processCommand(str.c_str()));
-		// strcat(command, "\n");
-		printf("%s %s\n", str.c_str(), command);
-	}
-	for (auto str : ClientUser_UDP) {
-		char command[COMMAND_SIZE];
-		memset(command, 0, COMMAND_SIZE);
-		strcat(command, processCommand(str.c_str()));
-		// strcat(command, "\n");
-		printf("%s %s\n", str.c_str(), command);
-	}
-	for (auto str : ClientUser_UDP_abrev) {
-		char command[COMMAND_SIZE];
-		memset(command, 0, COMMAND_SIZE);
-		strcat(command, processCommand(str.c_str()));
-		// strcat(command, "\n");
-		printf("%s %s\n", str.c_str(), command);
-	}
-	*/
 	const char* usage = "Usage: %s [-n DSIP] [-p DSport]\n"
 		"\t-n DSIP\t\tIP address of the machine where the DS is running\n"
 		"\t-p PORT\t\tPort where the DS server accepts requests\n";
@@ -177,7 +118,6 @@ int main(int argc, char **argv) {
 	const char* DSIP = DSIP_DEFAULT;
 	const char* DSport = DSPORT_DEFAULT;
 	char flag;
-	//char command[COMMAND_SIZE];
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "n:p:")) != -1) {
@@ -213,12 +153,10 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 
-		//memset(&command, 0, sizeof(command));
-
 		if(isTCP(cmd.assign(input))){
 			TCPClient tcp = TCPClient(DSIP, DSport);
-			//strcat(command, processCommand(input));
 			cmd = processCommand(input);
+
 			if(cmd.compare("ERR") != 0){
 				tcp.sendData(cmd.c_str());
 				reply = functionCaller(tcp.getData());
@@ -230,8 +168,8 @@ int main(int argc, char **argv) {
 		}
 		else if(isUDP(cmd)){
 			UDPClient udp = UDPClient(DSIP, DSport);
-			//strcat(command, processCommand(input));
 			cmd = processCommand(input);
+
 			if(cmd.compare("ERR") != 0){
 				udp.sendData(cmd.c_str());
 				reply = functionCaller(udp.getData());
@@ -243,6 +181,7 @@ int main(int argc, char **argv) {
 		}
 		else{
 			reply = processLocalCommand(cmd);
+
 			if(reply.compare("ERR") != 0){
 				fprintf(stdout, "%s", reply.c_str());
 			}
