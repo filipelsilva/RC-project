@@ -5,30 +5,51 @@
 
 // TODO:
 // - save UID and password for logout command
-// - subscribe/s recebe UID antes do resto do comando transformar 0 em 00
+// - subscribe/s recebe UID antes do resto do comando, transformar 0 em 00
 // - unsubscribe/u igual
 // - my_groups/mgl igual
 // - ulist/ul leva GID (temos que guardar GID no select)
 // - post leva com 1001 cenas
 // - retrieve leva com outras 1001 cenas
 string processCommand(const char *message) {
-	//int index;
 	string cmd, remaining;
 	stringstream ss;
 	ss << message;
 	getline(ss, cmd, ' ');
 	getline(ss, remaining);
-	if(remaining.empty()){
-		cmd = remove_new_line(cmd);
-		remaining = "\n";
-	}
-	else{
-		remaining = " " + remaining + "\n";
-	}
-
+	cmd = remove_new_line(cmd);
 	auto code = commands.find(cmd);
+	if(code->second.compare("LOG") == 0){
+		save_login(remaining);
+	}
+	if(code->second.compare("OUT") == 0){
+		save_logout(remaining);
+	}
+	if(code->second.compare("GSR") == 0){
+		save_subscribe(remaining);
+	}
+	if(code->second.compare("GUR") == 0){
+		save_unsubscribe(remaining);
+	}
+	if(code->second.compare("GLM") == 0){
+		save_my_groups(remaining);
+	}
+	if(code->second.compare("ULS") == 0){
+		save_ulist(remaining);		
+	}
+	if(code->second.compare("PST") == 0){
+		save_post(remaining);
+	}
+	if(code->second.compare("RTV") == 0){
+		save_retrieve(remaining);
+	}
 	if(code->second.compare("ERR") != 0){
-		return code->second + remaining;
+		if (!remaining.empty()){
+			return code->second + " " + remaining + "\n";
+		}
+		else{
+			return code->second + "\n";
+		}
 	}
 	else{
 		return "ERR";

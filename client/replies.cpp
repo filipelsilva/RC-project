@@ -1,6 +1,6 @@
 #include "../Constants.hpp"
 
-string selected_UID, selected_GID, sent_GName;
+string selected_UID, selected_GID, sent_GName, password;
 
 //TODO: por isto num ficheiro comum a todos...
 string remove_new_line(string s){
@@ -8,6 +8,41 @@ string remove_new_line(string s){
 		return s.substr(0, s.length()-1);
 	}
 	return s;
+}
+
+void save_login(string remaining){
+    stringstream ss;
+	ss << remaining;
+	getline(ss, selected_UID, ' ');
+	getline(ss, password, ' ');
+}
+
+void save_logout(string remaining){
+
+}
+
+void save_subscribe(string remaining){
+
+}
+
+void save_unsubscribe(string remaining){
+
+}
+
+void save_my_groups(string remaining){
+
+}
+
+void save_ulist(string remaining){
+
+}
+
+void save_post(string remaining){
+
+}
+
+void save_retrieve(string remaining){
+
 }
 
 string showuid(){
@@ -57,8 +92,12 @@ string rlo(string command){
         return "You are now logged in\n";
     }
     else if(command.compare("RLO NOK\n") == 0){
+        selected_UID = "";
+        password = "";
         return "Something went wrong. User could not login\n";
     }
+    selected_UID = "";
+    password = "";
     return "Something went wrong\n";
 }
 
