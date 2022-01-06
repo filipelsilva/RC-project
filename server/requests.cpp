@@ -1,5 +1,7 @@
 #include "../Constants.hpp"
 
+// TODO: save selected uid, gid and gname; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
+
 string remove_new_line(string s){
 	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
 		return s.substr(0, s.length()-1);
