@@ -382,6 +382,9 @@ bool validFileInfo(string Fname, string Fsize, string data){
 		if(toBeSure < 2)
 			return false;
 
+		if(strlen(name.c_str()) != 3)
+			return false;
+
 		for(i=0; name[i] != '\0'; i++){
 			if(!isalpha(name[i]) || i > 2)
 				return false;
@@ -904,6 +907,7 @@ void rtv(string UID, string GID, string MID){
 }
 
 int main(void){
+	pst("95662", "02", "16", "Bom dia!", "ola.png", "123", "alala");
 	rtv("95662", "02", "0001");
 	
 
