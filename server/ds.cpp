@@ -97,12 +97,18 @@ int main(int argc, char **argv) {
 
 		if (FD_ISSET(tcp.fd, &mask)) {
 			request = tcp.getData();
+			if (verbose) {
+				tcp.printVerbose();
+			}
 			reply = functionCaller(command.assign(request));
 			tcp.sendData(reply.c_str());
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
 			request = udp.getData();
+			if (verbose) {
+				udp.printVerbose();
+			}
 			reply = functionCaller(command.assign(request));
 			udp.sendData(reply.c_str());
 		}

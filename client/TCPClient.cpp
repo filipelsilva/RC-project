@@ -1,13 +1,6 @@
 #include "./Client.hpp"
 
 class TCPClient : public Client {
-	struct sigaction act;
-	struct addrinfo hints, *res;
-	int fd, errcode;
-	ssize_t nbytes, nleft, nwritten, nread;
-	char *ptr, buffer[COMMAND_SIZE];
-	const char *server, *port;
-
 	public:
 	TCPClient(const char *server, const char *port) {
 		// Handling of SIGPIPE signal
