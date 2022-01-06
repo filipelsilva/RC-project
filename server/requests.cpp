@@ -1,5 +1,12 @@
 #include "../Constants.hpp"
 
+string remove_new_line(string s){
+	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
+		return s.substr(0, s.length()-1);
+	}
+	return s;
+}
+
 bool isNumber(string str){
 	for(int i = 0; i < str.length(); i++)
       	if(! (str[i] >= '0' && str[i] <= '9') ) 
@@ -281,7 +288,7 @@ bool UID_in_group(string UID, string GID){
 /*Falta enviar os códigos, aka dar returns*/
 string reg(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RRG NOK\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string passFile_name = "_pass.txt";
@@ -337,7 +344,7 @@ string reg(string command){
 /*UNREGISTER*/
 string unr(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RUN NOK\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	ss << command;
@@ -382,7 +389,7 @@ string unr(string command){
 /*LOGIN*/
 string log(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RLO NOK\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
@@ -417,7 +424,7 @@ string log(string command){
 /*LOGOUT*/
 string out(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "ROU NOK\n";
 	string cmd, UID, pass;
 	string path="../USERS";
 	string loginFile_name = "_login.txt";
@@ -489,7 +496,7 @@ string gls(string command){
 	else{
 		sort(list.begin(), list.end());
 		std::cout << "RGL " << numberOfGroups(path) << endl;
-		reply = "RGL " + to_string(numberOfGroups(path)) + "\n";
+		reply = "RGL " + to_string(numberOfGroups(path));
 		for(i = 0; i < list.size(); i++){
 			std::cout << list[i] << endl;
 			reply += list[i] + "\n";
@@ -602,7 +609,7 @@ string gsr(string command){
 /*Unsubscribe from group*/
 string gur(string command){
 	stringstream ss;
-	string reply = "NOK\n";
+	string reply = "RGU NOK\n";
 	string cmd, UID, GID;
 	string path = "../GROUPS/";
 	DIR *dir;
@@ -689,7 +696,7 @@ string glm(string command){
 		else{
 			sort(list.begin(), list.end());
 			std::cout << "RGM " << i << endl;
-			reply = "RGM ";
+			reply = "RGM " + to_string(list.size());
 			for(i = 0; i < list.size(); i++){
 				std::cout << list[i] << endl;
 				reply += list[i] + "\n";
@@ -707,7 +714,7 @@ string glm(string command){
 /*List of users subscribed to a given group (TCP)*/
 string uls(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RUL NOK\n";
 	string cmd, GID;
 	DIR *dir;
 	struct dirent *diread;

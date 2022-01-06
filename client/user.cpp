@@ -4,76 +4,108 @@
 #include "./replies.cpp"
 
 string processCommand(const char *message) {
-	int index;
-	string tmp, remaining;
+	//int index;
+	string cmd, remaining;
 	stringstream ss;
 	ss << message;
-	getline(ss, tmp, ' ');
+	getline(ss, cmd, ' ');
 	getline(ss, remaining);
+	if(remaining.empty()){
+		cmd = remove_new_line(cmd);
+		remaining = "\n";
+	}
+	else{
+		remaining = " " + remaining + "\n";
+	}
 
-	if (tmp.compare("exit") == 0)
-		return "ta";
+	auto code = commands.find(cmd);
+	if(code->second.compare("ERR") != 0){
+		return code->second + remaining;
+	}
+	else{
+		return "ERR";
+	}
 
 	//TODO: fazer diferente para ulist, post e retrieve
 	//tbh refazer isto e percorrer simplesmente uma lista com todos pq o q esta 
 	//em cima e pq isto nao funciona para o ultimo de cada vetor
-	auto location = find(ClientUser_TCP.begin(), ClientUser_TCP.end(), tmp);
+	/*
+	auto location = find(ClientUser_TCP.begin(), ClientUser_TCP.end(), cmd);
 	if (location != ClientUser_TCP.end()) {
 		index = location - ClientUser_TCP.begin();
 		return UserDS_TCP[index] + " " + remaining + "\n";
 	}
 
-	location = find(ClientUser_TCP_abrev.begin(), ClientUser_TCP_abrev.end(), tmp);
+	location = find(ClientUser_TCP_abrev.begin(), ClientUser_TCP_abrev.end(), cmd);
 	if (location != ClientUser_TCP_abrev.end()) {
 		index = location - ClientUser_TCP_abrev.begin();
 		return UserDS_TCP[index] + " " + remaining + "\n";
 	}
 
-	location = find(ClientUser_UDP.begin(), ClientUser_UDP.end(), tmp);
+	location = find(ClientUser_UDP.begin(), ClientUser_UDP.end(), cmd);
 	if (location != ClientUser_UDP.end()) {
 		index = location - ClientUser_UDP.begin();
 		return UserDS_UDP[index] + " " + remaining + "\n";
 	}
 
-	location = find(ClientUser_UDP_abrev.begin(), ClientUser_UDP_abrev.end(), tmp);
+	location = find(ClientUser_UDP_abrev.begin(), ClientUser_UDP_abrev.end(), cmd);
 	if (location != ClientUser_UDP_abrev.end()) {
 		index = location - ClientUser_UDP_abrev.begin();
 		return UserDS_UDP[index] + " " + remaining + "\n";
 	}
-
-	fprintf(stderr, "Error: invalid command\n");
-	return NULL;
+	*/
 }
 
 string processLocalCommand(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "ERR";
 	string cmd, GID;
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, GID);
+	cmd = remove_new_line(cmd);
 	if(cmd.compare("showuid") == 0 || cmd.compare("su") == 0)
 		reply = showuid();
 	if(cmd.compare("showgid") == 0 || cmd.compare("sg") == 0)
 		reply = showgid();
 	if(cmd.compare("select") == 0 || cmd.compare("sag") == 0)
 		reply = select_GID(GID);
+	if(cmd.compare("exit") == 0)
+		exit(0);
 	return reply;
 }
 
-bool isTCP(string command){
-	for (string cmd: ClientUser_TCP)
-		if (command.rfind(cmd, 0) != string::npos)
+bool isTCP(string input){
+	string command;
+	stringstream ss;
+	ss << input;
+	getline(ss, command, ' ');
+	command = remove_new_line(command);
+	for (string cmd: ClientUser_TCP){
+		if (command.compare(cmd) == 0)
 			return true;
-
+	}
+	for (string cmd: ClientUser_TCP_abrev){
+		if (command.compare(cmd) == 0)
+			return true;
+	}
 	return false;
 }
 
-bool isUDP(string command){
-	for (string cmd: ClientUser_UDP)
-		if (command.rfind(cmd, 0) != string::npos)
+bool isUDP(string input){
+	string command;
+	stringstream ss;
+	ss << input;
+	getline(ss, command, ' ');
+	command = remove_new_line(command);
+	for (string cmd: ClientUser_UDP){
+		if (command.compare(cmd) == 0)
 			return true;
-
+	}
+	for (string cmd: ClientUser_UDP_abrev){
+		if (command.compare(cmd) == 0)
+			return true;
+	}
 	return false;
 }
 
@@ -103,6 +135,7 @@ string functionCaller(string command){
 	if(cmd.compare("RRT") == 0)
 		return rrt(command);
 	*/
+	return "Something went wrong\n";
 }
 
 int main(int argc, char **argv) {
@@ -144,7 +177,7 @@ int main(int argc, char **argv) {
 	const char* DSIP = DSIP_DEFAULT;
 	const char* DSport = DSPORT_DEFAULT;
 	char flag;
-	char command[COMMAND_SIZE];
+	//char command[COMMAND_SIZE];
 
 	// Argument parser
 	while ((flag = getopt(argc, argv, "n:p:")) != -1) {
@@ -186,21 +219,36 @@ int main(int argc, char **argv) {
 			TCPClient tcp = TCPClient(DSIP, DSport);
 			//strcat(command, processCommand(input));
 			cmd = processCommand(input);
-			tcp.sendData(cmd.c_str());
-			reply = functionCaller(tcp.getData());
-			fprintf(stdout, "%s", reply.c_str());
+			if(cmd.compare("ERR") != 0){
+				tcp.sendData(cmd.c_str());
+				reply = functionCaller(tcp.getData());
+				fprintf(stdout, "%s", reply.c_str());
+			}
+			else{
+				fprintf(stderr, "Error: invalid command\n");
+			}
 		}
 		else if(isUDP(cmd)){
 			UDPClient udp = UDPClient(DSIP, DSport);
 			//strcat(command, processCommand(input));
 			cmd = processCommand(input);
-			udp.sendData(cmd.c_str());
-			reply = functionCaller(udp.getData());
-			fprintf(stdout, "%s", reply.c_str());
+			if(cmd.compare("ERR") != 0){
+				udp.sendData(cmd.c_str());
+				reply = functionCaller(udp.getData());
+				fprintf(stdout, "%s", reply.c_str());
+			}
+			else{
+				fprintf(stderr, "Error: invalid command\n");
+			}
 		}
 		else{
 			reply = processLocalCommand(cmd);
-			fprintf(stdout, "%s", reply.c_str());
+			if(reply.compare("ERR") != 0){
+				fprintf(stdout, "%s", reply.c_str());
+			}
+			else{
+				fprintf(stderr, "Error: invalid command\n");
+			}
 		}
 	}
 

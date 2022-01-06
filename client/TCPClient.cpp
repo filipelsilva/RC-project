@@ -37,6 +37,7 @@ class TCPClient : public Client {
 	}
 
 	void sendData(const char *message) {
+		memset(buffer, 0, sizeof(buffer));
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
 			exit(1);

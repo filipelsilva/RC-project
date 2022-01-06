@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <sstream>
 #include <algorithm>
 #include <regex>
@@ -34,6 +35,35 @@ extern "C" { // For C libraries, to avoid namespace cluttering
 
 using namespace std;
 
+static map<string, string> commands = {
+	{"showuid", "showuid"},
+	{"su", "showuid"},
+	{"showgid", "showgid"},
+	{"sg", "showgid"},
+	{"select", "select"},
+	{"sag", "select"},
+	{"exit", "exit"},
+	{"reg", "REG"},
+	{"unregister", "UNR"},
+	{"unr", "UNR"},
+	{"login", "LOG"},
+	{"logout", "OUT"},
+	{"groups", "GLS"},
+	{"gl", "GLS"},
+	{"subscribe", "GSR"},
+	{"s", "GSR"},
+	{"unsubscribe", "GUR"},
+	{"u", "GUR"},
+	{"my_groups", "GLM"},
+	{"mgl", "GLM"},
+	{"ulist", "ULS"},
+	{"ul", "ULS"},
+	{"post", "PST"},
+	{"retrieve", "RTV"},
+	{"r", "RTV"},
+	{"ERR", "ERR"},
+};
+
 static vector<string> ClientUser_local = {
 	"showuid",
 	"showgid",
@@ -55,7 +85,6 @@ static vector<string> ClientUser_UDP = {
 	"subscribe",
 	"unsubscribe",
 	"my_groups",
-	"exit",
 };
 
 static vector<string> ClientUser_UDP_abrev = {
@@ -67,7 +96,6 @@ static vector<string> ClientUser_UDP_abrev = {
 	"s",
 	"u",
 	"mgl",
-	"exit",
 };
 
 static vector<string> ClientUser_TCP = {
@@ -82,6 +110,7 @@ static vector<string> ClientUser_TCP_abrev = {
 	"ul",
 };
 
+/*
 static vector<string> UserDS_UDP = {
 	"REG",
 	"UNR",
@@ -115,5 +144,5 @@ static vector<string> UserDS_TCP_response = {
 	"RPT",
 	"RRT",
 };
-
+*/
 #endif

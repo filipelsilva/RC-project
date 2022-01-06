@@ -8,6 +8,10 @@ string functionCaller(string command){
 	string cmd;
 	ss << command;
 	getline(ss, cmd, ' ');
+	if(command.compare(cmd) == 0){
+		command = remove_new_line(command);
+	}
+	cmd = remove_new_line(cmd);
 	if(cmd.compare("REG") == 0)
 		return reg(command);
 	if(cmd.compare("UNR") == 0)

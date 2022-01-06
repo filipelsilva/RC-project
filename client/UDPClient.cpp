@@ -34,6 +34,7 @@ class UDPClient : public Client {
 	}
 
 	void sendData(const char *message) {
+		memset(buffer, 0, sizeof(buffer));
 		if ((n = sendto(fd, message, strlen(message), 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
 			fprintf(stderr, "Error: sendto: %s\n", gai_strerror(n));
