@@ -1,6 +1,6 @@
 #include "../Constants.hpp"
 
-// TODO: save selected uid, gid and gname; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
+// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
 
 string remove_new_line(string s){
 	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
@@ -143,15 +143,15 @@ bool validGID(string GID){
 	return false;
 }
 
-bool existingGroupName(string GID, string gname){
+bool existingGroupName(string GID, string GName){
 	string path = "../GROUPS/";
-	string gname_file = "_name.txt";
+	string GName_file = "_name.txt";
 
 	path.append(GID); path.append("/");
 
-	gname_file.insert(0,GID);
+	GName_file.insert(0,GID);
 
-	path.append(gname_file);
+	path.append(GName_file);
 
 	ifstream gNameFile;
 	string name;
@@ -159,17 +159,17 @@ bool existingGroupName(string GID, string gname){
 	gNameFile.open(path.c_str());
 	getline(gNameFile, name);	
 
-	if(gname == name)
+	if(GName == name)
 		return true;
 	return false;
 
 }
 
-bool validGroupName(string gname){
+bool validGroupName(string GName){
 	int i;
 
-	for (i=0; gname[i] != '\0'; i++)
-		if ((!isalnum(gname[i]) && gname[i] != '-' && gname[i] != '_') || i >= 24)
+	for (i=0; GName[i] != '\0'; i++)
+		if ((!isalnum(GName[i]) && GName[i] != '-' && GName[i] != '_') || i >= 24)
 				return false;
 	if(i == 0)
 		return false;	
@@ -204,20 +204,20 @@ string get_group_name(string GID){
 	path.append(GID);path.append("/");
 	path.append(GID);path.append("_name.txt");
 
-	ifstream gnameFile;
-	string gname;
+	ifstream GNameFile;
+	string GName;
 
-	gnameFile.open(path.c_str());
-	getline(gnameFile, gname);
+	GNameFile.open(path.c_str());
+	getline(GNameFile, GName);
 
-	return gname;
+	return GName;
 }
 
-string get_mid(string GID){
+string get_MID(string GID){
 	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	string mid = "0000";
+	string MID = "0000";
 
 	path.append(GID);path.append("/");
 	path.append("MSG");
@@ -230,11 +230,11 @@ string get_mid(string GID){
 		if(strlen(diread->d_name)>4)
 			continue;
 
-		if(atoi(mid.c_str()) < atoi(diread->d_name))
-			mid = diread->d_name;
+		if(atoi(MID.c_str()) < atoi(diread->d_name))
+			MID = diread->d_name;
 	}
 	closedir(dir);
-	return mid;	
+	return MID;	
 }
 
 bool user_logon(string UID){
@@ -286,6 +286,164 @@ bool UID_in_group(string UID, string GID){
 	return false;
 }
 
+bool validTextSize(string Tsize){
+	return stoi(Tsize) <= 240;
+}
+
+int max_MID(string GID){
+	string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	int i=0;
+
+	path.append(GID); path.append("/MSG");
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+
+		if(strlen(diread->d_name) != 4)
+			continue;
+
+		i++;
+	}
+
+	return i;
+}
+
+string post_text(string UID, string GID, string text){
+	string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	int i;
+	string author, msg;
+
+	path.append(GID); path.append("/MSG");
+
+	i = max_MID(GID);
+
+	string new_MID;
+	i++;
+	new_MID = to_string(i);
+
+	while(strlen(new_MID.c_str()) != 4)
+		new_MID.insert(0, "0");
+
+	path.append("/"); path.append(new_MID);
+
+	mkdir(path.c_str(), 0777);
+
+	author = path;
+	msg = path;
+	author.append("/A U T H O R.txt");
+	msg.append("/T E X T.txt");
+
+	ofstream authorFile(author);
+	ofstream msgFile(msg);
+
+	authorFile << UID;
+
+	msgFile << text;
+
+	authorFile.close();
+	msgFile.close();
+
+	return new_MID;
+}
+
+bool validFileInfo(string Fname, string Fsize, string data){
+	int i;
+	stringstream ss;
+	string name;
+	locale loc;
+	int toBeSure = 0;
+
+	if(0 <= strlen(Fname.c_str()) <= 24){
+		for (i=0; Fname[i] != '\0'; i++)
+			if (!isalnum(Fname[i]) && Fname[i] != '-' && Fname[i] != '_' && Fname[i] != '.')
+				return false;
+
+		ss << Fname;
+
+		while(getline(ss, name, '.'))
+			toBeSure++;
+
+		if(toBeSure < 2)
+			return false;
+
+		if(strlen(name.c_str()) != 3)
+			return false;
+
+		for(i=0; name[i] != '\0'; i++){
+			if(!isalpha(name[i]) || i > 2)
+				return false;
+		}
+
+		if(strlen(Fsize.c_str()) >= 10 || strlen(Fsize.c_str()) == 0)
+			return false;
+
+		return true;
+	}
+	return false;
+}
+
+void post_file(string Fname, string data, string GID, string MID){
+	string path = "../GROUPS/";
+
+	path.append(GID); path.append("/MSG/");
+	path.append(MID); path.append("/");
+	path.append(Fname);
+
+	ofstream file(path);
+
+	file << data;
+
+	file.close();
+}
+
+string getFileName(string path){
+	DIR *dir;
+	struct dirent *diread;
+	string name = "";
+	string author = "A U T H O R.txt";
+	string text = "T E X T.txt";
+
+
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir))!= nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+		if(strcmp(diread->d_name, author.c_str()) == 0)
+			continue;
+		if(strcmp(diread->d_name, text.c_str()) == 0)
+			continue;
+		name = diread->d_name;
+	}
+
+	return name;	
+}
+
+string getFileSize(string path){
+
+	ifstream fileSize(path, ios::binary);
+	fileSize.seekg(0, ios::end);
+	return to_string(fileSize.tellg());
+}
+
+string getFileData(string path){
+	char* data;
+
+	ifstream fileFile(path);
+	stringstream ss;
+
+	ss << fileFile.rdbuf();
+
+	return ss.str();
+}
+
 /*REGISTER*/
 /*Falta enviar os códigos, aka dar returns*/
 string reg(string command){
@@ -301,6 +459,10 @@ string reg(string command){
 	if(cmd.compare("REG") != 0){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
+	}
+	if(UID.empty() || pass.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
 	}
 	
 	/*Provavelmente pode tornanr-se num && uma vez que a exceção é a mesma nos dois casos*/
@@ -357,6 +519,10 @@ string unr(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(UID.empty() || pass.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
 
 	if(validUID(UID) && validPass(pass)){
 		if(!UID_free(UID)){
@@ -403,6 +569,10 @@ string log(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(UID.empty() || pass.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
 
 	if(validUID(UID) &&  validPass(pass) 
 		 && !UID_free(UID) && correct_pass(UID,pass)){
@@ -437,6 +607,10 @@ string out(string command){
 	if(cmd.compare("OUT") != 0){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
+	}
+	if(UID.empty() || pass.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
 	}
 
 	if(validUID(UID) &&  validPass(pass) 
@@ -475,8 +649,8 @@ string gls(string command){
 
 	while((diread = readdir(dir)) != nullptr){
 		string gid;
-		string gname;
-		string mid;
+		string GName;
+		string MID;
 		stringstream message;
 
 		if(diread->d_name[0]=='.')
@@ -485,10 +659,10 @@ string gls(string command){
 			continue;
 
 		gid = diread->d_name;
-		gname = get_group_name(diread->d_name);
-		mid = get_mid(diread->d_name);
+		GName = get_group_name(diread->d_name);
+		MID = get_MID(diread->d_name);
 
-		message << " [ " << gid << " " << gname << " " << mid << "]";
+		message << " [ " << gid << " " << GName << " " << MID << "]";
 		list.push_back(message.str());
 	}
 	if(numberOfGroups(path) == 0){
@@ -512,22 +686,26 @@ string gls(string command){
 string gsr(string command){
 	stringstream ss;
 	string reply = "RGS NOK\n";
-	string cmd, UID, GID, gname;
+	string cmd, UID, GID, GName;
 	string path = "../GROUPS";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
 	getline(ss, GID, ' ');
-	getline(ss, gname);
+	getline(ss, GName);
 	if(cmd.compare("GSR") != 0){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
+	}
+	if(UID.empty() || GID.empty() || GName.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
 	}
 
 	if(validUID(UID) && !UID_free(UID)){
 		if (validGID(GID)){
 			if(GID != "00"){
-				if(existingGroupName(GID, gname)){
+				if(existingGroupName(GID, GName)){
 					path.append("/"); path.append(GID); path.append("/");
 					path.append(UID); path.append(".txt");
 
@@ -546,14 +724,14 @@ string gsr(string command){
 			}
 
 			else{
-				if(validGroupName(gname)){
+				if(validGroupName(GName)){
 					int i;
 					i = numberOfGroups(path);
 					if(i < 99){
 						i++;
 
 						string newGID;
-						string gname_path;
+						string GName_path;
 						string uid_path;
 						string msg_path;
 
@@ -567,10 +745,10 @@ string gsr(string command){
 
 						path.append("/");
 
-						gname_path = path;
-						gname_path.append(newGID); gname_path.append("_name.txt");
-						ofstream new_Gname_file(gname_path);
-						new_Gname_file << gname << endl;
+						GName_path = path;
+						GName_path.append(newGID); GName_path.append("_name.txt");
+						ofstream new_Gname_file(GName_path);
+						new_Gname_file << GName << endl;
 						new_Gname_file.close();
 
 						uid_path = path;
@@ -624,7 +802,10 @@ string gur(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
-	
+	if(UID.empty() || GID.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
 
 	if(validUID(UID) && !UID_free(UID)){
 		if(validGID(GID) && groupExists(GID)){
@@ -665,6 +846,10 @@ string glm(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(UID.empty()){
+		fprintf(stderr, "ERR: Missing argument(s)\n");
+		return reply;
+	}
 
 	if(validUID(UID) && !UID_free(UID) && user_logon(UID)){
 			
@@ -672,8 +857,8 @@ string glm(string command){
 
 		while((diread = readdir(dir)) != nullptr){
 			string gid;
-			string gname;
-			string mid;
+			string GName;
+			string MID;
 			stringstream message;
 
 			if(diread->d_name[0]=='.')
@@ -684,10 +869,10 @@ string glm(string command){
 			if(UID_in_group(UID, diread->d_name)){
 				i++;
 				gid = diread->d_name;
-				gname = get_group_name(diread->d_name);
-				mid = get_mid(diread->d_name);
+				GName = get_group_name(diread->d_name);
+				MID = get_MID(diread->d_name);
 
-				message << " [ " << gid << " " << gname << " " << mid << "]";
+				message << " [ " << gid << " " << GName << " " << MID << "]";
 				list.push_back(message.str());
 			}
 		}
@@ -730,6 +915,10 @@ string uls(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(GID.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
 
 	if(validGID(GID)){
 			
@@ -739,7 +928,7 @@ string uls(string command){
 		
 		while((diread = readdir(dir)) != nullptr){
 			string uid;
-			string gname;
+			string GName;
 			stringstream message;
 			if(diread->d_name[0]=='.')
 				continue;
@@ -776,37 +965,91 @@ string uls(string command){
 	return reply;
 }
 
+/*Doing a post on a certain group*/
 string pst(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RPT NOK\n";
 	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
-	/*TODO: FIX THIS*/
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
 	getline(ss, GID, ' ');
 	getline(ss, Tsize, ' ');
-	getline(ss, text, ' '); //ler texto de acordo com size e o mm para o file
+	getline(ss, text, ' ');
 	getline(ss, Fname, ' ');
 	getline(ss, Fsize, ' ');
 	getline(ss, data);
-	//int nArgs = count_args(... ver quais nao sao '')
-	//if(nArgs != 5 && nArgs != 8){
-	//	fprintf(stderr, "ERR\n");
-	//	return "ERR\n";
-	//}
+	DIR *dir;
+	struct dirent *diread;
+	string path = "../GROUPS/";	
+	int i;
+	string status;
 
 	if(cmd.compare("PST") != 0){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(UID.empty() || GID.empty() || Tsize.empty() || text.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
+	if(!Fname.empty() && (GID.empty() || Tsize.empty() || text.empty())){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
 
+	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID,GID)){
+		if(validTextSize(Tsize)){
+			if(Fname == "" && Fsize == "" && data == ""){
+				if(max_MID(GID) == 9999){
+					cout << "NOK: Maximum number of messages reached (9999).\n";
+					return reply;
+				}
+				else{
+					status = post_text(UID, GID, text);
+					cout << "RPT " << status << endl;
+					reply = "RPT " + status + "\n";
+					return reply;
+				}
+
+			}
+			else{
+				if(validFileInfo(Fname, Fsize, data)){
+					if(max_MID(GID) == 9999){
+						cout << "NOK: Maximum number of messages reached (9999).\n";
+						return reply;
+					}
+					else{
+						status = post_text(UID, GID, text);
+						post_file(Fname, data, GID, status);
+
+						cout << "RPT " << status << endl;
+						reply = "RPT " + status + "\n";
+						return reply;
+					}
+				}
+				else{
+					cout << "NOK: Invalid file info.\n";
+					return reply;
+				}
+			}
+		}
+		else{
+			cout << "NOK: Invalid text info.\n";
+			return reply;
+		}
+
+	}
+	else{
+		cout << "NOK: Invalid arguments.\n";
+		return reply;
+	}
 	return reply;
 }
 
 string rtv(string command){
 	stringstream ss;
-	string reply = "ERR\n";
+	string reply = "RRT NOK\n";
 	string cmd, UID, GID, MID;
 	ss << command;
 	getline(ss, cmd, ' ');
@@ -817,7 +1060,87 @@ string rtv(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
+	if(UID.empty() || GID.empty() || MID.empty()){
+		fprintf(stderr, "ERR: Missing argument(s)\n");
+		return reply;
+	}
 
+	string path = "../GROUPS/";
+	DIR *dir;
+	struct dirent *diread;
+	int i = 0;
+
+	vector<string> list;
+
+	path.append(GID); path.append("/MSG");
+
+	dir = opendir(path.c_str());
+
+	if(max_MID(GID) == 0){
+		cout << "RRT EOF [0]\n";
+		return "RRT EOF 0\n";
+	}
+
+	while((diread = readdir(dir))!= nullptr && i < 20){
+		if(diread->d_name[0]=='.')
+			continue;
+		if(strlen(diread->d_name) != 4)
+			continue;
+		if(stoi(diread->d_name) < stoi(MID))
+			continue;
+
+		string currentMID;
+		string currentUID;
+		string Tsize;
+		string text;
+		string Fname = "";
+		string Fsize = "";
+		string data = "";
+		stringstream message;
+
+		string msg_path = path;
+		string author_path;
+		string text_path;
+		string file_path;
+
+		currentMID = diread->d_name;
+
+		msg_path.append("/"); msg_path.append(currentMID); 
+
+		author_path = msg_path;author_path.append("/A U T H O R.txt");
+		ifstream authorFile(author_path);
+		getline(authorFile, currentUID);
+
+		text_path = msg_path;
+		text_path.append("/T E X T.txt");
+		ifstream textFile(text_path);
+		getline(textFile, text);
+
+		Tsize = to_string(strlen(text.c_str()));
+
+		if((Fname = getFileName(msg_path)) != ""){
+			file_path = msg_path; file_path.append("/"); file_path.append(Fname);
+			Fsize = getFileSize(file_path);
+			data = getFileData(file_path);
+		}
+
+		message << "[" << currentMID << ", " << currentUID << ", " <<
+		Tsize << ", " << text << "[ / " << Fname << " " << Fsize << " "
+		<< data << "]]"; 
+
+		list.push_back(message.str());
+
+		i++;
+	}
+	sort(list.begin(), list.end());
+	cout << "RRT [" << i << std::endl;
+	reply = "RRT OK " + to_string(i) + "\n";
+	for(i = 0; i < list.size(); i++){
+		cout << list[i] << endl;
+		reply += list[i] + "\n";
+	}
+	cout << "]\n";
+	
 	return reply;
 }
 

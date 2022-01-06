@@ -34,6 +34,7 @@ string functionCaller(string command){
 		return pst(command);
 	if(cmd.compare("RTV") == 0)
 		return rtv(command);
+	return "ERR\n";
 }
 
 int main(int argc, char **argv) {
