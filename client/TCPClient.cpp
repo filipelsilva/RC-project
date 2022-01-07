@@ -25,11 +25,7 @@ class TCPClient : public Client {
 		}
 	}
 
-	string getData(){
-		return buffer;
-	}
-
-	void sendData(const char *message) {
+	char *sendAndReceive(const char *message) {
 		memset(buffer, 0, sizeof(buffer));
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
@@ -79,6 +75,7 @@ class TCPClient : public Client {
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
 		close(fd);
+		return buffer;
 	}
 
 	~TCPClient() {
