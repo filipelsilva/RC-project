@@ -1,6 +1,6 @@
 #include "../Common.hpp"
 
-// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
+// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
 
 bool isNumber(string str){
 	for(size_t i = 0; i < str.length(); i++)
