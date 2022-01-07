@@ -15,7 +15,7 @@ class Client {
 		const char *server, *port;
 
 	public:
-		virtual void sendData(const char *message) = 0;
+		virtual char *sendAndReceive(const char *message) = 0;
 		virtual ~Client() {};
 };
 

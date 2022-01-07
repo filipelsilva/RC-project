@@ -25,7 +25,7 @@ class UDPClient : public Client {
 		return buffer;
 	}
 
-	void sendData(const char *message) {
+	char *sendAndReceive(const char *message) {
 		memset(buffer, 0, sizeof(buffer));
 		if ((n = sendto(fd, message, strlen(message), 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
@@ -44,14 +44,7 @@ class UDPClient : public Client {
 		//write(1, "Server: ", 8);
 		//write(1, buffer, n);
 
-		if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
-						sizeof(host), service, sizeof(service), 0)) != 0) {
-			fprintf(stderr, "Error: getnameinfo: %s\n", strerror(errcode));
-			exit(1);
-		}
-		else {
-			//printf("Sent by [%s:%s]\n", host, service);
-		}
+		return buffer;
 	}
 
 	~UDPClient() {
