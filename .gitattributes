@@ -1,0 +1,4 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+assignment/ export-ignore
+notes/ export-ignore
