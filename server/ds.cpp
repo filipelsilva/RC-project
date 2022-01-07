@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
 
 		if (FD_ISSET(tcp.fd, &mask)) {
 			request = tcp.getData();
+			// TODO: update verbose mode in server
 			if (verbose) {
 				tcp.printVerbose();
 			}
