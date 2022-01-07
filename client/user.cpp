@@ -190,8 +190,8 @@ int main(int argc, char **argv) {
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
-				tcp.sendData(cmd.c_str());
-				reply = functionCaller(tcp.getData());
+				cmd = tcp.sendAndReceive(cmd.c_str());
+				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
 			//Logout before exiting
 			if(cmd.compare("exit") == 0){
 				string cmd = "logout " + save_logout("") + "\n";
-				udp.sendData(cmd.c_str());
+				udp.sendAndReceive(cmd.c_str());
 				exit(0);
 			}
 
@@ -213,15 +213,15 @@ int main(int argc, char **argv) {
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
-				udp.sendData(cmd.c_str());
-				reply = functionCaller(udp.getData());
+				cmd = udp.sendAndReceive(cmd.c_str());
+				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
 				fprintf(stderr, "Error: invalid command\n");
 			}
 		}
-		
+
 		else{
 			reply = processLocalCommand(cmd);
 
