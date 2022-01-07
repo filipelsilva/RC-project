@@ -17,5 +17,8 @@ clean:
 format:
 	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
 
+todo:
+	grep --colour=always -r -i --include=\*.cpp --include=\*.hpp "todo"
+
 zip:
 	git archive -o proj_13.zip HEAD

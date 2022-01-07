@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
 		if ((counter = select(maxfd, &mask, (fd_set*)NULL, (fd_set*)NULL,
 						(struct timeval*)NULL)) <= 0) {
-			fprintf(stderr, "Error: socket: %s\n", gai_strerror(counter));
+			fprintf(stderr, "Error: socket: %s\n", strerror(counter));
 			exit(1);
 		}
 

@@ -7,7 +7,7 @@ class UDPClient : public Client {
 		this->port = port;
 
 		if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 			exit(1);
 		}
 
@@ -29,7 +29,7 @@ class UDPClient : public Client {
 		memset(buffer, 0, sizeof(buffer));
 		if ((n = sendto(fd, message, strlen(message), 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: sendto: %s\n", gai_strerror(n));
+			fprintf(stderr, "Error: sendto: %s\n", strerror(n));
 			exit(1);
 		}
 
@@ -37,7 +37,7 @@ class UDPClient : public Client {
 
 		if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr,
 						&addrlen)) == -1) {
-			fprintf(stderr, "Error: recvfrom: %s\n", gai_strerror(n));
+			fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
 			exit(1);
 		}
 
@@ -46,7 +46,7 @@ class UDPClient : public Client {
 
 		if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
 						sizeof(host), service, sizeof(service), 0)) != 0) {
-			fprintf(stderr, "Error: getnameinfo: %s\n", gai_strerror(errcode));
+			fprintf(stderr, "Error: getnameinfo: %s\n", strerror(errcode));
 			exit(1);
 		}
 		else {

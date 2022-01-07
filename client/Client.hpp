@@ -3,8 +3,6 @@
 
 #include "../Constants.hpp"
 
-// TODO: ver das funções gai_strerror e strerror, porque posso-me ter enganado
-// e posto em tudo quando deveria apenas ser numa delas
 class Client {
 	protected:
 		struct sigaction act;

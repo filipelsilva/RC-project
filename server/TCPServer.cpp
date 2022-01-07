@@ -7,7 +7,7 @@ class TCPServer : public Server {
 			memset(&act, 0, sizeof(act));
 			act.sa_handler = SIG_IGN;
 			if ((errcode = sigaction(SIGPIPE, &act, NULL)) == -1) {
-				fprintf(stderr, "Error: sigaction: %s\n", gai_strerror(errcode));
+				fprintf(stderr, "Error: sigaction: %s\n", strerror(errcode));
 				exit(1);
 			}
 
@@ -15,7 +15,7 @@ class TCPServer : public Server {
 			this->port = port;
 
 			if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-				fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+				fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 				exit(1);
 			}
 
@@ -30,12 +30,12 @@ class TCPServer : public Server {
 			}
 
 			if ((n = bind(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-				fprintf(stderr, "Error: bind: %s\n", gai_strerror(n));
+				fprintf(stderr, "Error: bind: %s\n", strerror(n));
 				exit(1);
 			}
 
 			if ((errcode = listen(fd, 5)) == -1) {
-				fprintf(stderr, "Error: listen: %s\n", gai_strerror(n));
+				fprintf(stderr, "Error: listen: %s\n", strerror(n));
 				exit(1);
 			}
 		}
@@ -45,13 +45,13 @@ class TCPServer : public Server {
 			memset(buffer, 0, sizeof(buffer));
 
 			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
+				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
 				exit(1);
 			}
 
 			while ((n = read(newfd, buffer, COMMAND_SIZE)) != 0) {
 				if (n == -1) {
-					fprintf(stderr, "Error: read: %s\n", gai_strerror(n));
+					fprintf(stderr, "Error: read: %s\n", strerror(n));
 					exit(1);
 				}
 				ptr = &buffer[0];
@@ -67,14 +67,14 @@ class TCPServer : public Server {
 			addrlen = sizeof(addr);
 
 			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: accept: %s\n", gai_strerror(newfd));
+				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
 				exit(1);
 			}
 
 			n = strlen(message);
 			while (n > 0) {
 				if ((nw = write(newfd, message, n)) == -1) {
-					fprintf(stderr, "Error: write %s\n", gai_strerror(nw));
+					fprintf(stderr, "Error: write %s\n", strerror(nw));
 					exit(1);
 				}
 				n -= nw;

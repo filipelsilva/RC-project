@@ -3,8 +3,6 @@
 
 #include "../Constants.hpp"
 
-// TODO: ver das funções gai_strerror e strerror, porque posso-me ter enganado
-// e posto em tudo quando deveria apenas ser numa delas
 class Server {
 	protected:
 		struct sigaction act;
@@ -22,7 +20,7 @@ class Server {
 		void printVerbose() {
 			if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
 							sizeof(host), service, sizeof(service), 0)) != 0) {
-				fprintf(stderr, "error: getnameinfo: %s\n", gai_strerror(errcode));
+				fprintf(stderr, "error: getnameinfo: %s\n", strerror(errcode));
 				exit(1);
 			}
 			else {

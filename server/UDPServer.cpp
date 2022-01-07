@@ -6,7 +6,7 @@ class UDPServer : public Server {
 			this->port = port;
 
 			if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-				fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+				fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 				exit(1);
 			}
 
@@ -21,7 +21,7 @@ class UDPServer : public Server {
 			}
 
 			if ((n = bind(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-				fprintf(stderr, "Error: bind: %s\n", gai_strerror(n));
+				fprintf(stderr, "Error: bind: %s\n", strerror(n));
 				exit(1);
 			}
 		}
@@ -31,7 +31,7 @@ class UDPServer : public Server {
 			memset(buffer, 0, sizeof(buffer));
 
 			if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: recvfrom: %s\n", gai_strerror(n));
+				fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
 				exit(1);
 			}
 
@@ -43,7 +43,7 @@ class UDPServer : public Server {
 
 		void sendData(const char *message) {
 			if ((n = sendto(fd, message, strlen(message), 0, (struct sockaddr*)&addr, addrlen)) == -1) {
-				fprintf(stderr, "Error: sendto: %s\n", gai_strerror(n));
+				fprintf(stderr, "Error: sendto: %s\n", strerror(n));
 				exit(1);
 			}
 		}

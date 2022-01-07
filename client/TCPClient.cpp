@@ -7,7 +7,7 @@ class TCPClient : public Client {
 		memset(&act, 0, sizeof(act));
 		act.sa_handler = SIG_IGN;
 		if ((errcode = sigaction(SIGPIPE, &act, NULL)) == -1) {
-			fprintf(stderr, "Error: sigaction: %s\n", gai_strerror(errcode));
+			fprintf(stderr, "Error: sigaction: %s\n", strerror(errcode));
 			exit(1);
 		}
 
@@ -32,12 +32,12 @@ class TCPClient : public Client {
 	void sendData(const char *message) {
 		memset(buffer, 0, sizeof(buffer));
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 			exit(1);
 		}
 
 		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
+			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
 			exit(1);
 		}
 
@@ -57,12 +57,12 @@ class TCPClient : public Client {
 		close(fd);
 
 		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", gai_strerror(fd));
+			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 			exit(1);
 		}
 
 		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", gai_strerror(errcode));
+			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
 			exit(1);
 		}
 
