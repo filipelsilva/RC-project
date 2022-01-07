@@ -74,8 +74,8 @@ int main(int argc, char **argv) {
 
 	int maxfd, counter;
 	fd_set mask;
-	TCPServer tcp = TCPServer(DSport);
-	UDPServer udp = UDPServer(DSport);
+	TCPServer tcp = TCPServer(DSport, verbose);
+	UDPServer udp = UDPServer(DSport, verbose);
 
 	// Set mask and maxfd to select
 	FD_ZERO(&mask);
@@ -95,25 +95,18 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 
+		// TODO: in verbose mode, output UID and GID if not empty
 		if (FD_ISSET(tcp.fd, &mask)) {
 			request = tcp.getData();
-			// TODO: update verbose mode in server
-			if (verbose) {
-				tcp.printVerbose();
-			}
 			reply = functionCaller(command.assign(request));
 			tcp.sendData(reply.c_str());
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
 			request = udp.getData();
-			if (verbose) {
-				udp.printVerbose();
-			}
 			reply = functionCaller(command.assign(request));
 			udp.sendData(reply.c_str());
 		}
-		//write(1, request, strlen(request));
 	}
 
 	exit(0);

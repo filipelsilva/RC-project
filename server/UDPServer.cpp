@@ -2,7 +2,8 @@
 
 class UDPServer : public Server {
 	public:
-		UDPServer(const char *port) {
+		UDPServer(const char *port, int verbose) {
+			this->verbose = verbose;
 			this->port = port;
 
 			if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -35,7 +36,12 @@ class UDPServer : public Server {
 				exit(1);
 			}
 
-			write(1, "received: ", 10);
+			if (verbose) {
+				printVerbose();
+			}
+			else {
+				write(1, "> ", strlen("> "));
+			}
 			write(1, buffer, n);
 
 			return buffer;

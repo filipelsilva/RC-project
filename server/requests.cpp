@@ -1,6 +1,6 @@
 #include "../Common.hpp"
 
-// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
+// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
 
 /*Verifies if a string only consists of digits.*/
 bool isNumber(string str){

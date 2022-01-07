@@ -7,7 +7,7 @@ class Server {
 	protected:
 		struct sigaction act;
 		struct addrinfo hints, *res;
-		int newfd, errcode;
+		int newfd, errcode, verbose;
 		ssize_t n, nw;
 		struct sockaddr_in addr;
 		socklen_t addrlen;
@@ -24,7 +24,10 @@ class Server {
 				exit(1);
 			}
 			else {
-				printf("%s:%s -> ", host, service);
+				write(1, host, strlen(host));
+				write(1, ":", strlen(":"));
+				write(1, service, strlen(service));
+				write(1, " -> ", strlen(" -> "));
 			}
 		}
 
