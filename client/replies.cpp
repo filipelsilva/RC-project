@@ -2,14 +2,6 @@
 
 string selected_UID, selected_GID, sent_GName, password;
 
-//TODO: por isto num ficheiro comum a todos...
-string remove_new_line(string s){
-	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
-		return s.substr(0, s.length()-1);
-	}
-	return s;
-}
-
 void save_login(string remaining){
     stringstream ss;
 	ss << remaining;

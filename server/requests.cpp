@@ -2,13 +2,6 @@
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
 
-string remove_new_line(string s){
-	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
-		return s.substr(0, s.length()-1);
-	}
-	return s;
-}
-
 bool isNumber(string str){
 	for(int i = 0; i < str.length(); i++)
       	if(! (str[i] >= '0' && str[i] <= '9') ) 

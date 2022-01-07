@@ -25,15 +25,22 @@ extern "C" { // For C libraries, to avoid namespace cluttering
 #include <dirent.h>
 }
 
+using namespace std;
+
 // Functions
 #define max(A,B) ((A)>=(B)?(A):(B))
+
+inline string remove_new_line(string s){
+	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
+		return s.substr(0, s.length()-1);
+	}
+	return s;
+}
 
 // Values
 #define DSPORT_DEFAULT "58013"
 #define DSIP_DEFAULT "localhost"
 #define COMMAND_SIZE 128
-
-using namespace std;
 
 static map<string, string> commands = {
 	{"showuid", "showuid"},
