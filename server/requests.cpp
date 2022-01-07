@@ -306,8 +306,6 @@ int max_MID(string GID){
 
 string post_text(string UID, string GID, string text){
 	string path = "../GROUPS/";
-	DIR *dir;
-	struct dirent *diread;
 	int i;
 	string author, msg;
 
@@ -351,7 +349,7 @@ bool validFileInfo(string Fname, string Fsize, string data){
 	locale loc;
 	int toBeSure = 0;
 
-	if(0 <= strlen(Fname.c_str()) <= 24){
+	if(strlen(Fname.c_str()) <= 24){
 		for (i=0; Fname[i] != '\0'; i++)
 			if (!isalnum(Fname[i]) && Fname[i] != '-' && Fname[i] != '_' && Fname[i] != '.')
 				return false;
@@ -425,8 +423,6 @@ string getFileSize(string path){
 }
 
 string getFileData(string path){
-	char* data;
-
 	ifstream fileFile(path);
 	stringstream ss;
 
@@ -783,8 +779,6 @@ string gur(string command){
 	string reply = "RGU NOK\n";
 	string cmd, UID, GID;
 	string path = "../GROUPS/";
-	DIR *dir;
-	struct dirent *diread;
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
@@ -970,8 +964,6 @@ string pst(string command){
 	getline(ss, Fname, ' ');
 	getline(ss, Fsize, ' ');
 	getline(ss, data);
-	DIR *dir;
-	struct dirent *diread;
 	string path = "../GROUPS/";	
 	string status;
 
