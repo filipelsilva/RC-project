@@ -61,9 +61,8 @@ class TCPServer : public Server {
 					printVerbose();
 				}
 				else {
-					write(1, "received: ", 10);
+					write(1, "> ", strlen("> "));
 				}
-
 				write(1, ptr, n);
 			}
 			close(newfd);

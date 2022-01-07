@@ -40,7 +40,7 @@ class UDPServer : public Server {
 				printVerbose();
 			}
 			else {
-				write(1, "> ", 10);
+				write(1, "> ", strlen("> "));
 			}
 			write(1, buffer, n);
 
