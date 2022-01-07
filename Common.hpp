@@ -12,7 +12,6 @@
 #include <map>
 #include <sstream>
 #include <algorithm>
-#include <regex>
 extern "C" { // For C libraries, to avoid namespace cluttering
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -73,18 +72,6 @@ static map<string, string> commands = {
 	{"ERR", "ERR"},
 };
 
-static vector<string> ClientUser_local = {
-	"showuid",
-	"showgid",
-	"select",
-};
-
-static vector<string> ClientUser_local_abrev = {
-	"su",
-	"sg",
-	"sag",
-};
-
 static vector<string> ClientUser_UDP = {
 	"reg",
 	"unregister",
@@ -97,10 +84,7 @@ static vector<string> ClientUser_UDP = {
 };
 
 static vector<string> ClientUser_UDP_abrev = {
-	"reg",
 	"unr",
-	"login",
-	"logout",
 	"gl",
 	"s",
 	"u",
@@ -108,50 +92,14 @@ static vector<string> ClientUser_UDP_abrev = {
 };
 
 static vector<string> ClientUser_TCP = {
+	"ulist",
 	"post",
 	"retrieve",
-	"ulist",
 };
 
 static vector<string> ClientUser_TCP_abrev = {
-	"post",
-	"r",
 	"ul",
+	"r",
 };
 
-/*
-static vector<string> UserDS_UDP = {
-	"REG",
-	"UNR",
-	"LOG",
-	"OUT",
-	"GLS",
-	"GSR",
-	"GUR",
-	"GLM",
-};
-
-static vector<string> UserDS_UDP_response = {
-	"RRG",
-	"RUN",
-	"RLO",
-	"ROU",
-	"RGL",
-	"RGS",
-	"RGU",
-	"RGM",
-};
-
-static vector<string> UserDS_TCP = {
-	"ULS",
-	"PST",
-	"RTV",
-};
-
-static vector<string> UserDS_TCP_response = {
-	"RUL",
-	"RPT",
-	"RRT",
-};
-*/
 #endif
