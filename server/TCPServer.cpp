@@ -2,7 +2,7 @@
 
 class TCPServer : public Server {
 	public:
-		TCPServer(const char *port) {
+		TCPServer(const char *port, int verbose) {
 			// Handling of SIGPIPE signal
 			memset(&act, 0, sizeof(act));
 			act.sa_handler = SIG_IGN;
@@ -12,6 +12,7 @@ class TCPServer : public Server {
 			}
 
 			// TCPServer setup
+			this->verbose = verbose;
 			this->port = port;
 
 			if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -56,7 +57,13 @@ class TCPServer : public Server {
 				}
 				ptr = &buffer[0];
 
-				write(1, "received: ", 10);
+				if (verbose) {
+					printVerbose();
+				}
+				else {
+					write(1, "received: ", 10);
+				}
+
 				write(1, ptr, n);
 			}
 			close(newfd);
