@@ -2,7 +2,6 @@
 *.yaml
 *.pptx
 *.zip
-tests/
 .vscode/
 USERS/
 GROUPS/
