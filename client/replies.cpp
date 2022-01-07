@@ -1,4 +1,4 @@
-#include "../Constants.hpp"
+#include "../Common.hpp"
 
 string selected_UID, selected_GID, sent_GName, password;
 

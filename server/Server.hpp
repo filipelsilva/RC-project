@@ -1,7 +1,7 @@
 #ifndef SERVER
 #define SERVER
 
-#include "../Constants.hpp"
+#include "../Common.hpp"
 
 class Server {
 	protected:

@@ -1,7 +1,7 @@
 #ifndef CLIENT
 #define CLIENT
 
-#include "../Constants.hpp"
+#include "../Common.hpp"
 
 class Client {
 	protected:

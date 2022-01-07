@@ -1,4 +1,4 @@
-#include "../Constants.hpp"
+#include "../Common.hpp"
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
 
