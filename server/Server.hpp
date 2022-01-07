@@ -20,7 +20,7 @@ class Server {
 		void printVerbose() {
 			if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
 							sizeof(host), service, sizeof(service), 0)) != 0) {
-				fprintf(stderr, "error: getnameinfo: %s\n", strerror(errcode));
+				fprintf(stderr, "error: getnameinfo: %s\n", gai_strerror(errcode));
 				exit(1);
 			}
 			else {
