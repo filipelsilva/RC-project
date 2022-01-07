@@ -36,7 +36,7 @@ string save_unsubscribe(string remaining){
 }
 
 string save_my_groups(string remaining){
-    return selected_UID + " " + remaining;
+    return selected_UID + remaining;
 }
 
 string save_ulist(string remaining){

@@ -29,8 +29,10 @@ bool UID_free(string UID){
 	while((diread = readdir(dir)) != nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-		if(diread->d_name == UID)
+		if(diread->d_name == UID){
+			closedir(dir);
 			return false;
+		}
 	}
 	closedir(dir);
 	return true;
@@ -226,6 +228,8 @@ bool user_logon(string UID){
 
 	dir = opendir(path.c_str());
 
+	diread = readdir(dir);
+
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.'){
 			continue;
@@ -287,7 +291,7 @@ int max_MID(string GID){
 
 		i++;
 	}
-
+	closedir(dir);
 	return i;
 }
 
@@ -406,7 +410,7 @@ string getFileName(string path){
 			continue;
 		name = diread->d_name;
 	}
-
+	closedir(dir);
 	return name;	
 }
 
@@ -818,11 +822,9 @@ string glm(string command){
 		fprintf(stderr, "ERR: Missing argument(s)\n");
 		return reply;
 	}
-	if(user_logon(UID)){
-		cout << "oi" << endl;
-	}
+
 	if(validUID(UID) && !UID_free(UID) && user_logon(UID)){
-			
+		
 		dir = opendir(path.c_str());
 
 		while((diread = readdir(dir)) != nullptr){
@@ -846,6 +848,7 @@ string glm(string command){
 				list.push_back(message.str());
 			}
 		}
+		cout << i << endl;
 		if(i == 0){
 			cout << "RGM 0: No groups subscribed\n";
 			reply = "RGM 0\n";
