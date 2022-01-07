@@ -3,7 +3,7 @@
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
 
 bool isNumber(string str){
-	for(int i = 0; i < str.length(); i++)
+	for(size_t i = 0; i < str.length(); i++)
       	if(! (str[i] >= '0' && str[i] <= '9') ) 
       		return false;
 
@@ -24,7 +24,7 @@ bool validPass(string pass){
 }
 
 bool validUID(string UID){
-	if (isNumber(UID) && UID.length()==UID_LENGTH)
+	if (UID.length()==UID_LENGTH && isNumber(UID))
 		return true;
 	return false;
 }
@@ -628,7 +628,7 @@ string gls(string command){
 	DIR *dir;
 	struct dirent *diread;
 	string path = "../GROUPS";	
-	int i;
+	size_t i;
 	if(command.compare("GLS") != 0){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
@@ -828,7 +828,7 @@ string glm(string command){
 	DIR *dir;
 	struct dirent *diread;
 	string path = "../GROUPS";	
-	int i = 0;
+	size_t i = 0;
 	vector<string> list;
 	ss << command;
 	getline(ss, cmd, ' ');
@@ -898,7 +898,7 @@ string uls(string command){
 	struct dirent *diread;
 	string path = "../GROUPS/";	
 	vector<string> list;
-	int i;
+	size_t i;
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, GID);
@@ -973,7 +973,6 @@ string pst(string command){
 	DIR *dir;
 	struct dirent *diread;
 	string path = "../GROUPS/";	
-	int i;
 	string status;
 
 	if(cmd.compare("PST") != 0){
@@ -1059,7 +1058,7 @@ string rtv(string command){
 	string path = "../GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	int i = 0;
+	size_t i = 0;
 
 	vector<string> list;
 
