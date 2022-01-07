@@ -11,22 +11,20 @@ bool isNumber(string str){
 }
 
 bool isAlNum(string str){
-	int i;
-
-	for (i=0; i<8; i++)
+	for (int i=0; i<8; i++)
 		if (!isalnum(str[i]))
 			return false;
 	return true;
 }
 
 bool validPass(string pass){
-	if (pass.length()==8 && isAlNum(pass))
+	if (pass.length()==PASS_LENGTH && isAlNum(pass))
 		return true;
 	return false;
 }
 
 bool validUID(string UID){
-	if (isNumber(UID) && UID.length()==5)
+	if (isNumber(UID) && UID.length()==UID_LENGTH)
 		return true;
 	return false;
 }

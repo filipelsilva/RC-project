@@ -41,6 +41,8 @@ inline string remove_new_line(string s){
 #define DSPORT_DEFAULT "58013"
 #define DSIP_DEFAULT "localhost"
 #define COMMAND_SIZE 128
+#define UID_LENGTH 5
+#define PASS_LENGTH 8
 
 static map<string, string> commands = {
 	{"showuid", "showuid"},
