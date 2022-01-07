@@ -2,23 +2,6 @@
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
 
-/*Verifies if a string only consists of digits.*/
-bool isNumber(string str){
-	for(size_t i = 0; i < str.length(); i++)
-      	if(! (str[i] >= '0' && str[i] <= '9') ) 
-      		return false;
-
-	return true;
-}
-
-/*Verifies if a string only consists of alphanumerical characters.*/
-bool isAlNum(string str){
-	for (int i=0; i<8; i++)
-		if (!isalnum(str[i]))
-			return false;
-	return true;
-}
-
 /*Verifies if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
 	if (pass.length()==PASS_LENGTH && isAlNum(pass))
@@ -51,22 +34,6 @@ bool UID_free(string UID){
 	}
 	closedir(dir);
 	return true;
-}
-
-/*Deletes all files from a given directory.*/
-void delete_files(string path){
-	DIR *dir;
-	struct dirent *diread;	
-	dir = opendir(path.c_str());
-
-	while((diread = readdir(dir)) != nullptr){
-		if(diread->d_name[0]=='.')
-			continue;
-		string current_path = path;
-		current_path.append("/"); current_path.append(diread->d_name);
-
-		remove(current_path.c_str());
-	}
 }
 
 /*Verifies if the given password is the one registered for the given UID.*/
@@ -260,14 +227,16 @@ bool user_logon(string UID){
 	dir = opendir(path.c_str());
 
 	while((diread = readdir(dir))!= nullptr){
-		if(diread->d_name[0]=='.')
+		if(diread->d_name[0]=='.'){
 			continue;
+		}
 
 		if(loginFile == diread->d_name){
 			closedir(dir);
 			return true;
 		}
 	}
+	
 	closedir(dir);
 	return false;	
 }
@@ -296,11 +265,6 @@ bool UID_in_group(string UID, string GID){
 	}
 	closedir(dir);
 	return false;
-}
-
-/*Verifies if the message text is valid (maximum of 240 characters).*/
-bool validTextSize(string Tsize){
-	return stoi(Tsize) <= 240;
 }
 
 /*Returns the number of messages in the group with the given GID.*/
@@ -444,24 +408,6 @@ string getFileName(string path){
 	}
 
 	return name;	
-}
-
-/*Returns the size of the file in a given message.*/
-string getFileSize(string path){
-
-	ifstream fileSize(path, ios::binary);
-	fileSize.seekg(0, ios::end);
-	return to_string(fileSize.tellg());
-}
-
-/*Return the file data of a given message.*/
-string getFileData(string path){
-	ifstream fileFile(path);
-	stringstream ss;
-
-	ss << fileFile.rdbuf();
-
-	return ss.str();
 }
 
 /*Registers a new user with a given UID and a given password.*/
@@ -834,6 +780,10 @@ string gur(string command){
 				cout << "NOK: User doesn't susbscribe to this group!\n";
 				reply = "RGU NOK\n";
 			}
+			else{
+				cout << "OK: User successfully unsusbscribed to this group!\n";
+				reply = "RGU OK\n";
+			}
 		}
 		else{
 			cout << "E_GRP: Invalid GID.\n";
@@ -868,7 +818,9 @@ string glm(string command){
 		fprintf(stderr, "ERR: Missing argument(s)\n");
 		return reply;
 	}
-
+	if(user_logon(UID)){
+		cout << "oi" << endl;
+	}
 	if(validUID(UID) && !UID_free(UID) && user_logon(UID)){
 			
 		dir = opendir(path.c_str());

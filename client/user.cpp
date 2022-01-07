@@ -20,28 +20,31 @@ string processCommand(const char *message) {
 	cmd = remove_new_line(cmd);
 	auto code = commands.find(cmd);
 	if(code->second.compare("LOG") == 0){
-		save_login(remaining);
+		remaining = save_login(remaining);
 	}
 	if(code->second.compare("OUT") == 0){
-		save_logout(remaining);
+		remaining = save_logout(remaining);
 	}
 	if(code->second.compare("GSR") == 0){
-		save_subscribe(remaining);
+		remaining = save_subscribe(remaining);
 	}
 	if(code->second.compare("GUR") == 0){
-		save_unsubscribe(remaining);
+		remaining = save_unsubscribe(remaining);
 	}
 	if(code->second.compare("GLM") == 0){
-		save_my_groups(remaining);
+		remaining = save_my_groups(remaining);
 	}
 	if(code->second.compare("ULS") == 0){
-		save_ulist(remaining);		
+		remaining = save_ulist(remaining);		
 	}
 	if(code->second.compare("PST") == 0){
-		save_post(remaining);
+		remaining = save_post(remaining);
+		if(remaining.compare("ERR") == 0){
+			return "ERR";
+		}
 	}
 	if(code->second.compare("RTV") == 0){
-		save_retrieve(remaining);
+		remaining = save_retrieve(remaining);
 	}
 	if(code->second.compare("ERR") != 0){
 		if (!remaining.empty()){
@@ -70,8 +73,6 @@ string processLocalCommand(string command){
 		reply = showgid();
 	if(cmd.compare("select") == 0 || cmd.compare("sag") == 0)
 		reply = select_GID(GID);
-	if(cmd.compare("exit") == 0)
-		exit(0);
 	return reply;
 }
 
@@ -184,7 +185,8 @@ int main(int argc, char **argv) {
 
 		if(isTCP(cmd.assign(input))){
 			TCPClient tcp = TCPClient(DSIP, DSport);
-			// cmd = processCommand(input);
+
+			cmd = processCommand(input);
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
@@ -196,8 +198,17 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Error: invalid command\n");
 			}
 		}
+
 		else if(isUDP(cmd)){
 			UDPClient udp = UDPClient(DSIP, DSport);
+			
+			//Logout before exiting
+			if(cmd.compare("exit") == 0){
+				string cmd = "logout " + save_logout("") + "\n";
+				udp.sendData(cmd.c_str());
+				exit(0);
+			}
+
 			cmd = processCommand(input);
 
 			if(cmd.compare("ERR") != 0){
@@ -210,6 +221,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Error: invalid command\n");
 			}
 		}
+		
 		else{
 			reply = processLocalCommand(cmd);
 

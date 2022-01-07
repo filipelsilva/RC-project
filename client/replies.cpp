@@ -2,39 +2,73 @@
 
 string selected_UID, selected_GID, sent_GName, password;
 
-void save_login(string remaining){
+//TODO: verificar login no server
+string save_login(string remaining){
     stringstream ss;
 	ss << remaining;
-	getline(ss, selected_UID, ' ');
-	getline(ss, password, ' ');
+    if(selected_UID.empty() && password.empty()){
+	    getline(ss, selected_UID, ' ');
+        getline(ss, password);
+    }
+    return remaining;
 }
 
-void save_logout(string remaining){
-
+string save_logout(string remaining){
+    remaining += selected_UID + " " + password;
+    return remaining;
 }
 
-void save_subscribe(string remaining){
-
+string save_subscribe(string remaining){
+    stringstream ss;
+    string GID, GName;
+	ss << remaining;
+    getline(ss, GID, ' ');
+    getline(ss, GName);
+    if(GID.compare("0") == 0){
+        GID = "00";
+    }
+    sent_GName = GName;
+    return selected_UID + " " + GID + " " + GName;
 }
 
-void save_unsubscribe(string remaining){
-
+string save_unsubscribe(string remaining){
+    return selected_UID + " " + remaining;
 }
 
-void save_my_groups(string remaining){
-
+string save_my_groups(string remaining){
+    return selected_UID + " " + remaining;
 }
 
-void save_ulist(string remaining){
-
+string save_ulist(string remaining){
+    return selected_GID + remaining;
 }
 
-void save_post(string remaining){
-
+string save_post(string remaining){
+    stringstream ss;
+    string text, Fname;
+    string c1, c2;
+    string Tsize, Fsize, data;
+    string file_path;
+	ss << remaining;
+    getline(ss, text, ' ');
+    getline(ss, Fname);
+    c1 = text.front(); c2 = text.back();
+    if(c1.compare("\"") != 0 && c2.compare("\"") != 0){
+        return "ERR";
+    }
+    Tsize = to_string(text.length()-2);
+    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text;
+    if(!Fname.empty()){
+        file_path= "/" + Fname;
+        Fsize = getFileSize(file_path);
+        data = getFileData(file_path);
+        remaining += " " + Fname + " " + Fsize + " " + data;
+    }
+    return remaining;
 }
 
-void save_retrieve(string remaining){
-
+string save_retrieve(string remaining){
+    return selected_UID + " " + selected_GID + " " + remaining;
 }
 
 string showuid(){
@@ -53,7 +87,9 @@ string showgid(){
 
 string select_GID(string GID){
     selected_GID = GID;
-    return "Group " + selected_GID + " - \"" + sent_GName + "\"is now the active group\n"; //TODO: por o nome do grupo?
+    string reply = "Group " + selected_GID + " - " + "is now the active group\n"; //TODO: por o nome do grupo?
+    sent_GName = "";
+    return reply;
 }
 
 string rrg(string command){
@@ -96,6 +132,7 @@ string rlo(string command){
 string rou(string command){
     if(command.compare("ROU OK\n") == 0){
         selected_UID = "";
+        password = "";
         return "You are now logged out\n";
     }
     else if(command.compare("ROU NOK\n") == 0){
@@ -139,6 +176,9 @@ string rgs(string command){
     if(cmd.compare("RGS") == 0){
         if(status.compare("NEW") == 0){
             return "New group created and subscribed: " + GID + " - \"" + sent_GName + "\"\n";
+        }
+        else if(status.compare("OK") == 0){
+            return "User successfully subscribed to group\n";
         }
         else if(status.compare("E_USR") == 0){
             return "User could not create nor subscribe the group. Invalid UID\n";
@@ -236,7 +276,7 @@ string rpt(string command){
             return "Something went wrong. User could not post\n";
         }
         else{
-            return "posted message number " + status + " to group " + selected_GID + " - \"" + sent_GName + "\"\n";
+            return "posted message number " + status + " to group " + selected_GID + "\n";
         }
     }
     return "Something went wrong\n";

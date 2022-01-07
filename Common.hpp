@@ -36,6 +36,62 @@ inline string remove_new_line(string s){
 	return s;
 }
 
+/*Verifies if a string only consists of digits.*/
+inline bool isNumber(string str){
+	for(size_t i = 0; i < str.length(); i++)
+      	if(! (str[i] >= '0' && str[i] <= '9') ) 
+      		return false;
+
+	return true;
+}
+
+/*Verifies if a string only consists of alphanumerical characters.*/
+inline bool isAlNum(string str){
+	for (int i=0; i<8; i++)
+		if (!isalnum(str[i]))
+			return false;
+	return true;
+}
+
+/*Deletes all files from a given directory.*/
+inline void delete_files(string path){
+	DIR *dir;
+	struct dirent *diread;	
+	dir = opendir(path.c_str());
+
+	while((diread = readdir(dir)) != nullptr){
+		if(diread->d_name[0]=='.')
+			continue;
+		string current_path = path;
+		current_path.append("/"); current_path.append(diread->d_name);
+
+		remove(current_path.c_str());
+	}
+}
+
+/*Verifies if the message text is valid (maximum of 240 characters).*/
+inline bool validTextSize(string Tsize){
+	return stoi(Tsize) <= 240;
+}
+
+/*Returns the size of the file in a given message.*/
+inline string getFileSize(string path){
+
+	ifstream fileSize(path, ios::binary);
+	fileSize.seekg(0, ios::end);
+	return to_string(fileSize.tellg());
+}
+
+/*Return the file data of a given message.*/
+inline string getFileData(string path){
+	ifstream fileFile(path);
+	stringstream ss;
+
+	ss << fileFile.rdbuf();
+
+	return ss.str();
+}
+
 // Values
 #define DSPORT_DEFAULT "58013"
 #define DSIP_DEFAULT "localhost"
@@ -81,6 +137,7 @@ static vector<string> ClientUser_UDP = {
 	"subscribe",
 	"unsubscribe",
 	"my_groups",
+	"exit",
 };
 
 static vector<string> ClientUser_UDP_abrev = {
