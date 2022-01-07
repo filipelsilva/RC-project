@@ -2,6 +2,7 @@
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp; add post from commands branch
 
+/*Verifies if a string only consists of digits.*/
 bool isNumber(string str){
 	for(size_t i = 0; i < str.length(); i++)
       	if(! (str[i] >= '0' && str[i] <= '9') ) 
@@ -10,6 +11,7 @@ bool isNumber(string str){
 	return true;
 }
 
+/*Verifies if a string only consists of alphanumerical characters.*/
 bool isAlNum(string str){
 	for (int i=0; i<8; i++)
 		if (!isalnum(str[i]))
@@ -17,18 +19,21 @@ bool isAlNum(string str){
 	return true;
 }
 
+/*Verifies if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
 	if (pass.length()==PASS_LENGTH && isAlNum(pass))
 		return true;
 	return false;
 }
 
+/*Verifies if a User ID is valid. (5-digit number)*/
 bool validUID(string UID){
 	if (UID.length()==UID_LENGTH && isNumber(UID))
 		return true;
 	return false;
 }
 
+/*Verifies if there isn't an equal User ID already registered.*/
 bool UID_free(string UID){
 	string path = "../USERS";
 	DIR *dir;
@@ -48,6 +53,7 @@ bool UID_free(string UID){
 	return true;
 }
 
+/*Deletes all files from a given directory.*/
 void delete_files(string path){
 	DIR *dir;
 	struct dirent *diread;	
@@ -63,6 +69,7 @@ void delete_files(string path){
 	}
 }
 
+/*Verifies if the given password is the one registered for the given UID.*/
 bool correct_pass(string UID, string pass){
 	string path="../USERS/";
 	path.append(UID);
@@ -84,6 +91,7 @@ bool correct_pass(string UID, string pass){
 
 }
 
+/*Returns the number of groups available.*/
 int numberOfGroups(string path){
 	int i = 0;
 	DIR *dir;
@@ -106,6 +114,7 @@ int numberOfGroups(string path){
 	return i;
 }
 
+/*Verifies if the given group already exists.*/
 bool groupExists(string GID){
 	string path = "../GROUPS";
 	DIR *dir;
@@ -127,6 +136,8 @@ bool groupExists(string GID){
 	return false;	
 }
 
+/*Verifies if the given Group ID is valid (2-digit number) 
+and if the group exists.*/
 bool validGID(string GID){
 	if(GID.length() == 2 && isNumber(GID))
 		if(GID == "00" || groupExists(GID))
@@ -134,6 +145,8 @@ bool validGID(string GID){
 	return false;
 }
 
+/*Verifies if the name of the group with given GID
+is the same as the given Gname.*/
 bool existingGroupName(string GID, string GName){
 	string path = "../GROUPS/";
 	string GName_file = "_name.txt";
@@ -156,6 +169,8 @@ bool existingGroupName(string GID, string GName){
 
 }
 
+/*Verifies if given group name is valid (total of 
+24 alphanumerical characters plus '-' and '_').*/
 bool validGroupName(string GName){
 	int i;
 
@@ -167,6 +182,7 @@ bool validGroupName(string GName){
 	return true;
 }
 
+/*Unsubscribe all groups that the given UID subscribes.*/
 void unsubscribe_groups(string UID){
 	string path = "../GROUPS";
 	DIR *dir;
@@ -189,6 +205,7 @@ void unsubscribe_groups(string UID){
 	closedir(dir);	
 }
 
+/*Returns the group name of the group with the given GID.*/
 string get_group_name(string GID){
 	string path = "../GROUPS/";
 
@@ -204,6 +221,7 @@ string get_group_name(string GID){
 	return GName;
 }
 
+/*Returns the latest message MID(message ID) of the group with the given GID.*/
 string get_MID(string GID){
 	string path = "../GROUPS/";
 	DIR *dir;
@@ -228,6 +246,7 @@ string get_MID(string GID){
 	return MID;	
 }
 
+/*Verifies if the user with the given UID is logged in.*/
 bool user_logon(string UID){
 	string path = "../USERS/";
 	string loginFile = "_login.txt";	
@@ -253,6 +272,8 @@ bool user_logon(string UID){
 	return false;	
 }
 
+/*Verifies if the user with the given UID is subscribed to the group with
+the given GID.*/
 bool UID_in_group(string UID, string GID){
 	string path = "../GROUPS/";
 	string UIDsubscribed = ".txt";
@@ -277,10 +298,12 @@ bool UID_in_group(string UID, string GID){
 	return false;
 }
 
+/*Verifies if the message text is valid (maximum of 240 characters).*/
 bool validTextSize(string Tsize){
 	return stoi(Tsize) <= 240;
 }
 
+/*Returns the number of messages in the group with the given GID.*/
 int max_MID(string GID){
 	string path = "../GROUPS/";
 	DIR *dir;
@@ -304,6 +327,8 @@ int max_MID(string GID){
 	return i;
 }
 
+/*Posts the given text message on the group with the given GID, having the 
+user with the given UID as an author. */
 string post_text(string UID, string GID, string text){
 	string path = "../GROUPS/";
 	int i;
@@ -342,6 +367,9 @@ string post_text(string UID, string GID, string text){
 	return new_MID;
 }
 
+/*Verifies if the given file name (maximum of 24 alphanumerical characters
+(plus '-', '_' and '.') including the 3 letter extension) and the given
+file size (which field has at most 10 digits) are valid.*/
 bool validFileInfo(string Fname, string Fsize){
 	int i;
 	stringstream ss;
@@ -378,6 +406,8 @@ bool validFileInfo(string Fname, string Fsize){
 	return false;
 }
 
+/*Posts a file with the given file name (Fname) and the given data
+on the group  with the given GID, on the message with the given MID.*/
 void post_file(string Fname, string data, string GID, string MID){
 	string path = "../GROUPS/";
 
@@ -392,6 +422,7 @@ void post_file(string Fname, string data, string GID, string MID){
 	file.close();
 }
 
+/*Returns the name of the file in a given message.*/
 string getFileName(string path){
 	DIR *dir;
 	struct dirent *diread;
@@ -415,6 +446,7 @@ string getFileName(string path){
 	return name;	
 }
 
+/*Returns the size of the file in a given message.*/
 string getFileSize(string path){
 
 	ifstream fileSize(path, ios::binary);
@@ -422,6 +454,7 @@ string getFileSize(string path){
 	return to_string(fileSize.tellg());
 }
 
+/*Return the file data of a given message.*/
 string getFileData(string path){
 	ifstream fileFile(path);
 	stringstream ss;
@@ -431,8 +464,7 @@ string getFileData(string path){
 	return ss.str();
 }
 
-/*REGISTER*/
-/*Falta enviar os códigos, aka dar returns*/
+/*Registers a new user with a given UID and a given password.*/
 string reg(string command){
 	stringstream ss;
 	string reply = "RRG NOK\n";
@@ -492,7 +524,7 @@ string reg(string command){
 	return reply;
 }
 
-/*UNREGISTER*/
+/*Unregisters the user with the given UID and the given password.*/
 string unr(string command){
 	stringstream ss;
 	string reply = "RUN NOK\n";
@@ -541,7 +573,7 @@ string unr(string command){
 	return reply;
 }
 
-/*LOGIN*/
+/*Logs in the user with the given UID and given password.*/
 string log(string command){
 	stringstream ss;
 	string reply = "RLO NOK\n";
@@ -580,7 +612,7 @@ string log(string command){
 	return reply;
 }
 
-/*LOGOUT*/
+/*Logs out the user with the given UID and given password.*/
 string out(string command){
 	stringstream ss;
 	string reply = "ROU NOK\n";
@@ -618,7 +650,7 @@ string out(string command){
 	return reply;
 }
 
-/*GROUP LIST*/
+/*Lists all the existing groups.*/
 string gls(string command){
 	string reply = "ERR\n";
 	DIR *dir;
@@ -669,7 +701,8 @@ string gls(string command){
 	return reply;
 }
 
-/*GROUP SUBSCRIBE*/
+/*The user with the given UID subscribes the group with the given GID and
+the given name (Gname).*/
 string gsr(string command){
 	stringstream ss;
 	string reply = "RGS NOK\n";
@@ -773,7 +806,7 @@ string gsr(string command){
 	return reply;
 }
 
-/*Unsubscribe from group*/
+/*The user with the given UID unsubscribes the group with the given GID.*/
 string gur(string command){
 	stringstream ss;
 	string reply = "RGU NOK\n";
@@ -814,7 +847,7 @@ string gur(string command){
 	return reply;
 }
 
-/*List of Groups subscribed by a specific user*/
+/*List of Groups subscribed by the user with the given UID.*/
 string glm(string command){
 	stringstream ss;
 	string reply = "ERR\n";
@@ -883,7 +916,7 @@ string glm(string command){
 	return reply;
 }
 
-/*List of users subscribed to a given group (TCP)*/
+/*List of users subscribed to a group with the given GID.*/
 string uls(string command){
 	stringstream ss;
 	string reply = "RUL NOK\n";
@@ -950,7 +983,9 @@ string uls(string command){
 	return reply;
 }
 
-/*Doing a post on a certain group*/
+/*The user with the given UID posts a given message (text, which size is Tsize)
+on the group with the given GID. It can include a file with the given name (Fname),
+given size (Fsize) and given data.*/
 string pst(string command){
 	stringstream ss;
 	string reply = "RPT NOK\n";
@@ -1029,6 +1064,9 @@ string pst(string command){
 	return reply;
 }
 
+/*List of messages(max 20) from the group with the given GID
+with MID greater or equal than the given MID, to the subscribed user with
+the given UID.*/
 string rtv(string command){
 	stringstream ss;
 	string reply = "RRT NOK\n";
