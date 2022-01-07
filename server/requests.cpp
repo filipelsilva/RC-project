@@ -342,7 +342,7 @@ string post_text(string UID, string GID, string text){
 	return new_MID;
 }
 
-bool validFileInfo(string Fname, string Fsize, string data){
+bool validFileInfo(string Fname, string Fsize){
 	int i;
 	stringstream ss;
 	string name;
@@ -996,7 +996,7 @@ string pst(string command){
 
 			}
 			else{
-				if(validFileInfo(Fname, Fsize, data)){
+				if(validFileInfo(Fname, Fsize)){
 					if(max_MID(GID) == 9999){
 						cout << "NOK: Maximum number of messages reached (9999).\n";
 						return reply;
