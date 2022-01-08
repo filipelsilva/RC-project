@@ -12,7 +12,7 @@ user: client/user.cpp
 	$(CC) $(CFLAGS) $< -o bin/$@
 
 clean:
-	rm bin/*
+	find bin/ -maxdepth 1 -type f ! -iname ".*" -delete
 
 format:
 	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
