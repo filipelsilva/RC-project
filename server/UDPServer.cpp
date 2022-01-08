@@ -36,12 +36,7 @@ class UDPServer : public Server {
 				exit(1);
 			}
 
-			if (verbose) {
-				printVerbose();
-			}
-			else {
-				write(1, "> ", strlen("> "));
-			}
+			printPrompt(verbose);
 			write(1, buffer, n);
 
 			return buffer;

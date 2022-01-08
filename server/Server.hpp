@@ -17,17 +17,20 @@ class Server {
 	public:
 		int fd;
 
-		void printVerbose() {
+		void printPrompt(int verbose) {
 			if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
 							sizeof(host), service, sizeof(service), 0)) != 0) {
 				fprintf(stderr, "error: getnameinfo: %s\n", gai_strerror(errcode));
 				exit(1);
 			}
 			else {
-				write(1, host, strlen(host));
-				write(1, ":", strlen(":"));
-				write(1, service, strlen(service));
-				write(1, " -> ", strlen(" -> "));
+				if (verbose) {
+					write(1, host, strlen(host));
+					write(1, ":", strlen(":"));
+					write(1, service, strlen(service));
+					write(1, " ", strlen(" "));
+				}
+				write(1, "> ", strlen("> "));
 			}
 		}
 

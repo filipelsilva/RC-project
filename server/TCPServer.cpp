@@ -57,12 +57,7 @@ class TCPServer : public Server {
 				}
 				ptr = &buffer[0];
 
-				if (verbose) {
-					printVerbose();
-				}
-				else {
-					write(1, "> ", strlen("> "));
-				}
+				printPrompt(verbose);
 				write(1, ptr, n);
 			}
 			close(newfd);
