@@ -36,6 +36,7 @@ class Server {
 
 		virtual char *getData(size_t size) = 0;
 		virtual void sendData(const char *message, size_t size) = 0;
+		virtual void closeConnection() = 0;
 		virtual ~Server() {};
 };
 

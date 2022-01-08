@@ -21,6 +21,10 @@ class UDPClient : public Client {
 		}
 	}
 
+	void closeConnection(){
+		close(fd);
+	}
+
 	void sendData(const char *message, size_t size){
 		if ((n = sendto(fd, message, size, 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
