@@ -18,6 +18,7 @@ string save_logout(string remaining){
     return remaining;
 }
 
+//TODO: se o user mandar 00 isto funciona. é suposto ou tem que ser um so 0?
 string save_subscribe(string remaining){
     stringstream ss;
     string GID, GName;
@@ -287,14 +288,14 @@ string rpt(string command){
     return "Something went wrong\n";
 }
 
+//TODO: apresentar data?
 string rrt(string command){
     stringstream ss;
-    string cmd, status, N, MID, UID, Tsize, text, Fname, Fsize, data, new_line, reply = "";
+    string cmd, status, N, MID, UID, Tsize, text, bar, Fname, Fsize, data, new_line, reply = "";
 	char text_p[10000], data_p[10000], new_line_p[10000]; //TODO
     ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
-    status = remove_new_line(status);
     getline(ss, N, ' ');
     if(cmd.compare("RRT") == 0){
         if(status.compare("OK") == 0){
@@ -315,6 +316,7 @@ string rrt(string command){
                     reply += "\n";
                     continue;
                 }
+                getline(ss, bar, ' ');
                 getline(ss, Fname, ' ');
                 getline(ss, Fsize, ' ');
                 ss.read(data_p, stoi(Fsize));

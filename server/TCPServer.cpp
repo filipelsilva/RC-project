@@ -64,7 +64,7 @@ class TCPServer : public Server {
 			return buffer;
 		}
 
-		void sendData(const char *message) {
+		void sendData(const char *message, size_t size) {
 			addrlen = sizeof(addr);
 
 			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
@@ -72,7 +72,7 @@ class TCPServer : public Server {
 				exit(1);
 			}
 
-			n = strlen(message);
+			n = size;
 			while (n > 0) {
 				if ((nw = write(newfd, message, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", strerror(nw));

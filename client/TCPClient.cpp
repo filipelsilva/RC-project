@@ -62,10 +62,10 @@ class TCPClient : public Client {
 	}
 
 
-	void sendData(const char *message) {
+	void sendData(const char *message, size_t size) {
 		createSocketAndConnect();
 
-		nleft = strlen(message);
+		nleft = size;
 		while (nleft > 0) {
 			nwritten = write(fd, message, nleft);
 			if (nwritten <= 0) exit(1);

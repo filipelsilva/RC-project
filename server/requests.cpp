@@ -391,7 +391,7 @@ void post_file(string Fname, string data, string GID, string MID){
 
 	ofstream file(path);
 
-	file << data;
+	file.write(data.c_str(), data.length());
 
 	file.close();
 }
@@ -1119,7 +1119,7 @@ string rtv(string command){
 		i++;
 	}
 	sort(list.begin(), list.end());
-	cout << "RRT OK " << i;
+	cout << "RRT OK " << i << " ";
 	reply = "RRT OK " + to_string(i) + " ";
 	for(i = 0; i < list.size(); i++){
 		cout << list[i] << endl;
