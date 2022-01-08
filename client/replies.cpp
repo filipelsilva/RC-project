@@ -57,11 +57,15 @@ string save_post(string remaining){
         return "ERR";
     }
     Tsize = to_string(text.length()-2);
-    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text;
-    if(!Fname.empty()){
-        file_path= "/" + Fname;
-        Fsize = getFileSize(file_path);
-        data = getFileData(file_path);
+    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text.substr(1, text.length()-2);
+
+    if(!Fname.empty() && !fileExists(Fname)){
+        return "ERR";
+    }
+
+    if(!Fname.empty() && fileExists(Fname)){
+        Fsize = getFileSize(Fname);
+        data = getFileData(Fname);
         remaining += " " + Fname + " " + Fsize + " " + data;
     }
     return remaining;
@@ -82,12 +86,12 @@ string showgid(){
     if(selected_GID.empty()){
         return "You have not selected an active group\n";
     }
-    return "Group " + selected_GID + " - is the active group\n"; //TODO: por o nome do grupo?
+    return "Group " + selected_GID + " is the active group\n"; //TODO: por o nome do grupo?
 }
 
 string select_GID(string GID){
     selected_GID = GID;
-    string reply = "Group " + selected_GID + " - " + "is now the active group\n"; //TODO: por o nome do grupo?
+    string reply = "Group " + selected_GID + " is now the active group\n";
     sent_GName = "";
     return reply;
 }
@@ -244,17 +248,18 @@ string rgm(string command){
 
 string rul(string command){
     stringstream ss;
-    string cmd, status, GName, UID, line, reply = "";
+    string cmd, status, GName, UID, reply = "";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
     getline(ss, GName, ' ');
+    getline(ss, UID);
     GName = remove_new_line(GName);
-    if(cmd.compare("RGM") == 0){
+    if(cmd.compare("RUL") == 0){
         if(status.compare("OK") == 0){
-            reply = "Users subscribed to group \"" + GName + "\":\n";
-            while(getline(ss, line, '\n')){
-                reply += line + "\n";
+            reply = "Users subscribed to group \"" + GName + "\":\n" + UID + "\n";
+            while(getline(ss, UID, '\n')){
+                reply += UID + "\n";
             }
             return reply;
         }
@@ -285,7 +290,7 @@ string rpt(string command){
 string rrt(string command){
     stringstream ss;
     string cmd, status, N, MID, UID, Tsize, text, Fname, Fsize, data, new_line, reply = "";
-	char *text_p, *data_p, *new_line_p;
+	char text_p[10000], data_p[10000], new_line_p[10000]; //TODO
     ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
@@ -295,6 +300,9 @@ string rrt(string command){
         if(status.compare("OK") == 0){
             reply = N + " message(s) retrieved:\n";
             for(int i = stoi(N); i > 0; i--){
+                memset(text_p, 0, 10000);
+                memset(data_p, 0, 10000);
+                memset(new_line_p, 0, 10000);
                 getline(ss, MID, ' ');
                 getline(ss, UID, ' ');
                 getline(ss, Tsize, ' ');

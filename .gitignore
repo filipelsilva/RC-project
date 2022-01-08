@@ -3,8 +3,6 @@
 *.pptx
 *.zip
 .vscode/
-USERS/
-GROUPS/
 
 ### C
 # Prerequisites

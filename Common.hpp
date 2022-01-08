@@ -30,7 +30,7 @@ using namespace std;
 #define max(A,B) ((A)>=(B)?(A):(B))
 
 inline string remove_new_line(string s){
-	if(s.substr(s.length()-1, s.length()).compare("\n") == 0){
+	if(!s.empty() && s.substr(s.length()-1, s.length()).compare("\n") == 0){
 		return s.substr(0, s.length()-1);
 	}
 	return s;
@@ -69,6 +69,25 @@ inline void delete_files(string path){
 	}
 }
 
+/*Verifies if a file exists based on its name*/
+inline bool fileExists(string Fname){
+	DIR *dir;
+	struct dirent *diread;
+
+	dir = opendir(".");
+
+	while((diread = readdir(dir))!= nullptr){
+
+		if(Fname == diread->d_name){
+			closedir(dir);
+			return true;
+		}
+	}
+	
+	closedir(dir);
+	return false;	
+}
+
 /*Verifies if the message text is valid (maximum of 240 characters).*/
 inline bool validTextSize(string Tsize){
 	return stoi(Tsize) <= 240;
@@ -95,7 +114,7 @@ inline string getFileData(string path){
 // Values
 #define DSPORT_DEFAULT "58013"
 #define DSIP_DEFAULT "localhost"
-#define COMMAND_SIZE 128
+#define COMMAND_SIZE 10000
 #define UID_LENGTH 5
 #define PASS_LENGTH 8
 

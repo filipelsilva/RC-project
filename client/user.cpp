@@ -4,13 +4,9 @@
 #include "./replies.cpp"
 
 // TODO:
-// - save UID and password for logout command
-// - subscribe/s recebe UID antes do resto do comando, transformar 0 em 00
-// - unsubscribe/u igual
-// - my_groups/mgl igual
-// - ulist/ul leva GID (temos que guardar GID no select)
-// - post leva com 1001 cenas
-// - retrieve leva com outras 1001 cenas
+// buffer nao pode ser so 10000
+// ficheiros grandes....
+// verificar login e talvez select
 string processCommand(const char *message) {
 	string cmd, remaining;
 	stringstream ss;
@@ -35,7 +31,7 @@ string processCommand(const char *message) {
 		remaining = save_my_groups(remaining);
 	}
 	if(code->second.compare("ULS") == 0){
-		remaining = save_ulist(remaining);		
+		remaining = save_ulist(remaining);
 	}
 	if(code->second.compare("PST") == 0){
 		remaining = save_post(remaining);
@@ -132,10 +128,8 @@ string functionCaller(string command){
 		return rul(command);
 	if(cmd.compare("RPT") == 0)
 		return rpt(command);
-	/*
 	if(cmd.compare("RRT") == 0)
 		return rrt(command);
-	*/
 	return "Something went wrong\n";
 }
 
@@ -195,7 +189,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
-				fprintf(stderr, "Error: invalid command\n");
+				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 		}
 
@@ -218,7 +212,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
-				fprintf(stderr, "Error: invalid command\n");
+				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 		}
 
@@ -230,7 +224,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
-				fprintf(stderr, "Error: invalid command\n");
+				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 		}
 	}

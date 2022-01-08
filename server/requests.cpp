@@ -18,7 +18,7 @@ bool validUID(string UID){
 
 /*Verifies if there isn't an equal User ID already registered.*/
 bool UID_free(string UID){
-	string path = "../USERS";
+	string path = "USERS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -40,7 +40,7 @@ bool UID_free(string UID){
 
 /*Verifies if the given password is the one registered for the given UID.*/
 bool correct_pass(string UID, string pass){
-	string path="../USERS/";
+	string path="USERS/";
 	path.append(UID);
 
 	string passFile_name = "_pass.txt";
@@ -85,7 +85,7 @@ int numberOfGroups(string path){
 
 /*Verifies if the given group already exists.*/
 bool groupExists(string GID){
-	string path = "../GROUPS";
+	string path = "GROUPS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -114,10 +114,18 @@ bool validGID(string GID){
 	return false;
 }
 
+/*Verifies if the given Message ID is valid (4-digit number) 
+and if the group exists.*/
+bool validMID(string MID){
+	if(MID.length() == 4 && isNumber(MID) && MID != "0000")
+		return true;
+	return false;
+}
+
 /*Verifies if the name of the group with given GID
 is the same as the given Gname.*/
 bool existingGroupName(string GID, string GName){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	string GName_file = "_name.txt";
 
 	path.append(GID); path.append("/");
@@ -153,7 +161,7 @@ bool validGroupName(string GName){
 
 /*Unsubscribe all groups that the given UID subscribes.*/
 void unsubscribe_groups(string UID){
-	string path = "../GROUPS";
+	string path = "GROUPS";
 	DIR *dir;
 	struct dirent *diread;
 
@@ -176,7 +184,7 @@ void unsubscribe_groups(string UID){
 
 /*Returns the group name of the group with the given GID.*/
 string get_group_name(string GID){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 
 	path.append(GID);path.append("/");
 	path.append(GID);path.append("_name.txt");
@@ -192,7 +200,7 @@ string get_group_name(string GID){
 
 /*Returns the latest message MID(message ID) of the group with the given GID.*/
 string get_MID(string GID){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
 	string MID = "0000";
@@ -217,7 +225,7 @@ string get_MID(string GID){
 
 /*Verifies if the user with the given UID is logged in.*/
 bool user_logon(string UID){
-	string path = "../USERS/";
+	string path = "USERS/";
 	string loginFile = "_login.txt";	
 	DIR *dir;
 	struct dirent *diread;
@@ -227,8 +235,6 @@ bool user_logon(string UID){
 	path.append(UID);
 
 	dir = opendir(path.c_str());
-
-	diread = readdir(dir);
 
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.'){
@@ -248,7 +254,7 @@ bool user_logon(string UID){
 /*Verifies if the user with the given UID is subscribed to the group with
 the given GID.*/
 bool UID_in_group(string UID, string GID){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	string UIDsubscribed = ".txt";
 	DIR *dir;
 	struct dirent *diread;
@@ -273,7 +279,7 @@ bool UID_in_group(string UID, string GID){
 
 /*Returns the number of messages in the group with the given GID.*/
 int max_MID(string GID){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
 	int i=0;
@@ -298,7 +304,7 @@ int max_MID(string GID){
 /*Posts the given text message on the group with the given GID, having the 
 user with the given UID as an author. */
 string post_text(string UID, string GID, string text){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	int i;
 	string author, msg;
 
@@ -377,7 +383,7 @@ bool validFileInfo(string Fname, string Fsize){
 /*Posts a file with the given file name (Fname) and the given data
 on the group  with the given GID, on the message with the given MID.*/
 void post_file(string Fname, string data, string GID, string MID){
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 
 	path.append(GID); path.append("/MSG/");
 	path.append(MID); path.append("/");
@@ -419,7 +425,7 @@ string reg(string command){
 	stringstream ss;
 	string reply = "RRG NOK\n";
 	string cmd, UID, pass;
-	string path="../USERS";
+	string path="USERS";
 	string passFile_name = "_pass.txt";
 	ss << command;
 	getline(ss, cmd, ' ');
@@ -479,7 +485,7 @@ string unr(string command){
 	stringstream ss;
 	string reply = "RUN NOK\n";
 	string cmd, UID, pass;
-	string path="../USERS";
+	string path="USERS";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
@@ -528,7 +534,7 @@ string log(string command){
 	stringstream ss;
 	string reply = "RLO NOK\n";
 	string cmd, UID, pass;
-	string path="../USERS";
+	string path="USERS";
 	string loginFile_name = "_login.txt";
 	ss << command;
 	getline(ss, cmd, ' ');
@@ -567,7 +573,7 @@ string out(string command){
 	stringstream ss;
 	string reply = "ROU NOK\n";
 	string cmd, UID, pass;
-	string path="../USERS";
+	string path="USERS";
 	string loginFile_name = "_login.txt";
 	ss << command;
 	getline(ss, cmd, ' ');
@@ -605,7 +611,7 @@ string gls(string command){
 	string reply = "ERR\n";
 	DIR *dir;
 	struct dirent *diread;
-	string path = "../GROUPS";	
+	string path = "GROUPS";	
 	size_t i;
 	if(command.compare("GLS") != 0){
 		fprintf(stderr, "ERR\n");
@@ -640,7 +646,7 @@ string gls(string command){
 	}
 	else{
 		sort(list.begin(), list.end());
-		cout << "RGL " << numberOfGroups(path) << endl;
+		cout << "RGL " << numberOfGroups(path);
 		reply = "RGL " + to_string(numberOfGroups(path)) + " ";
 		for(i = 0; i < list.size(); i++){
 			cout << list[i] << endl;
@@ -657,7 +663,7 @@ string gsr(string command){
 	stringstream ss;
 	string reply = "RGS NOK\n";
 	string cmd, UID, GID, GName;
-	string path = "../GROUPS";
+	string path = "GROUPS";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
@@ -761,7 +767,7 @@ string gur(string command){
 	stringstream ss;
 	string reply = "RGU NOK\n";
 	string cmd, UID, GID;
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
@@ -808,7 +814,7 @@ string glm(string command){
 	string cmd, UID;
 	DIR *dir;
 	struct dirent *diread;
-	string path = "../GROUPS";	
+	string path = "GROUPS";	
 	size_t i = 0;
 	vector<string> list;
 	ss << command;
@@ -848,14 +854,13 @@ string glm(string command){
 				list.push_back(message.str());
 			}
 		}
-		cout << i << endl;
 		if(i == 0){
 			cout << "RGM 0: No groups subscribed\n";
 			reply = "RGM 0\n";
 		}
 		else{
 			sort(list.begin(), list.end());
-			cout << "RGM " << i << endl;
+			cout << "RGM " << i;
 			reply = "RGM " + to_string(list.size()) + " ";
 			for(i = 0; i < list.size(); i++){
 				cout << list[i] << endl;
@@ -878,7 +883,7 @@ string uls(string command){
 	string cmd, GID;
 	DIR *dir;
 	struct dirent *diread;
-	string path = "../GROUPS/";	
+	string path = "GROUPS/";	
 	vector<string> list;
 	size_t i;
 	ss << command;
@@ -922,8 +927,8 @@ string uls(string command){
 			
 		}
 		sort(list.begin(), list.end());
-		cout << "RUL " << get_group_name(GID) << endl;
-		reply = "RUL " + get_group_name(GID) + " ";
+		cout << "RUL OK: " << get_group_name(GID);
+		reply = "RUL OK " + get_group_name(GID) + " ";
 		for(i = 0; i < list.size(); i++){
 			cout << list[i] << endl;
 			reply += list[i] + "\n";
@@ -951,10 +956,11 @@ string pst(string command){
 	getline(ss, GID, ' ');
 	getline(ss, Tsize, ' ');
 	getline(ss, text, ' ');
+	text = remove_new_line(text);
 	getline(ss, Fname, ' ');
 	getline(ss, Fsize, ' ');
 	getline(ss, data);
-	string path = "../GROUPS/";	
+	string path = "GROUPS/";	
 	string status;
 
 	if(cmd.compare("PST") != 0){
@@ -970,7 +976,7 @@ string pst(string command){
 		return reply;
 	}
 
-	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID,GID)){
+	if(validUID(UID) && !UID_free(UID) && validGID(GID)){ //UID_in_group(UID,GID)
 		if(validTextSize(Tsize)){
 			if(Fname == "" && Fsize == "" && data == ""){
 				if(max_MID(GID) == 9999){
@@ -1039,8 +1045,12 @@ string rtv(string command){
 		fprintf(stderr, "ERR: Missing argument(s)\n");
 		return reply;
 	}
+	if(!validUID(UID) || !validGID(GID) || !validMID(MID)){
+		cout << reply;
+		return reply;
+	}
 
-	string path = "../GROUPS/";
+	string path = "GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
 	size_t i = 0;
@@ -1051,8 +1061,8 @@ string rtv(string command){
 
 	dir = opendir(path.c_str());
 
-	if(max_MID(GID) == 0){
-		cout << "RRT EOF [0]\n";
+	if(max_MID(GID) == 0 || stoi(MID) > max_MID(GID)){
+		cout << "RRT EOF 0\n";
 		return "RRT EOF 0\n";
 	}
 
@@ -1068,7 +1078,7 @@ string rtv(string command){
 		string currentUID;
 		string Tsize;
 		string text;
-		string Fname = "";
+		string Fname;
 		string Fsize = "";
 		string data = "";
 		stringstream message;
@@ -1099,22 +1109,22 @@ string rtv(string command){
 			data = getFileData(file_path);
 		}
 
-		message << currentMID << " " << currentUID << " " <<
-		Tsize << " " << text << " / " << Fname << " " << Fsize << " "
-		<< data; 
+		message << currentMID << " " << currentUID << " " << Tsize << " " << text;
+		if(!Fname.empty()){
+			message << " / " << Fname << " " << Fsize << " " << data;
+		}
 
 		list.push_back(message.str());
 
 		i++;
 	}
 	sort(list.begin(), list.end());
-	cout << "RRT [" << i << endl;
+	cout << "RRT OK " << i;
 	reply = "RRT OK " + to_string(i) + " ";
 	for(i = 0; i < list.size(); i++){
 		cout << list[i] << endl;
 		reply += list[i] + "\n";
 	}
-	cout << "\n";
 	
 	return reply;
 }

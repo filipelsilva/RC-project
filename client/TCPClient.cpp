@@ -61,7 +61,8 @@ class TCPClient : public Client {
 			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
 			exit(1);
 		}
-
+		
+		nleft = COMMAND_SIZE; //TODO
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);
 			if(nread == -1) exit(1);
