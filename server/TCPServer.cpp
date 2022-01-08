@@ -41,7 +41,7 @@ class TCPServer : public Server {
 			}
 		}
 
-		char *getData() {
+		char *getData(size_t size) {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 
@@ -50,7 +50,7 @@ class TCPServer : public Server {
 				exit(1);
 			}
 
-			while ((n = read(newfd, buffer, COMMAND_SIZE)) != 0) {
+			while ((n = read(newfd, buffer, size)) != 0) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));
 					exit(1);

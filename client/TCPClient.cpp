@@ -37,12 +37,12 @@ class TCPClient : public Client {
 		}
 	}
 
-	char *getData() {
+	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
 
 		createSocketAndConnect();
 		
-		nleft = COMMAND_SIZE;
+		nleft = size;
 		ptr = buffer;
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);

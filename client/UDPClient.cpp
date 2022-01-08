@@ -29,11 +29,11 @@ class UDPClient : public Client {
 		}
 	}
 
-	char *getData() {
+	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
 
 		addrlen = sizeof(addr);
-		if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr,
+		if ((n = recvfrom(fd, buffer, size, 0, (struct sockaddr*)&addr,
 						&addrlen)) == -1) {
 			fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
 			exit(1);

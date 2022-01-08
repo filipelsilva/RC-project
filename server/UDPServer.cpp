@@ -27,11 +27,11 @@ class UDPServer : public Server {
 			}
 		}
 
-		char *getData() {
+		char *getData(size_t size) {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 
-			if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
+			if ((n = recvfrom(fd, buffer, size, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
 				fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
 				exit(1);
 			}
