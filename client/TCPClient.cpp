@@ -25,44 +25,25 @@ class TCPClient : public Client {
 		}
 	}
 
-	char *sendAndReceive(const char *message) {
+	void createSocketAndConnect() {
+		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
+			exit(1);
+		}
+
+		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
+			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
+			exit(1);
+		}
+	}
+
+	char *getData() {
 		memset(buffer, 0, sizeof(buffer));
-		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
-			exit(1);
-		}
 
-		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
-			exit(1);
-		}
-
-		ptr = strcpy(buffer, message);
-		nbytes = strlen(message);
-
-		nleft = nbytes;
-		while (nleft > 0) {
-			nwritten = write(fd, ptr, nleft);
-			if (nwritten <= 0) exit(1);
-			nleft -= nwritten;
-			ptr += nwritten;
-		}
-		nleft = nbytes;
-		ptr = buffer;
-
-		close(fd);
-
-		if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
-			exit(1);
-		}
-
-		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
-			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
-			exit(1);
-		}
+		createSocketAndConnect();
 		
-		nleft = COMMAND_SIZE; //TODO
+		nleft = COMMAND_SIZE;
+		ptr = buffer;
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);
 			if(nread == -1) exit(1);
@@ -75,8 +56,24 @@ class TCPClient : public Client {
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
+
 		close(fd);
 		return buffer;
+	}
+
+
+	void sendData(const char *message) {
+		createSocketAndConnect();
+
+		nleft = strlen(message);
+		while (nleft > 0) {
+			nwritten = write(fd, message, nleft);
+			if (nwritten <= 0) exit(1);
+			nleft -= nwritten;
+			message += nwritten;
+		}
+
+		close(fd);
 	}
 
 	~TCPClient() {

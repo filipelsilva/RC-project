@@ -21,20 +21,18 @@ class UDPClient : public Client {
 		}
 	}
 
-	string getData(){
-		return buffer;
-	}
-
-	char *sendAndReceive(const char *message) {
-		memset(buffer, 0, sizeof(buffer));
+	void sendData(const char *message){
 		if ((n = sendto(fd, message, strlen(message), 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
 			fprintf(stderr, "Error: sendto: %s\n", strerror(n));
 			exit(1);
 		}
+	}
+
+	char *getData() {
+		memset(buffer, 0, sizeof(buffer));
 
 		addrlen = sizeof(addr);
-
 		if ((n = recvfrom(fd, buffer, COMMAND_SIZE, 0, (struct sockaddr*)&addr,
 						&addrlen)) == -1) {
 			fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));

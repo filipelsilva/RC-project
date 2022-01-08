@@ -184,7 +184,8 @@ int main(int argc, char **argv) {
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
-				cmd = tcp.sendAndReceive(cmd.c_str());
+				tcp.sendData(cmd.c_str());
+				cmd = tcp.getData();
 				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}
@@ -199,7 +200,8 @@ int main(int argc, char **argv) {
 			//Logout before exiting
 			if(cmd.compare("exit") == 0){
 				string cmd = "logout " + save_logout("") + "\n";
-				udp.sendAndReceive(cmd.c_str());
+				udp.sendData(cmd.c_str());
+				fprintf(stdout, "%s", udp.getData());
 				exit(0);
 			}
 
@@ -207,7 +209,8 @@ int main(int argc, char **argv) {
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
-				cmd = udp.sendAndReceive(cmd.c_str());
+				udp.sendData(cmd.c_str());
+				cmd = udp.getData();
 				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}
