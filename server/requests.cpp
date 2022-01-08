@@ -390,8 +390,7 @@ void post_file(string Fname, string data, string GID, string MID){
 	path.append(Fname);
 
 	ofstream file(path);
-
-	file.write(data.c_str(), data.length());
+	file << data;
 
 	file.close();
 }

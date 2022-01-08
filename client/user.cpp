@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
 				tcp.sendData(cmd.c_str(), cmd.length());
-				cmd = tcp.getData();
+				cmd = tcp.getData(COMMAND_SIZE);
 				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}
@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
 				udp.sendData(cmd.c_str(), cmd.length());
-				cmd = udp.getData();
+				cmd = udp.getData(COMMAND_SIZE);
 				reply = functionCaller(cmd);
 				fprintf(stdout, "%s", reply.c_str());
 			}

@@ -97,13 +97,13 @@ int main(int argc, char **argv) {
 
 		// TODO: in verbose mode, output UID and GID if not empty
 		if (FD_ISSET(tcp.fd, &mask)) {
-			request = tcp.getData();
+			request = tcp.getData(COMMAND_SIZE);
 			reply = functionCaller(command.assign(request));
 			tcp.sendData(reply.c_str(), reply.length());
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
-			request = udp.getData();
+			request = udp.getData(COMMAND_SIZE);
 			reply = functionCaller(command.assign(request));
 			udp.sendData(reply.c_str(), reply.length());
 		}
