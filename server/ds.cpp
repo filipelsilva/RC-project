@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 		// TODO: in verbose mode, output UID and GID if not empty
 		if (FD_ISSET(tcp.fd, &mask)) {
 			request = tcp.getData(COMMAND_SIZE);
-			reply = functionCaller(command.assign(request));
+			reply = functionCaller(command.assign(request, COMMAND_SIZE));
 			tcp.sendData(reply.c_str(), reply.length());
 		}
 

@@ -948,17 +948,42 @@ given size (Fsize) and given data.*/
 string pst(string command){
 	stringstream ss;
 	string reply = "RPT NOK\n";
-	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
+	string cmd, UID, GID, Tsize, text, Fname, Fsize, data, line;
 	ss << command;
 	getline(ss, cmd, ' ');
 	getline(ss, UID, ' ');
 	getline(ss, GID, ' ');
 	getline(ss, Tsize, ' ');
-	getline(ss, text, ' ');
-	text = remove_new_line(text);
-	getline(ss, Fname, ' ');
-	getline(ss, Fsize, ' ');
-	getline(ss, data);
+
+	if(UID.empty() || GID.empty() || Tsize.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
+
+	char c;
+
+	for (int i = 0; i < stoi(Tsize); i++){
+		ss.get(c);
+		text += c;
+	}
+
+	ss.get(c);
+
+	if(text.empty()){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;		
+	}
+
+	if(c != '\n'){
+		getline(ss, Fname, ' ');
+		getline(ss, Fsize, ' ');
+	}
+
+	/*while(!ss.eof()){	
+		getline(ss, line);
+		data.append(line); data.append("\n");
+	}*/ 
+
 	string path = "GROUPS/";	
 	string status;
 
@@ -966,18 +991,11 @@ string pst(string command){
 		fprintf(stderr, "ERR\n");
 		return "ERR\n";
 	}
-	if(UID.empty() || GID.empty() || Tsize.empty() || text.empty()){
-		fprintf(stderr, "NOK: Missing argument(s)\n");
-		return reply;
-	}
-	if(!Fname.empty() && (GID.empty() || Tsize.empty() || text.empty())){
-		fprintf(stderr, "NOK: Missing argument(s)\n");
-		return reply;
-	}
+
 
 	if(validUID(UID) && !UID_free(UID) && validGID(GID)){ //UID_in_group(UID,GID)
 		if(validTextSize(Tsize)){
-			if(Fname == "" && Fsize == "" && data == ""){
+			if(Fname.empty() && Fsize.empty() && data.empty()){
 				if(max_MID(GID) == 9999){
 					cout << "NOK: Maximum number of messages reached (9999).\n";
 					return reply;
@@ -998,6 +1016,11 @@ string pst(string command){
 					}
 					else{
 						status = post_text(UID, GID, text);
+						for (int i = 0; i < stoi(Fsize); i++){
+							char c;
+							ss.get(c);
+							data += c;
+						}
 						post_file(Fname, data, GID, status);
 
 						cout << "RPT " << status << endl;

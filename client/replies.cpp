@@ -50,15 +50,31 @@ string save_post(string remaining){
     string c1, c2;
     string Tsize, Fsize, data;
     string file_path;
+    char c;
 	ss << remaining;
-    getline(ss, text, ' ');
-    getline(ss, Fname);
-    c1 = text.front(); c2 = text.back();
-    if(c1.compare("\"") != 0 && c2.compare("\"") != 0){
+    ss.get(c);
+    c1 = c;
+    c = 'i';
+    while(c != '\"' && !ss.eof()){
+        ss.get(c);
+        text += c;
+    }
+    text.pop_back();
+
+    c2 = c;
+    ss.get(c);
+
+    if(c != '\n'){
+        getline(ss, Fname);
+    }
+
+
+
+    if(c1.compare("\"") != 0 || c2.compare("\"") != 0){
         return "ERR";
     }
-    Tsize = to_string(text.length()-2);
-    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text.substr(1, text.length()-2);
+    Tsize = to_string(text.length());
+    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text;
 
     if(!Fname.empty() && !fileExists(Fname)){
         return "ERR";
