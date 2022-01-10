@@ -2,6 +2,7 @@
 #define SERVER
 
 #include "../Common.hpp"
+#include "./requests.cpp"
 
 class Server {
 	protected:
@@ -24,6 +25,16 @@ class Server {
 				exit(1);
 			}
 			else {
+				if (!local_UID.empty()) {
+					write(1, "[UID=", strlen("[UID="));
+					write(1, local_UID.c_str(), local_UID.length());
+					write(1, "]", strlen("]"));
+				}
+				if (!local_GID.empty()) {
+					write(1, "[GID=", strlen("[UID="));
+					write(1, local_GID.c_str(), local_GID.length());
+					write(1, "]", strlen("]"));
+				}
 				if (verbose) {
 					write(1, host, strlen(host));
 					write(1, ":", strlen(":"));

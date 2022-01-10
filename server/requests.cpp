@@ -1,6 +1,11 @@
+#ifndef REQUESTS
+#define REQUESTS
+
 #include "../Common.hpp"
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
+
+string local_UID, local_GID;
 
 /*Verifies if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
@@ -559,6 +564,7 @@ string log(string command){
 
 		cout << "OK: Logged in successfully!" << endl;
 		reply = "RLO OK\n";
+		local_UID = UID;
 	}
 	else{
 		cout << "NOK: Incorrect UID or password" << endl;
@@ -1155,3 +1161,5 @@ string rtv(string command){
 	- Does the user have to be log on to subscribe/unsubscribe?
 	- special UIDs and GROUPs
 	- How to deal with files when they are sent*/
+
+#endif
