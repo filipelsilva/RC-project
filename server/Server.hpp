@@ -26,16 +26,6 @@ class Server {
 			}
 			else {
 				if (verbose) {
-					if (!local_UID.empty()) {
-						write(1, "[UID=", strlen("[UID="));
-						write(1, local_UID.c_str(), local_UID.length());
-						write(1, "]", strlen("]"));
-					}
-					if (!local_GID.empty()) {
-						write(1, "[GID=", strlen("[UID="));
-						write(1, local_GID.c_str(), local_GID.length());
-						write(1, "]", strlen("]"));
-					}
 					write(1, host, strlen(host));
 					write(1, ":", strlen(":"));
 					write(1, service, strlen(service));
@@ -46,6 +36,7 @@ class Server {
 		}
 
 		virtual char *getData(size_t size) = 0;
+		virtual void printCommand() = 0;
 		virtual void sendData(const char *message, size_t size) = 0;
 		virtual ~Server() {};
 };

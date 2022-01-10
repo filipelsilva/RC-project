@@ -199,8 +199,6 @@ int main(int argc, char **argv) {
 			
 			//Logout before exiting
 			if(cmd.compare("exit\n") == 0){
-				string cmd = "OUT " + save_logout("") + "\n";
-				udp.sendData(cmd.c_str(), cmd.length());
 				exit(0);
 			}
 

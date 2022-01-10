@@ -42,6 +42,10 @@ class UDPServer : public Server {
 			return buffer;
 		}
 
+		void printCommand() {
+			write(1, buffer, n);
+		}
+
 		void sendData(const char *message, size_t size) {
 			if ((n = sendto(fd, message, size, 0, (struct sockaddr*)&addr, addrlen)) == -1) {
 				fprintf(stderr, "Error: sendto: %s\n", strerror(n));

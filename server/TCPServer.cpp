@@ -58,10 +58,13 @@ class TCPServer : public Server {
 				ptr = &buffer[0];
 
 				printPrompt(verbose);
-				write(1, ptr, n);
 			}
 			close(newfd);
 			return buffer;
+		}
+
+		void printCommand() {
+			write(1, ptr, n);
 		}
 
 		void sendData(const char *message, size_t size) {

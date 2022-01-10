@@ -5,7 +5,27 @@
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
 
-string local_UID, local_GID;
+// int local_verbose = 0;
+/* Set verbose flag for the following functions */
+// void setVerbose(int verbose) {
+// 	if (verbose) {
+// 		local_verbose = verbose;
+// 	}
+// }
+
+/* Print UID and GID of user, when and if applicable */
+void printLocalVariables(string UID, string GID) {
+	if (!UID.empty()) {
+		write(1, "[UID=", strlen("[UID="));
+		write(1, UID.c_str(), UID.length());
+		write(1, "]", strlen("]"));
+	}
+	if (!GID.empty()) {
+		write(1, "[GID=", strlen("[UID="));
+		write(1, GID.c_str(), GID.length());
+		write(1, "]", strlen("]"));
+	}
+}
 
 /*Verifies if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
@@ -564,7 +584,6 @@ string log(string command){
 
 		cout << "OK: Logged in successfully!" << endl;
 		reply = "RLO OK\n";
-		local_UID = UID;
 	}
 	else{
 		cout << "NOK: Incorrect UID or password" << endl;
