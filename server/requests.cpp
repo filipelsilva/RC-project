@@ -949,11 +949,12 @@ string uls(string command){
 		}
 		sort(list.begin(), list.end());
 		cout << "RUL OK: " << get_group_name(GID);
-		reply = "RUL OK " + get_group_name(GID) + " ";
+		reply = "RUL OK " + get_group_name(GID);
 		for(i = 0; i < list.size(); i++){
 			cout << list[i] << endl;
-			reply += list[i] + "\n";
+			reply += " " + list[i];
 		}
+		reply += "\n";
 		
 		closedir(dir);
 	}
