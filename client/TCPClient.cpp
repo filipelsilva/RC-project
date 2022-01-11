@@ -61,7 +61,6 @@ class TCPClient : public Client {
 		return buffer;
 	}
 
-
 	void sendData(const char *message, size_t size) {
 		createSocketAndConnect();
 
@@ -71,6 +70,22 @@ class TCPClient : public Client {
 			if (nwritten <= 0) exit(1);
 			nleft -= nwritten;
 			message += nwritten;
+		}
+
+		close(fd);
+	}
+
+	void sendDataString(string message) {
+		createSocketAndConnect();
+
+		nleft = message.length();
+		const char *index = message.c_str();
+		while (nleft > 0) {
+			nwritten = write(fd, index, nleft);
+			// cout << message.substr(message.length() - nleft, nwritten) << endl;
+			if (nwritten <= 0) exit(1);
+			nleft -= nwritten;
+			index += nwritten;
 		}
 
 		close(fd);

@@ -85,6 +85,10 @@ string save_post(string remaining){
         data = getFileData(Fname);
         remaining += " " + Fname + " " + Fsize + " " + data;
     }
+    // cout << remaining << endl;
+    // cout << remaining.length() << endl;
+    // ofstream tmp("tmp.txt");
+    // tmp << remaining;
     return remaining;
 }
 

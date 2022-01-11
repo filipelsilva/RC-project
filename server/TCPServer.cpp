@@ -63,6 +63,34 @@ class TCPServer : public Server {
 			return buffer;
 		}
 
+		string getDataString(size_t size) {
+			string ret;
+			addrlen = sizeof(addr);
+			memset(buffer, 0, sizeof(buffer));
+
+			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
+				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
+				exit(1);
+			}
+
+			// ofstream tmp("tmpMASnoSERVER.txt", ios::app);
+			while ((n = read(newfd, buffer, size)) != 0) {
+				if (n == -1) {
+					fprintf(stderr, "Error: read: %s\n", strerror(n));
+					exit(1);
+				}
+				ret.append(buffer, n);
+				ptr = &buffer[0];
+
+				printPrompt(verbose);
+			}
+			cout << endl;
+			// tmp << ret;
+			// tmp.close();
+			close(newfd);
+			return ret;
+		}
+
 		void printCommand() {
 			write(1, ptr, n);
 		}
