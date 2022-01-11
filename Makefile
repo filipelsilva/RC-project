@@ -1,4 +1,4 @@
-.PHONY: all DS user main clean format zip
+.PHONY: all DS user main clean clean-data format todo zip
 
 CC=g++
 CFLAGS=-Wall -Wextra
@@ -13,6 +13,9 @@ user: client/user.cpp
 
 clean:
 	find bin/ -maxdepth 1 -type f ! -iname ".*" -delete
+
+clean_data:
+	rm -r bin/USERS/* bin/GROUPS/*
 
 format:
 	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
