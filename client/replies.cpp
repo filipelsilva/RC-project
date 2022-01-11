@@ -1,6 +1,3 @@
-#ifndef REPLIES
-#define REPLIES
-
 #include "../Common.hpp"
 
 string selected_UID, selected_GID, sent_GName, password;
@@ -354,5 +351,3 @@ string rrt(string command){
     }
     return "Something went wrong\n";
 }
-
-#endif

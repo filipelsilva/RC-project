@@ -2,7 +2,6 @@
 #define SERVER
 
 #include "../Common.hpp"
-#include "./requests.cpp"
 
 class Server {
 	protected:

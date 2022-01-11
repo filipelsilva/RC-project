@@ -1,6 +1,3 @@
-#ifndef REQUESTS
-#define REQUESTS
-
 #include "../Common.hpp"
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
@@ -1180,5 +1177,3 @@ string rtv(string command){
 	- Does the user have to be log on to subscribe/unsubscribe?
 	- special UIDs and GROUPs
 	- How to deal with files when they are sent*/
-
-#endif
