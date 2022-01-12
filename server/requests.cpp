@@ -667,12 +667,13 @@ string gls(string command){
 	}
 	else{
 		sort(list.begin(), list.end());
-		cout << "RGL " << numberOfGroups(path);
-		reply = "RGL " + to_string(numberOfGroups(path)) + " ";
+		cout << "RGL " << numberOfGroups(path) << " ";
+		reply = "RGL " + to_string(numberOfGroups(path));
 		for(i = 0; i < list.size(); i++){
 			cout << list[i] << endl;
-			reply += list[i] + "\n";
+			reply += " " + list[i];
 		}
+		reply += "\n";
 	}
 	closedir(dir);
 	return reply;
@@ -882,11 +883,12 @@ string glm(string command){
 		else{
 			sort(list.begin(), list.end());
 			cout << "RGM " << i;
-			reply = "RGM " + to_string(list.size()) + " ";
+			reply = "RGM " + to_string(list.size());
 			for(i = 0; i < list.size(); i++){
 				cout << list[i] << endl;
-				reply += list[i] + "\n";
+				reply += " " + list[i];
 			}
+			reply += "\n";
 		}
 		closedir(dir);
 	}
