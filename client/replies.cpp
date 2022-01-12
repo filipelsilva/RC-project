@@ -1,6 +1,7 @@
 #include "../Common.hpp"
 
 string selected_UID, selected_GID, sent_GName, password;
+bool logged_in = false;
 
 //TODO: verificar login no server
 string save_login(string remaining){
@@ -26,8 +27,14 @@ string save_subscribe(string remaining){
     getline(ss, GID, ' ');
     getline(ss, GName);
     sent_GName = GName;
-    if (GID.length() == 1) {
-        GID = "0" + GID;
+    switch (GID.length()) {
+        case 1:
+            GID = "0" + GID;
+            break;
+        case 2:
+            break;
+        default:
+            break;
     }
     return selected_UID + " " + GID + " " + GName;
 }
@@ -55,6 +62,9 @@ string showgid(){
 }
 
 string select_GID(string GID){
+    if(!logged_in){
+		return "User not logged in\n";
+	}
     switch (GID.length()) {
         case 1:
             GID = "0" + GID;
@@ -95,6 +105,7 @@ string run(string command){
 
 string rlo(string command){
     if(command.compare("RLO OK\n") == 0){
+        logged_in = true;
         return "You are now logged in\n";
     }
     else if(command.compare("RLO NOK\n") == 0){
@@ -111,6 +122,7 @@ string rou(string command){
     if(command.compare("ROU OK\n") == 0){
         selected_UID = "";
         password = "";
+        logged_in = false;
         return "You are now logged out\n";
     }
     else if(command.compare("ROU NOK\n") == 0){
@@ -221,6 +233,10 @@ string rgm(string command){
 }
 
 void ulist(string remaining, TCPClient &tcp){
+    if(!logged_in){
+        fprintf(stdout, "Something went wrong\n");
+        return;
+    }
     string request, reply;
     request = "ULS " + selected_GID + remaining + "\n";
     tcp.sendData(request.c_str(), request.length());
@@ -345,11 +361,25 @@ string post(string remaining, TCPClient &tcp){
 }
 
 void retrieve(string remaining, TCPClient &tcp){
-    string request = "RTV " + selected_UID + " " + selected_GID + " " + remaining + "\n";
+    string MID = remaining;
+    switch (MID.length()) {
+        case 1:
+            MID = "000" + MID;
+            break;
+        case 2:
+            MID = "00" + MID;
+            break;
+        case 3:
+            MID = "0" + MID;
+            break;
+        default:
+            break;
+    }
+    string request = "RTV " + selected_UID + " " + selected_GID + " " + MID + "\n";
     tcp.sendData(request.c_str(), request.length());
     string reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
-    string cmd, status, N, MID, UID, Tsize, bar, Fname, Fsize;
+    string cmd, status, N, UID, Tsize, bar, Fname, Fsize;
     ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
@@ -357,16 +387,12 @@ void retrieve(string remaining, TCPClient &tcp){
     if(cmd.compare("RRT") == 0){
         if(status.compare("OK") == 0){
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
-            bool MID_set = false;
             for(int i = stoi(N); i > 0; i--){
                 reply = tcp.getData(COMMAND_SIZE);
                 ss.clear();
                 ss.str("");
                 ss << reply;
-                if(!MID_set){
-                    getline(ss, MID, ' ');
-                    MID_set = false;
-                }
+                getline(ss, MID, ' ');
                 getline(ss, UID, ' ');
                 getline(ss, Tsize, ' ');
 
@@ -389,8 +415,6 @@ void retrieve(string remaining, TCPClient &tcp){
                 }
                 getline(ss, bar, ' ');
                 if(bar != "/"){
-                    MID = bar;
-                    MID_set = true;
                     fprintf(stdout, "\n");
                     continue;
                 }
@@ -420,7 +444,6 @@ void retrieve(string remaining, TCPClient &tcp){
                 ss << reply;
                 ss.get(c);
                 if(c == '\n'){
-                    cout << "i: " << endl;
                     return;
                 }
             }

@@ -687,6 +687,10 @@ string gsr(string command){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
 		return reply;
 	}
+	if(!user_logon(UID)){
+		fprintf(stderr, "NOK: User not logged in\n");
+		return reply;
+	}
 
 	if(validUID(UID) && !UID_free(UID)){
 		if (validGID(GID)){
@@ -788,6 +792,10 @@ string gur(string command){
 	}
 	if(UID.empty() || GID.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
+		return reply;
+	}
+	if(!user_logon(UID)){
+		fprintf(stderr, "NOK: User not logged in\n");
 		return reply;
 	}
 
@@ -1022,7 +1030,7 @@ void pst(string command, TCPServer &tcp){
 	}
 
 
-	if(validUID(UID) && !UID_free(UID) && validGID(GID)){ //UID_in_group(UID,GID)
+	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID,GID)){
 		if(validTextSize(Tsize)){
 			if(Fname.empty()){
 				if(max_MID(GID) == 9999){
@@ -1158,54 +1166,52 @@ void rtv(string command, TCPServer &tcp){
 
 		text_path = msg_path;
 		text_path.append("/T E X T.txt");
-		ifstream textFile(text_path);
-		getline(textFile, text);
+		text = getFileData(text_path);
 
 		Tsize = to_string(strlen(text.c_str()));
-		if((Fname = getFileName(msg_path)) != ""){
-			cout << "i: " + to_string(i) + "N: " + to_string(N) << endl;
-			i++;
-			if(Fname.empty()){
-				reply = currentMID + " " + currentUID + " " + Tsize + " " + text;
-				tcp.sendData(reply.c_str(), reply.length());
-				if(i != N){
-					cout << reply << " ";
-					reply = " ";
-				}
-				else{
-					cout << reply << "\n";
-					reply = "\n";
-				}
-				tcp.sendData(reply.c_str(), reply.length());
+		Fname = getFileName(msg_path);
+		i++;
+		if(Fname.empty()){
+			cout << "here: "+currentMID << endl;
+			reply = currentMID + " " + currentUID + " " + Tsize + " " + text;
+			tcp.sendData(reply.c_str(), reply.length());
+			if(i != N){
+				cout << reply << " ";
+				reply = " ";
 			}
 			else{
-				file_path = msg_path; file_path.append("/"); file_path.append(Fname);
-				Fsize = getFileSize(file_path);
-				reply = currentMID + " " + currentUID + " " + Tsize + " " + 
-							text;
-				cout << reply;
-				tcp.sendData(reply.c_str(), reply.length());
-				reply = " / " + Fname + " " + Fsize + " ";
-				cout << reply;
-				tcp.sendData(reply.c_str(), reply.length());
-				ifstream fileFile(file_path, std::ios_base::binary);
-				while(true){
-					memset(data, 0, sizeof(data));
-					fileFile.read(data, COMMAND_SIZE);
-					cout << data;
-					tcp.sendData(data, COMMAND_SIZE);
-					if(fileFile.tellg() == -1){
-						break;
-					}
+				cout << reply << "\n";
+				reply = "\n";
+			}
+			tcp.sendData(reply.c_str(), reply.length());
+		}
+		else{
+			file_path = msg_path; file_path.append("/"); file_path.append(Fname);
+			Fsize = getFileSize(file_path);
+			reply = currentMID + " " + currentUID + " " + Tsize + " " + 
+						text;
+			cout << reply;
+			tcp.sendData(reply.c_str(), reply.length());
+			reply = " / " + Fname + " " + Fsize + " ";
+			cout << reply;
+			tcp.sendData(reply.c_str(), reply.length());
+			ifstream fileFile(file_path, std::ios_base::binary);
+			while(true){
+				memset(data, 0, sizeof(data));
+				fileFile.read(data, COMMAND_SIZE);
+				cout << data;
+				tcp.sendData(data, COMMAND_SIZE);
+				if(fileFile.tellg() == -1){
+					break;
 				}
-				if(i != N){
-					cout << " ";
-					tcp.sendData(" ", 1);
-				}
-				else{
-					cout << "\n";
-					tcp.sendData("\n", 1);
-				}
+			}
+			if(i != N){
+				cout << " ";
+				tcp.sendData(" ", 1);
+			}
+			else{
+				cout << "\n";
+				tcp.sendData("\n", 1);
 			}
 		}
 	}
