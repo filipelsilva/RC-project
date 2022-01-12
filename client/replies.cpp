@@ -254,7 +254,7 @@ void ulist(string remaining, TCPClient &tcp){
                     }
                 }
                 reply = tcp.getData(COMMAND_SIZE);
-                ss.clear();
+                ss.str("");
                 ss << reply;
             }
             return;
@@ -322,10 +322,10 @@ string post(string remaining, TCPClient &tcp){
             }
         }
     }
-
     reply = tcp.getData(COMMAND_SIZE);
     string cmd, status;
     ss.clear();
+    ss.str("");
 	ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, '\n');

@@ -382,34 +382,27 @@ bool validFileInfo(string Fname, string Fsize){
 
 /*Posts a file with the given file name (Fname) and the given data
 on the group  with the given GID, on the message with the given MID.*/
-void post_file(string Fname, string GID, string MID, int Fsize, string data, TCPServer &tcp){
+void post_file(string Fname, string GID, string MID, int Fsize, string data, int bytes_read, TCPServer &tcp){
 	string path = "GROUPS/";
-	string received;
-	stringstream ss;
-	int written = 0;
+	const char* received;
+	int written = bytes_read;
 
 	path.append(GID); path.append("/MSG/");
 	path.append(MID); path.append("/");
 	path.append(Fname);
 
-	ofstream file(path);
+	ofstream file(path, std::ios_base::binary);
+	file.write(data.c_str(), bytes_read);
 	while(written < Fsize){
-		file << data;
-		data = "";
-		for (int i = 0; i < COMMAND_SIZE; i++){
-			char c;
-			ss.get(c);
-			data += c;
+		received = tcp.getData(COMMAND_SIZE);
+		for(int i = 0; i < COMMAND_SIZE; i++){
+			file.write(&received[i], 1);
 			written += 1;
-			if(ss.tellg() == -1){
-				received = tcp.getData(COMMAND_SIZE);
-				ss.clear();
-				ss << received;
+			if(written == Fsize){
 				break;
 			}
 		}
 	}
-
 	file.close();
 }
 
@@ -1056,16 +1049,17 @@ void pst(string command, TCPServer &tcp){
 					}
 					else{
 						status = post_text(UID, GID, text);
+						int bytes_read = 0;
 						for (int i = 0; i < stoi(Fsize); i++){
 							char c;
 							ss.get(c);
 							data += c;
+							bytes_read = i+1;
 							if(ss.tellg() == -1){
 								break;
 							}
 						}
-						post_file(Fname, GID, status, stoi(Fsize), data, tcp);
-
+						post_file(Fname, GID, status, stoi(Fsize), data, bytes_read, tcp);
 						cout << "RPT " << status << endl;
 						reply = "RPT " + status + "\n";
 						tcp.sendData(reply.c_str(), reply.length());
