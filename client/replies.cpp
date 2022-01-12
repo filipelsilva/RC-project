@@ -254,6 +254,7 @@ void ulist(string remaining, TCPClient &tcp){
                     }
                 }
                 reply = tcp.getData(COMMAND_SIZE);
+                ss.clear();
                 ss.str("");
                 ss << reply;
             }
