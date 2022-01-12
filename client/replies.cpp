@@ -25,9 +25,6 @@ string save_subscribe(string remaining){
 	ss << remaining;
     getline(ss, GID, ' ');
     getline(ss, GName);
-    if(GID.compare("0") == 0){
-        GID = "00";
-    }
     sent_GName = GName;
     return selected_UID + " " + GID + " " + GName;
 }
@@ -55,6 +52,15 @@ string showgid(){
 }
 
 string select_GID(string GID){
+    switch (GID.length()) {
+        case 1:
+            GID = "0" + GID;
+            break;
+        case 2:
+            break;
+        default:
+            return "Inavlid group number";
+    }
     selected_GID = GID;
     string reply = "Group " + selected_GID + " is now the active group\n";
     sent_GName = "";
