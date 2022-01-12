@@ -395,8 +395,6 @@ void post_file(string Fname, string GID, string MID, int Fsize, string data, TCP
 	ofstream file(path);
 	while(written < Fsize){
 		file << data;
-		received = tcp.getData(COMMAND_SIZE);
-		ss << received;
 		data = "";
 		for (int i = 0; i < COMMAND_SIZE; i++){
 			char c;
@@ -404,6 +402,9 @@ void post_file(string Fname, string GID, string MID, int Fsize, string data, TCP
 			data += c;
 			written += 1;
 			if(ss.tellg() == -1){
+				received = tcp.getData(COMMAND_SIZE);
+				ss.clear();
+				ss << received;
 				break;
 			}
 		}
