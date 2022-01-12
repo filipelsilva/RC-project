@@ -19,7 +19,7 @@ class TCPClient : public Client {
 		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;
 
-		if ((errcode = getaddrinfo("localhost", port, &hints, &res)) != 0) {
+		if ((errcode = getaddrinfo(server, port, &hints, &res)) != 0) {
 			fprintf(stderr, "Error: getaddrinfo: %s\n", gai_strerror(errcode));
 			exit(1);
 		}
