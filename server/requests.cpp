@@ -1110,8 +1110,7 @@ void rtv(string command, TCPServer &tcp){
 	string path = "GROUPS/";
 	DIR *dir;
 	struct dirent *diread;
-	int i, N;
-	vector<string> list;
+	int i = 0, N;
 
 	path.append(GID); path.append("/MSG");
 
@@ -1128,8 +1127,7 @@ void rtv(string command, TCPServer &tcp){
 	cout << "RRT OK " << N << " ";
 	reply = "RRT OK " + to_string(N) + " ";
 	tcp.sendData(reply.c_str(), reply.length());
-
-	while((diread = readdir(dir))!= nullptr && i <= N){
+	while((diread = readdir(dir))!= nullptr && i < N){
 		if(diread->d_name[0]=='.')
 			continue;
 		if(strlen(diread->d_name) != 4)
@@ -1137,7 +1135,6 @@ void rtv(string command, TCPServer &tcp){
 		if(stoi(diread->d_name) < stoi(MID))
 			continue;
 
-		i++;
 		string currentMID;
 		string currentUID;
 		string Tsize;
@@ -1165,63 +1162,54 @@ void rtv(string command, TCPServer &tcp){
 		getline(textFile, text);
 
 		Tsize = to_string(strlen(text.c_str()));
-
 		if((Fname = getFileName(msg_path)) != ""){
+			cout << "i: " + to_string(i) + "N: " + to_string(N) << endl;
+			i++;
 			if(Fname.empty()){
-				reply = currentMID + " " + currentUID + " " + Tsize + " " + text + " ";
+				reply = currentMID + " " + currentUID + " " + Tsize + " " + text;
+				tcp.sendData(reply.c_str(), reply.length());
 				if(i != N){
 					cout << reply << " ";
-					reply = reply + " ";
+					reply = " ";
 				}
 				else{
 					cout << reply << "\n";
-					reply = reply + "\n";
+					reply = "\n";
 				}
 				tcp.sendData(reply.c_str(), reply.length());
 			}
 			else{
 				file_path = msg_path; file_path.append("/"); file_path.append(Fname);
-				if(i != N){
-					Fsize = getFileSize(file_path);
-					reply = currentMID + " " + currentUID + " " + Tsize + " " + 
-								text + " / " + Fname + " " + Fsize + " ";
-					cout << reply;
-					tcp.sendData(reply.c_str(), reply.length());
-					ifstream fileFile(file_path, std::ios_base::binary);
-					while(true){
-						memset(data, 0, sizeof(data));
-						fileFile.read(data, COMMAND_SIZE);
-						cout << data;
-						tcp.sendData(data, COMMAND_SIZE);
-						if(fileFile.tellg() == -1){
-							break;
-						}
+				Fsize = getFileSize(file_path);
+				reply = currentMID + " " + currentUID + " " + Tsize + " " + 
+							text;
+				cout << reply;
+				tcp.sendData(reply.c_str(), reply.length());
+				reply = " / " + Fname + " " + Fsize + " ";
+				cout << reply;
+				tcp.sendData(reply.c_str(), reply.length());
+				ifstream fileFile(file_path, std::ios_base::binary);
+				while(true){
+					memset(data, 0, sizeof(data));
+					fileFile.read(data, COMMAND_SIZE);
+					cout << data;
+					tcp.sendData(data, COMMAND_SIZE);
+					if(fileFile.tellg() == -1){
+						break;
 					}
+				}
+				if(i != N){
 					cout << " ";
 					tcp.sendData(" ", 1);
 				}
 				else{
-					Fsize = getFileSize(file_path);
-					reply = currentMID + " " + currentUID + " " + Tsize + " " + 
-								text + " / " + Fname + " " + Fsize + " ";
-					cout << reply;
-					tcp.sendData(reply.c_str(), reply.length());
-					ifstream fileFile(file_path, std::ios_base::binary);
-					while(true){
-						memset(data, 0, sizeof(data));
-						fileFile.read(data, COMMAND_SIZE);
-						cout << data;
-						tcp.sendData(data, COMMAND_SIZE);
-						if(fileFile.tellg() == -1){
-							break;
-						}
-					}
 					cout << "\n";
 					tcp.sendData("\n", 1);
 				}
 			}
 		}
 	}
+	closedir(dir);
 	return;
 }
 

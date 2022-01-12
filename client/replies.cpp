@@ -62,7 +62,7 @@ string select_GID(string GID){
         case 2:
             break;
         default:
-            return "Inavlid group number";
+            return "Inavlid group number\n";
     }
     selected_GID = GID;
     string reply = "Group " + selected_GID + " is now the active group\n";
@@ -345,67 +345,86 @@ string post(string remaining, TCPClient &tcp){
 }
 
 void retrieve(string remaining, TCPClient &tcp){
-    string request = "RRT " + selected_UID + " " + selected_GID + " " + remaining + "\n";
+    string request = "RTV " + selected_UID + " " + selected_GID + " " + remaining + "\n";
     tcp.sendData(request.c_str(), request.length());
     string reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
-    string cmd, status, N, MID, UID, Tsize, text, bar, Fname, Fsize;
+    string cmd, status, N, MID, UID, Tsize, bar, Fname, Fsize;
     ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
     getline(ss, N, ' ');
-    if(cmd.compare("RTV") == 0){
+    if(cmd.compare("RRT") == 0){
         if(status.compare("OK") == 0){
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
+            bool MID_set = false;
             for(int i = stoi(N); i > 0; i--){
-                getline(ss, MID, ' ');
+                reply = tcp.getData(COMMAND_SIZE);
+                ss.clear();
+                ss.str("");
+                ss << reply;
+                if(!MID_set){
+                    getline(ss, MID, ' ');
+                    MID_set = false;
+                }
                 getline(ss, UID, ' ');
                 getline(ss, Tsize, ' ');
 
                 char c;
+                string text;
                 for (int i = 0; i < stoi(Tsize); i++){
                     ss.get(c);
                     text += c;
-                    if(ss.tellg() == -1){
-                        reply = tcp.getData(COMMAND_SIZE);
-                        ss << reply;
-                    }
                 }
                 fprintf(stdout, "%s - \"%s\";", MID.c_str(), text.c_str());
 
                 reply = tcp.getData(COMMAND_SIZE);
+                ss.clear();
+                ss.str("");
                 ss << reply;
-
                 ss.get(c);
-                if(c =='\n'){
+                if(c == '\n'){
+                    fprintf(stdout, "\n");
+                    return;
+                }
+                getline(ss, bar, ' ');
+                if(bar != "/"){
+                    MID = bar;
+                    MID_set = true;
                     fprintf(stdout, "\n");
                     continue;
                 }
-
-                getline(ss, bar, ' ');
                 getline(ss, Fname, ' ');
                 getline(ss, Fsize, ' ');
-                ofstream file(Fname);
-                for (int i = 0; i < stoi(Fsize); i++){
-                    char c;
-                    ss.get(c);
-                    file << c;
-                    if(ss.tellg() == -1){
-                        reply = tcp.getData(COMMAND_SIZE);
-		                ss << reply;
+
+                int written = 0;
+                const char *received;
+                ofstream file(Fname, std::ios_base::binary);
+                while(written < stoi(Fsize)){
+                    received = tcp.getData(COMMAND_SIZE);
+                    for(int i = 0; i < COMMAND_SIZE; i++){
+                        file.write(&received[i], 1);
+                        written += 1;
+                        if(written == stoi(Fsize)){
+                            break;
+                        }
                     }
                 }
                 file.close();
+
                 fprintf(stdout, " file stored: %s\n", Fname.c_str());
 
                 reply = tcp.getData(COMMAND_SIZE);
+                ss.clear();
+                ss.str("");
                 ss << reply;
-
                 ss.get(c);
                 if(c == '\n'){
+                    cout << "i: " << endl;
                     return;
                 }
             }
+            return;
         }
         else if(status.compare("EOF") == 0){
             fprintf(stdout, "There are no messages available\n");
