@@ -26,6 +26,9 @@ string save_subscribe(string remaining){
     getline(ss, GID, ' ');
     getline(ss, GName);
     sent_GName = GName;
+    if (GID.length() == 1) {
+        GID = "0" + GID;
+    }
     return selected_UID + " " + GID + " " + GName;
 }
 
