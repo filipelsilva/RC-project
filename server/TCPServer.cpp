@@ -41,10 +41,6 @@ class TCPServer : public Server {
 			}
 		}
 
-		void closeConnection(){
-			close(fd);
-		}
-
 		char *getData(size_t size) {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
@@ -64,6 +60,7 @@ class TCPServer : public Server {
 				printPrompt(verbose);
 				write(1, ptr, n);
 			}
+			close(newfd);
 			return buffer;
 		}
 
@@ -84,6 +81,7 @@ class TCPServer : public Server {
 				n -= nw;
 				ptr += nw;
 			}
+			close(newfd);
 		}
 
 		~TCPServer() {

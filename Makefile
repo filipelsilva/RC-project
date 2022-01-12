@@ -1,7 +1,7 @@
 .PHONY: all DS user main clean format zip
 
 CC=g++
-CFLAGS=-Wall -Wextra
+CFLAGS=-Wall -Wextra -g
 
 all: DS user
 

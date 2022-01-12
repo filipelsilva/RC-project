@@ -114,7 +114,7 @@ inline string getFileData(string path){
 // Values
 #define DSPORT_DEFAULT "58013"
 #define DSIP_DEFAULT "localhost"
-#define COMMAND_SIZE 10000
+#define COMMAND_SIZE 512
 #define UID_LENGTH 5
 #define PASS_LENGTH 8
 
@@ -156,7 +156,6 @@ static vector<string> ClientUser_UDP = {
 	"subscribe",
 	"unsubscribe",
 	"my_groups",
-	"exit",
 };
 
 static vector<string> ClientUser_UDP_abrev = {

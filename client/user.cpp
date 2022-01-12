@@ -4,10 +4,10 @@
 #include "./replies.cpp"
 
 // TODO:
-// buffer nao pode ser so 10000
+// buffer nao pode ser so COMMAND_SIZE
 // ficheiros grandes....
 // verificar login e talvez select
-string processCommand(const char *message) {
+string processUDPCommand(const char *message) {
 	string cmd, remaining;
 	stringstream ss;
 	ss << message;
@@ -30,18 +30,6 @@ string processCommand(const char *message) {
 	if(code->second.compare("GLM") == 0){
 		remaining = save_my_groups(remaining);
 	}
-	if(code->second.compare("ULS") == 0){
-		remaining = save_ulist(remaining);
-	}
-	if(code->second.compare("PST") == 0){
-		remaining = save_post(remaining);
-		if(remaining.compare("ERR") == 0){
-			return "ERR";
-		}
-	}
-	if(code->second.compare("RTV") == 0){
-		remaining = save_retrieve(remaining);
-	}
 	if(code->second.compare("ERR") != 0){
 		if (!remaining.empty()){
 			return code->second + " " + remaining + "\n";
@@ -53,6 +41,31 @@ string processCommand(const char *message) {
 	else{
 		return "ERR";
 	}
+}
+
+string processTCPCommand(const char *message, TCPClient &tcp){
+	string cmd, remaining;
+	stringstream ss;
+	ss << message;
+	getline(ss, cmd, ' ');
+	getline(ss, remaining);
+	cmd = remove_new_line(cmd);
+	auto code = commands.find(cmd);
+	if(code->second.compare("ULS") == 0){
+		ulist(remaining, tcp);
+		return "";
+	}
+	if(code->second.compare("PST") == 0){
+		remaining = post(remaining, tcp);
+		if(remaining.compare("ERR") == 0){
+			return "ERR";
+		}
+	}
+	if(code->second.compare("RTV") == 0){
+		retrieve(remaining, tcp);
+		return "";
+	}
+	return "ERR";
 }
 
 string processLocalCommand(string command){
@@ -69,6 +82,9 @@ string processLocalCommand(string command){
 		reply = showgid();
 	if(cmd.compare("select") == 0 || cmd.compare("sag") == 0)
 		reply = select_GID(GID);
+	if(cmd.compare("exit") == 0){
+		exit(0);
+	}
 	return reply;
 }
 
@@ -124,12 +140,6 @@ string functionCaller(string command){
 		return rgu(command);
 	if(cmd.compare("RGM") == 0)
 		return rgm(command);
-	if(cmd.compare("RUL") == 0)
-		return rul(command);
-	if(cmd.compare("RPT") == 0)
-		return rpt(command);
-	if(cmd.compare("RRT") == 0)
-		return rrt(command);
 	return "Something went wrong\n";
 }
 
@@ -180,31 +190,19 @@ int main(int argc, char **argv) {
 		if(isTCP(cmd.assign(input))){
 			TCPClient tcp = TCPClient(DSIP, DSport);
 
-			cmd = processCommand(input);
+			cmd = processTCPCommand(input, tcp);
 
-			if(cmd.compare("ERR") != 0){
+			if(cmd.compare("ERR") == 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));
-				tcp.sendData(cmd.c_str(), cmd.length());
-				cmd = tcp.getData(COMMAND_SIZE);
-				reply = functionCaller(cmd);
-				fprintf(stdout, "%s", reply.c_str());
+				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 			else{
-				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 		}
 
 		else if(isUDP(cmd)){
 			UDPClient udp = UDPClient(DSIP, DSport);
-			
-			//Logout before exiting
-			if(cmd.compare("exit\n") == 0){
-				string cmd = "OUT " + save_logout("") + "\n";
-				udp.sendData(cmd.c_str(), cmd.length());
-				exit(0);
-			}
-
-			cmd = processCommand(input);
+			cmd = processUDPCommand(input);
 
 			if(cmd.compare("ERR") != 0){
 				// write(1, cmd.c_str(), strlen(cmd.c_str()));

@@ -40,42 +40,6 @@ string save_my_groups(string remaining){
     return selected_UID + remaining;
 }
 
-string save_ulist(string remaining){
-    return selected_GID + remaining;
-}
-
-string save_post(string remaining){
-    stringstream ss;
-    string text, Fname;
-    string c1, c2;
-    string Tsize, Fsize, data;
-    string file_path;
-	ss << remaining;
-    getline(ss, text, ' ');
-    getline(ss, Fname);
-    c1 = text.front(); c2 = text.back();
-    if(c1.compare("\"") != 0 && c2.compare("\"") != 0){
-        return "ERR";
-    }
-    Tsize = to_string(text.length()-2);
-    remaining = selected_UID + " " + selected_GID + " " + Tsize + " " + text.substr(1, text.length()-2);
-
-    if(!Fname.empty() && !fileExists(Fname)){
-        return "ERR";
-    }
-
-    if(!Fname.empty() && fileExists(Fname)){
-        Fsize = getFileSize(Fname);
-        data = getFileData(Fname);
-        remaining += " " + Fname + " " + Fsize + " " + data;
-    }
-    return remaining;
-}
-
-string save_retrieve(string remaining){
-    return selected_UID + " " + selected_GID + " " + remaining;
-}
-
 string showuid(){
     if(selected_UID.empty()){
         return "You are not logged in\n";
@@ -247,91 +211,200 @@ string rgm(string command){
     return "Something went wrong\n";
 }
 
-string rul(string command){
+void ulist(string remaining, TCPClient &tcp){
+    string request, reply;
+    request = "ULS " + selected_GID + remaining + "\n";
+    tcp.sendData(request.c_str(), request.length());
+    reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
-    string cmd, status, GName, UID, reply = "";
-	ss << command;
+    string cmd, status, GName, UID, prev_UID;
+	ss << reply;
 	getline(ss, cmd, ' ');
-	getline(ss, status, ' ');
+    getline(ss, status, ' ');
     getline(ss, GName, ' ');
-    getline(ss, UID);
     GName = remove_new_line(GName);
     if(cmd.compare("RUL") == 0){
         if(status.compare("OK") == 0){
-            reply = "Users subscribed to group \"" + GName + "\":\n" + UID + "\n";
-            while(getline(ss, UID, '\n')){
-                reply += UID + "\n";
+            fprintf(stdout, "Users subscribed to group \"%s\":\n", GName.c_str());
+            while(reply.length() != 0){
+                while(ss.tellg() != -1){
+                    getline(ss, UID, ' ');
+                    if(prev_UID != ""){
+                        UID = prev_UID + UID;
+                        prev_UID = "";
+                    }
+                    if(UID.length() == 5){
+                        fprintf(stdout, "%s\n", UID.c_str());
+                    }
+                    else if(UID.length() == 6){
+                        fprintf(stdout, "%s", UID.c_str());
+                        return;
+                    }
+                    else if(UID.length() < 5){
+                        prev_UID = UID;
+                    }
+                }
+                reply = tcp.getData(COMMAND_SIZE);
+                ss.clear();
+                ss << reply;
             }
-            return reply;
+            return;
         }
         else if(status.compare("NOK") == 0){
-            return "Something went wrong or the group doesn't exist\n";
+            fprintf(stdout, "Something went wrong or the group doesn't exist\n");
+            return;
         }
     }
-    return "Something went wrong\n";
+    fprintf(stdout, "Something went wrong\n");
+    return;
 }
 
-string rpt(string command){
+string post(string remaining, TCPClient &tcp){
+    string request, reply;
     stringstream ss;
+    string text, Fname;
+    string c1, c2;
+    string Tsize, Fsize;
+    char data[COMMAND_SIZE];
+    char c;
+	ss << remaining;
+    ss.get(c);
+    c1 = c;
+    c = 'i';
+    while((c != '\"') && (ss.tellg() != -1)){
+        ss.get(c);
+        text += c;
+    }
+    text.pop_back();
+
+    c2 = c;
+    ss.get(c);
+
+    if(c != '\n'){
+        getline(ss, Fname);
+    }
+
+    if(c1.compare("\"") != 0 || c2.compare("\"") != 0){
+        return "ERR";
+    }
+    if(!Fname.empty() && !fileExists(Fname)){
+        return "ERR";
+    }
+    
+    Tsize = to_string(text.length());
+    request = "PST " + selected_UID + " " + selected_GID + " " + Tsize + " " + text;
+    tcp.sendData(request.c_str(), request.length());
+
+    if(!Fname.empty() && fileExists(Fname)){
+        Fsize = getFileSize(Fname);
+        request = " " + Fname + " " + Fsize + " ";
+        tcp.sendData(request.c_str(), request.length());
+        ifstream fileFile(Fname, std::ios_base::binary);
+        while(true){
+            memset(data, 0, sizeof(data));
+            fileFile.read(data, COMMAND_SIZE);
+            tcp.sendData(data, COMMAND_SIZE);
+            if(fileFile.tellg() == -1){
+                tcp.sendData("\n", 1);
+                break;
+            }
+        }
+    }
+    else{
+        tcp.sendData("\n", 1);
+    }
+
+    reply = tcp.getData(COMMAND_SIZE);
     string cmd, status;
-	ss << command;
+	ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, '\n');
     if(cmd.compare("RPT") == 0){
         if(status.compare("NOK") == 0){
-            return "Something went wrong. User could not post\n";
+            fprintf(stdout, "Something went wrong. User could not post\n");
+            return "";
         }
         else{
-            return "posted message number " + status + " to group " + selected_GID + "\n";
+            fprintf(stdout, "posted message number %s to group %s\n", status.c_str(), selected_GID.c_str());
+            return "";
         }
     }
-    return "Something went wrong\n";
+    fprintf(stdout, "Something went wrong\n");
+    return "";
 }
 
-//TODO: apresentar data?
-string rrt(string command){
+void retrieve(string remaining, TCPClient &tcp){
+    string request = "RRT " + selected_UID + " " + selected_GID + " " + remaining + "\n";
+    tcp.sendData(request.c_str(), request.length());
+    string reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
-    string cmd, status, N, MID, UID, Tsize, text, bar, Fname, Fsize, data, new_line, reply = "";
-	char text_p[10000], data_p[10000], new_line_p[10000]; //TODO
-    ss << command;
+    string cmd, status, N, MID, UID, Tsize, text, bar, Fname, Fsize;
+    ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, ' ');
     getline(ss, N, ' ');
-    if(cmd.compare("RRT") == 0){
+    if(cmd.compare("RTV") == 0){
         if(status.compare("OK") == 0){
-            reply = N + " message(s) retrieved:\n";
+            fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
             for(int i = stoi(N); i > 0; i--){
-                memset(text_p, 0, 10000);
-                memset(data_p, 0, 10000);
-                memset(new_line_p, 0, 10000);
                 getline(ss, MID, ' ');
                 getline(ss, UID, ' ');
                 getline(ss, Tsize, ' ');
-                ss.read(text_p, stoi(Tsize));
-                text.assign(text_p);
-                reply += MID + " - \"" + text + "\";";
-                ss.read(new_line_p, 1);
-                new_line.assign(new_line_p);
-                if(new_line.compare("\n") == 0){
-                    reply += "\n";
+
+                char c;
+                for (int i = 0; i < stoi(Tsize); i++){
+                    ss.get(c);
+                    text += c;
+                    if(ss.tellg() == -1){
+                        reply = tcp.getData(COMMAND_SIZE);
+                        ss << reply;
+                    }
+                }
+                fprintf(stdout, "%s - \"%s\";", MID.c_str(), text.c_str());
+
+                reply = tcp.getData(COMMAND_SIZE);
+                ss << reply;
+
+                ss.get(c);
+                if(c =='\n'){
+                    fprintf(stdout, "\n");
                     continue;
                 }
+
                 getline(ss, bar, ' ');
                 getline(ss, Fname, ' ');
                 getline(ss, Fsize, ' ');
-                ss.read(data_p, stoi(Fsize));
-                data.assign(data_p);
-                ss.read(new_line_p, 1);
-                reply += " file stored: " + Fname + "\n";
+                ofstream file(Fname);
+                for (int i = 0; i < stoi(Fsize); i++){
+                    char c;
+                    ss.get(c);
+                    file << c;
+                    if(ss.tellg() == -1){
+                        reply = tcp.getData(COMMAND_SIZE);
+		                ss << reply;
+                    }
+                }
+                file.close();
+                fprintf(stdout, " file stored: %s\n", Fname.c_str());
+
+                reply = tcp.getData(COMMAND_SIZE);
+                ss << reply;
+
+                ss.get(c);
+                if(c == '\n'){
+                    return;
+                }
             }
-            return reply;
         }
         else if(status.compare("EOF") == 0){
-            return "There are no messages available\n";
+            fprintf(stdout, "There are no messages available\n");
+            return;
         }
         else if(status.compare("NOK") == 0){
-            return "Something went wrong. User could not retrieve any messages\n";
+            fprintf(stdout, "Something went wrong. User could not retrieve any messages\n");
+            return;
         }
     }
-    return "Something went wrong\n";
+    fprintf(stdout, "Something went wrong\n");
+    return;
 }

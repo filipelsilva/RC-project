@@ -27,6 +27,10 @@ class UDPServer : public Server {
 			}
 		}
 
+		void closeConnection(){
+			close(fd);
+		}
+
 		char *getData(size_t size) {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
