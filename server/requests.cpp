@@ -942,17 +942,20 @@ void uls(string command, TCPServer &tcp){
 		}
 
 		cout << "RUL OK: " << get_group_name(GID) << " ";
-		reply = "RUL OK " + get_group_name(GID) + " ";
+		reply = "RUL OK " + get_group_name(GID);
+		if (list.size() == 0) {
+			reply += "\n";
+		}
 		tcp.sendData(reply.c_str(), reply.length());
 
 		for(i = 0; i < list.size(); i++){
 			if(i == list.size()-1){
 				cout << list[i] << "\n";
-				reply = list[i] + "\n";
+				reply = " " + list[i] + "\n";
 			}
 			else{
 				cout << list[i] << " ";
-				reply = list[i] + " ";
+				reply = " " + list[i];
 			}
 			tcp.sendData(reply.c_str(), reply.length());
 		}
