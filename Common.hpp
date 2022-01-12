@@ -1,5 +1,5 @@
-#ifndef CONSTANTS
-#define CONSTANTS
+#ifndef COMMON
+#define COMMON
 
 #include <cstdio>
 #include <cstdlib>
