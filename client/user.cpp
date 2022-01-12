@@ -60,6 +60,7 @@ string processTCPCommand(const char *message, TCPClient &tcp){
 		if(remaining.compare("ERR") == 0){
 			return "ERR";
 		}
+		return "";
 	}
 	if(code->second.compare("RTV") == 0){
 		retrieve(remaining, tcp);

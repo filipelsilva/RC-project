@@ -50,6 +50,7 @@ class TCPServer : public Server {
 				exit(1);
 			}
 
+			printPrompt(verbose);
 			while ((n = read(newfd, buffer, size)) != 0) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));
@@ -57,7 +58,6 @@ class TCPServer : public Server {
 				}
 				ptr = &buffer[0];
 
-				printPrompt(verbose);
 				write(1, ptr, n);
 			}
 			close(newfd);

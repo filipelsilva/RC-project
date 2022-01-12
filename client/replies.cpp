@@ -293,6 +293,9 @@ string post(string remaining, TCPClient &tcp){
     
     Tsize = to_string(text.length());
     request = "PST " + selected_UID + " " + selected_GID + " " + Tsize + " " + text;
+    if(Fname.empty()){
+        request += "\n";
+    }
     tcp.sendData(request.c_str(), request.length());
 
     if(!Fname.empty() && fileExists(Fname)){
@@ -310,12 +313,10 @@ string post(string remaining, TCPClient &tcp){
             }
         }
     }
-    else{
-        tcp.sendData("\n", 1);
-    }
 
     reply = tcp.getData(COMMAND_SIZE);
     string cmd, status;
+    ss.clear();
 	ss << reply;
 	getline(ss, cmd, ' ');
 	getline(ss, status, '\n');

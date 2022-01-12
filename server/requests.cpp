@@ -382,7 +382,7 @@ bool validFileInfo(string Fname, string Fsize){
 
 /*Posts a file with the given file name (Fname) and the given data
 on the group  with the given GID, on the message with the given MID.*/
-void post_file(string Fname, string GID, string MID, int Fsize, string data, TCPServer tcp){
+void post_file(string Fname, string GID, string MID, int Fsize, string data, TCPServer &tcp){
 	string path = "GROUPS/";
 	string received;
 	stringstream ss;
@@ -395,7 +395,6 @@ void post_file(string Fname, string GID, string MID, int Fsize, string data, TCP
 	ofstream file(path);
 	while(written < Fsize){
 		file << data;
-		written += data.length();
 		received = tcp.getData(COMMAND_SIZE);
 		ss << received;
 		data = "";
@@ -403,6 +402,7 @@ void post_file(string Fname, string GID, string MID, int Fsize, string data, TCP
 			char c;
 			ss.get(c);
 			data += c;
+			written += 1;
 			if(ss.tellg() == -1){
 				break;
 			}
@@ -977,6 +977,7 @@ void uls(string command, TCPServer &tcp){
 on the group with the given GID. It can include a file with the given name (Fname),
 given size (Fsize) and given data.*/
 void pst(string command, TCPServer &tcp){
+	string request;
 	stringstream ss;
 	string reply = "RPT NOK\n";
 	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
@@ -1007,7 +1008,11 @@ void pst(string command, TCPServer &tcp){
 		return;
 	}
 
+	string tmp;
 	if(c != '\n'){
+		request = tcp.getData(COMMAND_SIZE);
+		ss << request;
+		getline(ss, tmp, ' ');
 		getline(ss, Fname, ' ');
 		getline(ss, Fsize, ' ');
 	}
