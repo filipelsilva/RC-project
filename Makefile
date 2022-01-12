@@ -1,7 +1,8 @@
 .PHONY: all DS user main clean format zip
 
 CC=g++
-CFLAGS=-Wall -Wextra -g
+CFLAGS=-Wall -Wextra
+CFLAGS_DEBUG=-g
 
 all: DS user
 
@@ -10,6 +11,10 @@ DS: server/ds.cpp
 
 user: client/user.cpp
 	$(CC) $(CFLAGS) $< -o bin/$@
+
+debug: server/ds.cpp client/user.cpp
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) server/ds.cpp -o bin/DS
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) client/user.cpp -o bin/user
 
 clean:
 	find bin/ -maxdepth 1 -type f ! -iname ".*" -delete
