@@ -45,6 +45,7 @@ class TCPClient : public Client {
 		while (nleft > 0){
 			nread = read(fd, ptr, nleft);
 			if(nread == -1){
+
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
 				exit(1);
 			}
@@ -70,6 +71,7 @@ class TCPClient : public Client {
 			if (nwritten <= 0){
 				fprintf(stderr, "Error: write: %s\n", strerror(nwritten));
 			 	exit(1);
+
 			}
 			nleft -= nwritten;
 			message += nwritten;
