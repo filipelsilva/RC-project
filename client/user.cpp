@@ -190,6 +190,7 @@ int main(int argc, char **argv) {
 
 		if(isTCP(cmd.assign(input))){
 			TCPClient tcp = TCPClient(DSIP, DSport);
+			tcp.createSocketAndConnect();
 
 			cmd = processTCPCommand(input, tcp);
 
@@ -199,6 +200,7 @@ int main(int argc, char **argv) {
 			}
 			else{
 			}
+			tcp.closeConnection();
 		}
 
 		else if(isUDP(cmd)){
