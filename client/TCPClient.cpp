@@ -30,19 +30,17 @@ class TCPClient : public Client {
 			fprintf(stderr, "Error: socket: %s\n", strerror(fd));
 			exit(1);
 		}
+
 		if ((errcode = connect(fd, res->ai_addr, res->ai_addrlen)) == -1) {
 			fprintf(stderr, "Error: connect: %s\n", strerror(errcode));
 			exit(1);
 		}
 	}
 
-	void closeConnection(){
-		close(fd);
-	}
-
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
 		
+		createSocketAndConnect();
 		nleft = size;
 		ptr = buffer;
 		while (nleft > 0){
@@ -57,21 +55,22 @@ class TCPClient : public Client {
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
+		close(fd);
 		return buffer;
 	}
 
 
 	void sendData(const char *message, size_t size) {
+		createSocketAndConnect();
 
 		nleft = size;
 		while (nleft > 0) {
 			nwritten = write(fd, message, nleft);
-			if (nwritten <= 0){
-				exit(1);
-			} 
+			if (nwritten <= 0) exit(1);
 			nleft -= nwritten;
 			message += nwritten;
 		}
+		close(fd);
 	}
 
 	~TCPClient() {
