@@ -7,7 +7,7 @@ class Server {
 	protected:
 		struct sigaction act;
 		struct addrinfo hints, *res;
-		int newfd, errcode, verbose;
+		int fdcopy, newfd, errcode, verbose;
 		ssize_t n, nw;
 		struct sockaddr_in addr;
 		socklen_t addrlen;

@@ -2,6 +2,7 @@
 
 class TCPServer : public Server {
 	public:
+		int flag = 0;
 		TCPServer(const char *port, int verbose) {
 			// Handling of SIGPIPE signal
 			memset(&act, 0, sizeof(act));
@@ -41,7 +42,7 @@ class TCPServer : public Server {
 			}
 		}
 
-		char *getData(size_t size) {
+		void acceptConnection() {
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 
@@ -49,9 +50,19 @@ class TCPServer : public Server {
 				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
 				exit(1);
 			}
+			fdcopy = dup(newfd);
+		}
+
+		void closeConnection() {
+			close(newfd);
+			close(fdcopy);
+		}
+
+		char *getData(size_t size) {
 
 			printPrompt(verbose);
-			while ((n = read(newfd, buffer, size)) != 0) {
+			write(1, "BEFORE IT READ\n", strlen("BEFORE IT READ\n"));
+			while ((n = read(fdcopy, buffer, size)) != 0) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));
 					exit(1);
@@ -59,29 +70,59 @@ class TCPServer : public Server {
 				ptr = &buffer[0];
 
 				write(1, ptr, n);
+				for (size_t i = 0; i < strlen(buffer); i++) {
+					if (buffer[i] == '\n') {
+						flag = 1;
+					}
+				}
+				if (flag) {
+					flag = 0;
+					break;
+				}
+				write(1, "IT READ\n", strlen("IT READ\n"));
 			}
-			close(newfd);
+			// dup2(fdcopy, fdcopy);
+
+			// close(fdcopy);
 			return buffer;
 		}
 
 		void sendData(const char *message, size_t size) {
-			addrlen = sizeof(addr);
+			// addrlen = sizeof(addr);
+			//
+			// if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
+			// 	fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
+			// 	exit(1);
+			// }
 
-			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
-				exit(1);
-			}
-
+			// fdcopy = dup(newfd);
+			write(1, "Message to send: ",  strlen("Message to send: "));
+			write(1, message, size);
 			n = size;
 			while (n > 0) {
+				write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
 				if ((nw = write(newfd, message, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", strerror(nw));
 					exit(1);
 				}
+				for (char *i = ptr; i <= ptr + nw; i++) {
+					if (*i == '\n') {
+						flag = 1;
+					}
+				}
+				if (flag) {
+					flag = 0;
+					break;
+				}
+				write(1, "IT WROTE\n", strlen("IT WROTE\n"));
 				n -= nw;
 				ptr += nw;
 			}
-			close(newfd);
+			// close(newfd);
+			// close(fdcopy);
+			// write(1, "BEFORE DUP\n", strlen("BEFORE DUP\n"));
+			// dup2(newfd, newfd);
+			// write(1, "DUP\n", strlen("DUP\n"));
 		}
 
 		~TCPServer() {

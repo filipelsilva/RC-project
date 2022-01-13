@@ -39,8 +39,7 @@ class TCPClient : public Client {
 
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
-		
-		createSocketAndConnect();
+
 		nleft = size;
 		ptr = buffer;
 		while (nleft > 0){
@@ -55,13 +54,12 @@ class TCPClient : public Client {
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
-		close(fd);
 		return buffer;
 	}
 
 
 	void sendData(const char *message, size_t size) {
-		createSocketAndConnect();
+		// createSocketAndConnect();
 
 		nleft = size;
 		while (nleft > 0) {
@@ -70,10 +68,10 @@ class TCPClient : public Client {
 			nleft -= nwritten;
 			message += nwritten;
 		}
-		close(fd);
 	}
 
 	~TCPClient() {
 		freeaddrinfo(res);
+		close(fd);
 	}
 };
