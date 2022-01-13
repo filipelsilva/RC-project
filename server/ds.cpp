@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
 			tcp.createSocketAndConnect();
 			request = tcp.getData(COMMAND_SIZE);
 			functionCallerTCP(command.assign(request, COMMAND_SIZE), tcp);
+			tcp.closeConnection();
 		}
 
 		if (FD_ISSET(udp.fd, &mask)) {
