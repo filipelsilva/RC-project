@@ -330,16 +330,17 @@ string post(string remaining, TCPClient &tcp){
         tcp.sendData(request.c_str(), request.length());
         ifstream fileFile(Fname, std::ios_base::binary);
         while(true){
-            memset(data, 0, sizeof(data));
+            memset(data, 0, COMMAND_SIZE);
             fileFile.read(data, COMMAND_SIZE);
             tcp.sendData(data, COMMAND_SIZE);
             if(fileFile.tellg() == -1){
-                tcp.sendData("\n", 1);
+                //tcp.sendData("\n", 1);
                 break;
             }
         }
     }
     reply = tcp.getData(COMMAND_SIZE);
+    cout << reply;
     string cmd, status;
     ss.clear();
     ss.str("");

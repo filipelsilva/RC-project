@@ -62,8 +62,8 @@ class TCPServer : public Server {
 			memset(buffer, 0, sizeof(buffer));
 
 			printPrompt(verbose);
-			write(1, "BEFORE IT READ\n", strlen("BEFORE IT READ\n"));
-			while ((n = read(fdcopy, buffer, size)) != 0) {
+			//write(1, "BEFORE IT READ\n", strlen("BEFORE IT READ\n"));
+			while ((n = read(fdcopy, buffer, size)) != 0 && n != size) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));
 					exit(1);
@@ -72,7 +72,7 @@ class TCPServer : public Server {
 
 				write(1, ptr, n);
 
-				for (size_t i = 0; i < strlen(buffer); i++) {
+				/*for (size_t i = 0; i < strlen(buffer); i++) {
 					if (buffer[i] == '\n' && (i == strlen(buffer) - 1 || buffer[i+1] == '\0')) {
 						flag = 1;
 					}
@@ -80,9 +80,8 @@ class TCPServer : public Server {
 				if (flag) {
 					flag = 0;
 					break;
-				}
-				write(1, "IT READ\n", strlen("IT READ\n"));
-				memset(buffer, 0, sizeof(buffer));
+				}*/
+				//write(1, "IT READ\n", strlen("IT READ\n"));
 			}
 			// dup2(fdcopy, fdcopy);
 
@@ -103,7 +102,7 @@ class TCPServer : public Server {
 			write(1, message, size);
 			n = size;
 			while (n > 0) {
-				write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
+				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
 				if ((nw = write(newfd, message, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", strerror(nw));
 					exit(1);
