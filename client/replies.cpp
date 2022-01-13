@@ -235,11 +235,15 @@ string rgm(string command){
 void ulist(string remaining, TCPClient &tcp){
     if(!logged_in){
         fprintf(stdout, "Something went wrong\n");
+        tcp.closeConnection();
         return;
     }
     string request, reply;
     request = "ULS " + selected_GID + remaining + "\n";
+    tcp.createSocketAndConnect();
     tcp.sendData(request.c_str(), request.length());
+    tcp.closeConnection();
+    tcp.createSocketAndConnect();
     reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
     string cmd, status, GName, UID, prev_UID;
@@ -263,6 +267,7 @@ void ulist(string remaining, TCPClient &tcp){
                     }
                     else if(UID.length() == 6){
                         fprintf(stdout, "%s", UID.c_str());
+                        tcp.closeConnection();
                         return;
                     }
                     else if(UID.length() < 5){
@@ -278,10 +283,12 @@ void ulist(string remaining, TCPClient &tcp){
         }
         else if(status.compare("NOK") == 0){
             fprintf(stdout, "Something went wrong or the group doesn't exist\n");
+            tcp.closeConnection();
             return;
         }
     }
     fprintf(stdout, "Something went wrong\n");
+    tcp.closeConnection();
     return;
 }
 
@@ -322,7 +329,10 @@ string post(string remaining, TCPClient &tcp){
     if(Fname.empty()){
         request += "\n";
     }
+    tcp.createSocketAndConnect();
     tcp.sendData(request.c_str(), request.length());
+    tcp.closeConnection();
+    tcp.createSocketAndConnect();
 
     if(!Fname.empty() && fileExists(Fname)){
         Fsize = getFileSize(Fname);
@@ -349,14 +359,17 @@ string post(string remaining, TCPClient &tcp){
     if(cmd.compare("RPT") == 0){
         if(status.compare("NOK") == 0){
             fprintf(stdout, "Something went wrong. User could not post\n");
+            tcp.closeConnection();
             return "";
         }
         else{
             fprintf(stdout, "posted message number %s to group %s\n", status.c_str(), selected_GID.c_str());
+            tcp.closeConnection();
             return "";
         }
     }
     fprintf(stdout, "Something went wrong\n");
+    tcp.closeConnection();
     return "";
 }
 
@@ -376,7 +389,11 @@ void retrieve(string remaining, TCPClient &tcp){
             break;
     }
     string request = "RTV " + selected_UID + " " + selected_GID + " " + MID + "\n";
+    tcp.createSocketAndConnect();
     tcp.sendData(request.c_str(), request.length());
+    tcp.closeConnection();
+    tcp.createSocketAndConnect();
+
     string reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
     string cmd, status, N, UID, Tsize, bar, Fname, Fsize;
@@ -411,6 +428,7 @@ void retrieve(string remaining, TCPClient &tcp){
                 ss.get(c);
                 if(c == '\n'){
                     fprintf(stdout, "\n");
+                    tcp.closeConnection();
                     return;
                 }
                 getline(ss, bar, ' ');
@@ -444,20 +462,25 @@ void retrieve(string remaining, TCPClient &tcp){
                 ss << reply;
                 ss.get(c);
                 if(c == '\n'){
+                    tcp.closeConnection();
                     return;
                 }
             }
+            tcp.closeConnection();
             return;
         }
         else if(status.compare("EOF") == 0){
             fprintf(stdout, "There are no messages available\n");
+            tcp.closeConnection();
             return;
         }
         else if(status.compare("NOK") == 0){
             fprintf(stdout, "Something went wrong. User could not retrieve any messages\n");
+            tcp.closeConnection();
             return;
         }
     }
     fprintf(stdout, "Something went wrong\n");
+    tcp.closeConnection();
     return;
 }

@@ -41,14 +41,20 @@ class TCPServer : public Server {
 			}
 		}
 
-		char *getData(size_t size) {
-			addrlen = sizeof(addr);
-			memset(buffer, 0, sizeof(buffer));
-
+		void createSocketAndConnect() {
 			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
 				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
 				exit(1);
 			}
+		}
+
+		void closeConnection(){
+			close(newfd);
+		}
+
+		char *getData(size_t size) {
+			addrlen = sizeof(addr);
+			memset(buffer, 0, sizeof(buffer));
 
 			printPrompt(verbose);
 			while ((n = read(newfd, buffer, size)) != 0) {
@@ -60,17 +66,11 @@ class TCPServer : public Server {
 
 				write(1, ptr, n);
 			}
-			close(newfd);
 			return buffer;
 		}
 
 		void sendData(const char *message, size_t size) {
 			addrlen = sizeof(addr);
-
-			if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
-				exit(1);
-			}
 
 			n = size;
 			while (n > 0) {
@@ -81,7 +81,6 @@ class TCPServer : public Server {
 				n -= nw;
 				ptr += nw;
 			}
-			close(newfd);
 		}
 
 		~TCPServer() {

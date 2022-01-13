@@ -897,6 +897,8 @@ string glm(string command){
 
 /*List of users subscribed to a group with the given GID.*/
 void uls(string command, TCPServer &tcp){
+	tcp.closeConnection();
+	tcp.createSocketAndConnect();
 	stringstream ss;
 	string reply = "RUL NOK\n";
 	string cmd, GID;
@@ -911,11 +913,13 @@ void uls(string command, TCPServer &tcp){
 	if(cmd.compare("ULS") != 0){
 		fprintf(stderr, "ERR\n");
 		tcp.sendData("ERR\n", strlen("ERR\n"));
+		tcp.closeConnection();
 		return;
 	}
 	if(GID.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 
@@ -964,15 +968,18 @@ void uls(string command, TCPServer &tcp){
 			tcp.sendData(reply.c_str(), reply.length());
 		}
 		closedir(dir);
+		tcp.closeConnection();
 		return;
 	}
 	else{
 		cout << "NOK: Invalid GID or group doesn't exist.\n";
 		reply = "RUL NOK\n";
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 	tcp.sendData(reply.c_str(), reply.length());
+	tcp.closeConnection();
 	return;
 }
 
@@ -980,6 +987,8 @@ void uls(string command, TCPServer &tcp){
 on the group with the given GID. It can include a file with the given name (Fname),
 given size (Fsize) and given data.*/
 void pst(string command, TCPServer &tcp){
+	tcp.closeConnection();
+	tcp.createSocketAndConnect();
 	string request;
 	stringstream ss;
 	string reply = "RPT NOK\n";
@@ -993,6 +1002,7 @@ void pst(string command, TCPServer &tcp){
 	if(UID.empty() || GID.empty() || Tsize.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 
@@ -1008,6 +1018,7 @@ void pst(string command, TCPServer &tcp){
 	if(text.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 
@@ -1026,6 +1037,7 @@ void pst(string command, TCPServer &tcp){
 	if(cmd.compare("PST") != 0){
 		fprintf(stderr, "ERR\n");
 		tcp.sendData("ERR\n", strlen("ERR\n"));
+		tcp.closeConnection();
 		return;
 	}
 
@@ -1036,6 +1048,7 @@ void pst(string command, TCPServer &tcp){
 				if(max_MID(GID) == 9999){
 					cout << "NOK: Maximum number of messages reached (9999).\n";
 					tcp.sendData(reply.c_str(), reply.length());
+					tcp.closeConnection();
 					return;
 				}
 				else{
@@ -1043,6 +1056,7 @@ void pst(string command, TCPServer &tcp){
 					cout << "RPT " << status << endl;
 					reply = "RPT " + status + "\n";
 					tcp.sendData(reply.c_str(), reply.length());
+					tcp.closeConnection();
 					return;
 				}
 
@@ -1052,6 +1066,7 @@ void pst(string command, TCPServer &tcp){
 					if(max_MID(GID) == 9999){
 						cout << "NOK: Maximum number of messages reached (9999).\n";
 						tcp.sendData(reply.c_str(), reply.length());
+						tcp.closeConnection();
 						return;
 					}
 					else{
@@ -1067,6 +1082,7 @@ void pst(string command, TCPServer &tcp){
 				else{
 					cout << "NOK: Invalid file info.\n";
 					tcp.sendData(reply.c_str(), reply.length());
+					tcp.closeConnection();
 					return;
 				}
 			}
@@ -1074,6 +1090,7 @@ void pst(string command, TCPServer &tcp){
 		else{
 			cout << "NOK: Invalid text info.\n";
 			tcp.sendData(reply.c_str(), reply.length());
+			tcp.closeConnection();
 			return;
 		}
 
@@ -1081,9 +1098,11 @@ void pst(string command, TCPServer &tcp){
 	else{
 		cout << "NOK: Invalid arguments.\n";
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 	tcp.sendData(reply.c_str(), reply.length());
+	tcp.closeConnection();
 	return;
 }
 
@@ -1091,6 +1110,9 @@ void pst(string command, TCPServer &tcp){
 with MID greater or equal than the given MID, to the subscribed user with
 the given UID.*/
 void rtv(string command, TCPServer &tcp){
+	tcp.closeConnection();
+	tcp.createSocketAndConnect();
+
 	stringstream ss;
 	string reply = "RRT NOK\n";
 	string cmd, UID, GID, MID;
@@ -1102,16 +1124,19 @@ void rtv(string command, TCPServer &tcp){
 	if(cmd.compare("RTV") != 0){
 		fprintf(stderr, "ERR\n");
 		tcp.sendData("ERR\n", strlen("ERR\n"));
+		tcp.closeConnection();
 		return;
 	}
 	if(UID.empty() || GID.empty() || MID.empty()){
 		fprintf(stderr, "ERR: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 	if(!validUID(UID) || !validGID(GID) || !validMID(MID)){
 		cout << reply;
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 
@@ -1128,6 +1153,7 @@ void rtv(string command, TCPServer &tcp){
 		cout << "RRT EOF 0\n";
 		reply = "RRT EOF 0\n";
 		tcp.sendData(reply.c_str(), reply.length());
+		tcp.closeConnection();
 		return;
 	}
 
@@ -1216,6 +1242,7 @@ void rtv(string command, TCPServer &tcp){
 		}
 	}
 	closedir(dir);
+	tcp.closeConnection();
 	return;
 }
 
