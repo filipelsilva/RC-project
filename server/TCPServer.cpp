@@ -59,6 +59,7 @@ class TCPServer : public Server {
 		}
 
 		char *getData(size_t size) {
+			memset(buffer, 0, sizeof(buffer));
 
 			printPrompt(verbose);
 			write(1, "BEFORE IT READ\n", strlen("BEFORE IT READ\n"));
@@ -70,8 +71,9 @@ class TCPServer : public Server {
 				ptr = &buffer[0];
 
 				write(1, ptr, n);
+
 				for (size_t i = 0; i < strlen(buffer); i++) {
-					if (buffer[i] == '\n') {
+					if (buffer[i] == '\n' && (i == strlen(buffer) - 1 || buffer[i+1] == '\0')) {
 						flag = 1;
 					}
 				}
@@ -80,6 +82,7 @@ class TCPServer : public Server {
 					break;
 				}
 				write(1, "IT READ\n", strlen("IT READ\n"));
+				memset(buffer, 0, sizeof(buffer));
 			}
 			// dup2(fdcopy, fdcopy);
 
@@ -105,15 +108,15 @@ class TCPServer : public Server {
 					fprintf(stderr, "Error: write %s\n", strerror(nw));
 					exit(1);
 				}
-				for (char *i = ptr; i <= ptr + nw; i++) {
-					if (*i == '\n') {
-						flag = 1;
-					}
-				}
-				if (flag) {
-					flag = 0;
-					break;
-				}
+				// for (char *i = ptr; i < ptr + nw; i++) {
+				// 	if (*i == '\n' && (i == ptr + nw - 1 || *(i+1) == '\0')) {
+				// 		flag = 1;
+				// 	}
+				// }
+				// if (flag) {
+				// 	flag = 0;
+				// 	break;
+				// }
 				write(1, "IT WROTE\n", strlen("IT WROTE\n"));
 				n -= nw;
 				ptr += nw;
