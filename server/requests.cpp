@@ -384,18 +384,20 @@ bool validFileInfo(string Fname, string Fsize){
 on the group  with the given GID, on the message with the given MID.*/
 void post_file(string Fname, string GID, string MID, string data, int bytes_read, int Fsize, TCPServer &tcp){
 	string path = "GROUPS/";
-	const char* received;
+	string received;
 	int written = bytes_read;
-	
+
 	path.append(GID); path.append("/MSG/");
 	path.append(MID); path.append("/");
 	path.append(Fname);
-	 
+
 	ofstream file(path, std::ios_base::binary);
 	file.write(data.c_str(), bytes_read);
 	while(written < Fsize){
-		received = tcp.getData(COMMAND_SIZE);
+		received.assign(tcp.getData(COMMAND_SIZE), COMMAND_SIZE);
 	 	for(int i = 0; i < COMMAND_SIZE; i++){
+	 		if(!strcmp(&received[i], "\n"))
+	 			cout << "\n\nREQUESTS:" << written <<  "\n\n";
 		   	file.write(&received[i], 1);
 		   	written += 1;
 		   	if(written == Fsize){
@@ -1054,21 +1056,49 @@ void pst(string command, TCPServer &tcp){
 					}
 					else{
 						status = post_text(UID, GID, text);
-						int bytes_read = 0;
+
+						string path = "GROUPS/";
+					    path.append(GID); path.append("/MSG/");
+					    path.append(status); path.append("/");
+					    path.append(Fname);
+
+					    string received;
+					    ofstream file(path, std::ios_base::binary);
+					    int bro = 0;
+					    for (int i = 0; i < stoi(Fsize); i++){
+					        char c;
+					        ss.get(c);
+					        if(ss.tellg() == -1){
+					        	received.assign(tcp.getData(COMMAND_SIZE), COMMAND_SIZE);
+					   
+					        	ss.clear();
+					            ss << received;
+					            i--;
+					              
+					        }
+					        else{
+					       		file.write(&c, 1);
+					        }
+					        
+					   	}
+					    file.close();
+					      //tcp.getData(COMMAND_SIZE);
+						/*int bytes_read = 0;
 					    for (int i = 0; i < stoi(Fsize); i++){
 					       	char c;
 					       	ss.get(c);
+					       	//cout << c << endl;
 					    	if(ss.tellg() == -1){
 					        	break;
 					       	}
 					    
 					       	data += c;
 					       	bytes_read++;
-
-					    } 
-					    cout << bytes_read<<endl;
+					    }
+					    cout << data << endl; 
+					    cout << bytes_read << endl;
 						post_file(Fname, GID, status, data, bytes_read, stoi(Fsize), tcp);
-						//tcp.getData(COMMAND_SIZE);
+						//tcp.getData(COMMAND_SIZE);*/
 						cout << "RPT " << status << endl;
 						reply = "RPT " + status + "\n";
 						tcp.sendData(reply.c_str(), reply.length());

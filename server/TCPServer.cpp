@@ -3,6 +3,7 @@
 class TCPServer : public Server {
 	public:
 		int flag = 0;
+		int written = 0;
 		TCPServer(const char *port, int verbose) {
 			// Handling of SIGPIPE signal
 			memset(&act, 0, sizeof(act));
@@ -70,7 +71,9 @@ class TCPServer : public Server {
 				}
 				ptr = &buffer[0];
 
-				write(1, ptr, n);
+
+
+
 
 				/*for (size_t i = 0; i < strlen(buffer); i++) {
 					if (buffer[i] == '\n' && (i == strlen(buffer) - 1 || buffer[i+1] == '\0')) {
@@ -83,8 +86,13 @@ class TCPServer : public Server {
 				}*/
 				//write(1, "IT READ\n", strlen("IT READ\n"));
 			}
+			//write(1, buffer, n);
 			// dup2(fdcopy, fdcopy);
-
+			/*for(int i = 0; i < size; i++){
+				if(buffer[i] == '\n')
+ 					cout << "\n\nTCPS:" << written <<  "\n\n";
+ 				written++;
+			}*/
 			// close(fdcopy);
 			return buffer;
 		}

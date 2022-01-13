@@ -338,6 +338,7 @@ string post(string remaining, TCPClient &tcp){
                 break;
             }
         }
+        fileFile.close();
     }
     reply = tcp.getData(COMMAND_SIZE);
     cout << reply;
