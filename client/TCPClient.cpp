@@ -89,6 +89,7 @@ class TCPClient : public Client {
 			written += n;
 			ptr = &buffer[0];
 			file.write(buffer, n);
+			//write(1, ptr, n);
 			memset(buffer, 0, sizeof(buffer));
 			to_read = size - written;
 			if(to_read > COMMAND_SIZE){
@@ -97,6 +98,7 @@ class TCPClient : public Client {
 		}
 		ptr = &buffer[0];
 		file.write(buffer, n);
+		//write(1, ptr, n);
 		file.close();
 	}
 

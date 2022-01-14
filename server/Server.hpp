@@ -11,8 +11,8 @@ class Server {
 		ssize_t n, nw;
 		struct sockaddr_in addr;
 		socklen_t addrlen;
-		char *ptr, buffer[COMMAND_SIZE], host[NI_MAXHOST], service[NI_MAXSERV];
-		const char *port;
+		char buffer[COMMAND_SIZE], host[NI_MAXHOST], service[NI_MAXSERV];
+		const char *ptr, *port;
 
 	public:
 		int fd;

@@ -112,9 +112,10 @@ class TCPServer : public Server {
 			//write(1, "Message to send: ",  strlen("Message to send: "));
 			//write(1, message, size);
 			n = size;
+			ptr = &message[0];
 			while (n > 0) {
 				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
-				if ((nw = write(newfd, message, n)) == -1) {
+				if ((nw = write(newfd, ptr, n)) == -1) {
 					fprintf(stderr, "Error: write %s\n", strerror(nw));
 					exit(1);
 				}

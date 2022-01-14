@@ -358,11 +358,11 @@ string post(string remaining, TCPClient &tcp){
                 tcp.sendData(data, COMMAND_SIZE);
             }
             if(fileFile.tellg() == -1){
-                tcp.sendData("\n", 1);
                 break;
             }
         }
         fileFile.close();
+        tcp.sendData("\n", 1);
     }
     reply = tcp.getData(COMMAND_SIZE);
     string cmd, status;

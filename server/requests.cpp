@@ -391,35 +391,6 @@ bool validFileInfo(string Fname, string Fsize){
 	return false;
 }
 
-/*Posts a file with the given file name (Fname) and the given data
-on the group  with the given GID, on the message with the given MID.*/
-void post_file(string Fname, string GID, string MID, string data, int bytes_read, int Fsize, TCPServer &tcp){
-	string path = "GROUPS/";
-	string received;
-	int written = bytes_read;
-
-	path.append(GID); path.append("/MSG/");
-	path.append(MID); path.append("/");
-	path.append(Fname);
-
-	ofstream file(path, std::ios_base::binary);
-	file.write(data.c_str(), bytes_read);
-	while(written < Fsize){
-		received.assign(tcp.getData(COMMAND_SIZE), COMMAND_SIZE);
-	 	for(int i = 0; i < COMMAND_SIZE; i++){
-	 		if(!strcmp(&received[i], "\n"))
-	 			cout << "\n\nREQUESTS:" << written <<  "\n\n";
-		   	file.write(&received[i], 1);
-		   	written += 1;
-		   	if(written == Fsize){
-		    	break;
-		   	}
-	  	}
-	}
-	//file.write("\n", 1);
-	file.close();
-}
-
 /*Returns the name of the file in a given message.*/
 string getFileName(string path){
 	DIR *dir;
@@ -1101,6 +1072,7 @@ void pst(TCPServer &tcp){
 						path.append(Fname);
 
 						tcp.getFileData(path, stoi(Fsize)), stoi(Fsize);
+						space.assign(tcp.getData(1));
 						cout << "RPT " << status << endl;
 						reply = "RPT " + status + "\n";
 						if(space.compare("\n") == 0){
@@ -1141,7 +1113,7 @@ the given UID.*/
 void rtv(TCPServer &tcp){
 	string reply = "RRT NOK\n";
 	string space, UID, GID, MID;
-	
+
 	space.assign(tcp.getData(1));
 	if(space.compare("\n") == 0){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
