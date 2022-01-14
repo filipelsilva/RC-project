@@ -243,12 +243,17 @@ string rgm(string command){
 }
 
 void ulist(string remaining, TCPClient &tcp){
+    string request, reply;
     if(!logged_in){
-        fprintf(stdout, "Something went wrong\n");
+        fprintf(stdout, "User not logged in\n");
         return;
     }
-    string request, reply;
-    request = "ULS " + selected_GID + remaining + "\n";
+    if(selected_GID.compare("") != 0){
+        request = "ULS " + selected_GID + remaining + "\n";
+    }
+    else{
+        request = "ULS\n";
+    }
     tcp.sendData(request.c_str(), request.length());
     reply = tcp.getData(COMMAND_SIZE);
     stringstream ss;
@@ -419,7 +424,6 @@ void retrieve(string remaining, TCPClient &tcp){
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
             bool found_bar = true;
             for(int i = stoi(N); i > 0; i--){
-                // cout << tcp.buffer << endl;
                 if(!found_bar){
                     MID.assign(tcp.getDataRetrieve(3));
                     MID = bar + MID;

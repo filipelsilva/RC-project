@@ -933,6 +933,11 @@ void uls(TCPServer &tcp){
 	size_t i;
 
 	space.assign(tcp.getData(1));
+	if(space.compare("\n") == 0){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		tcp.sendData(reply.c_str(), reply.length());
+		return;
+	}
 
 	GID.assign(tcp.getData(GID_LENGTH));
 	space.assign(tcp.getData(1));
