@@ -56,11 +56,14 @@ class TCPClient : public Client {
 
 	char *getDataRetrieve(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
-		while ((nread = read(fd, buffer, size)) != 0 && nread < size){
+
+		ptr = buffer;
+		while ((nread = read(fd, ptr, size)) != 0 && nread < size){
 			if(nread == -1){
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
 				exit(1);
 			}
+			ptr += nread;
 		}
 		ptr = &buffer[0];
 		//write(1, ptr, nread);

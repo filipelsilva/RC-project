@@ -1183,8 +1183,9 @@ void rtv(TCPServer &tcp){
 		Tsize = to_string(strlen(text.c_str()));
 		Fname = getFileName(msg_path);
 		i++;
-		if(Fname.empty()){
+		if(Fname.compare("") == 0){
 			reply = currentMID + " " + currentUID + " " + Tsize + " " + text;
+			cout << reply;
 			tcp.sendData(reply.c_str(), reply.length());
 		}
 		else{
