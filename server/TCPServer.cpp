@@ -77,6 +77,9 @@ class TCPServer : public Server {
 			written = 0;
 			ofstream file(path, std::ios_base::binary);
 			int to_read = COMMAND_SIZE;
+			if(size < COMMAND_SIZE){
+				to_read = size;
+			}
 			while ((n = read(fdcopy, buffer, to_read)) != 0 && written < size) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));

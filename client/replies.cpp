@@ -342,7 +342,12 @@ string post(string remaining, TCPClient &tcp){
         while(true){
             memset(data, 0, COMMAND_SIZE);
             fileFile.read(data, COMMAND_SIZE);
-            tcp.sendData(data, COMMAND_SIZE);
+            if(stoi(Fsize) < COMMAND_SIZE){
+                tcp.sendData(data, stoi(Fsize));
+            }
+            else{
+                tcp.sendData(data, COMMAND_SIZE);
+            }
             if(fileFile.tellg() == -1){
                 tcp.sendData("\n", 1);
                 break;
@@ -351,7 +356,6 @@ string post(string remaining, TCPClient &tcp){
         fileFile.close();
     }
     reply = tcp.getData(COMMAND_SIZE);
-    cout << reply;
     string cmd, status;
     ss.clear();
     ss.str("");
