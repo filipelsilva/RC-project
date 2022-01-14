@@ -1,8 +1,8 @@
 #include "../Common.hpp"
 
-// TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
 int verbose = 0;
 
+/* Verbose mode output */
 void printVerbose(string UID, string GID) {
 	if (!UID.empty()) {
 		cout << "[UID=" << UID << "]";
@@ -1259,8 +1259,3 @@ void rtv(TCPServer &tcp){
 	}
 	return;
 }
-
-/*TODO:
-	- Does the user have to be log on to subscribe/unsubscribe?
-	- special UIDs and GROUPs
-	- How to deal with files when they are sent*/

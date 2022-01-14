@@ -105,7 +105,6 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 
-		// TODO: in verbose mode, output UID and GID if not empty
 		if (FD_ISSET(tcp.fd, &mask)) {
 			tcp.acceptConnection();
 			tcp.printPrompt();

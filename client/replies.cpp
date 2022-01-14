@@ -3,7 +3,6 @@
 string selected_UID, selected_GID, sent_GName, password;
 bool logged_in = false;
 
-//TODO: verificar login no server
 string save_login(string remaining){
     stringstream ss;
 	ss << remaining;
@@ -19,7 +18,6 @@ string save_logout(string remaining){
     return remaining;
 }
 
-//TODO: se o user mandar 00 isto funciona. é suposto ou tem que ser um so 0?
 string save_subscribe(string remaining){
     stringstream ss;
     string GID, GName;
@@ -68,7 +66,7 @@ string showgid(){
     if(selected_GID.empty()){
         return "You have not selected an active group\n";
     }
-    return "Group " + selected_GID + " is the active group\n"; //TODO: por o nome do grupo?
+    return "Group " + selected_GID + " is the active group\n";
 }
 
 string select_GID(string GID){

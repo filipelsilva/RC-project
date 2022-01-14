@@ -3,10 +3,6 @@
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
 
-// TODO:
-// buffer nao pode ser so COMMAND_SIZE
-// ficheiros grandes....
-// verificar login e talvez select
 string processUDPCommand(const char *message) {
 	string cmd, remaining;
 	stringstream ss;

@@ -11,7 +11,3 @@
 
 - Funções para os comandos
 - Primeiro, recebe-se o comando no cliente. Ver parte incial do comando para ver se se manda por TCP ou UDP. Mandas. O servidor verifica o conteúdo e faz o que tem a fazer, devolvendo mensagem.
-
-# TODO
-
-- "gai_strerror" e "strerror"
