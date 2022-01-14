@@ -7,17 +7,20 @@ located there.
 
 As stated before, this project is split in two parts:
 
-- User, the client, which runs with the following parameters:
+- User, the client, which runs with the following (optional) parameters:
 
 ./user [-n DSIP] [-p DSport]
 	-n DSIP		IP address of the machine where the DS is running
 	-p PORT		Port where the DS server accepts requests
 
-- DS, the server, which runs with the following parameters:
+- DS, the server, which runs with the following (optional) parameters:
 
 ./DS [-p DSport] [-v]
 	-p PORT		Port where the DS server accepts requests
 	-v			Verbose mode: outputs description of the received requests
+
+- Note: DSIP defaults to "localhost" and DSPORT defaults to "58013". Verbose
+  mode is disabled by default.
 
 There are a number of commands that can be tested, involving user registration,
 user acess, group membership and message handling. Below is the list of
