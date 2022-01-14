@@ -60,7 +60,7 @@ class TCPClient : public Client {
 		return buffer;
 	}
 
-	char *getDataRetrieve(size_t size) {
+	char *getDataRetrieve(ssize_t size) {
 		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 
@@ -86,9 +86,9 @@ class TCPClient : public Client {
 	void getFileData(string path, size_t size) {
 		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
-		int written = 0, tries = 0;
+		size_t written = 0;
 		ofstream file(path, std::ios_base::binary);
-		int to_read = COMMAND_SIZE;
+		int to_read = COMMAND_SIZE, tries = 0;
 		if(size < COMMAND_SIZE){
 			to_read = size;
 		}

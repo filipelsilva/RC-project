@@ -28,7 +28,7 @@ class UDPServer : public Server {
 			}
 		}
 
-		char *getData(size_t size) {
+		char *getData(ssize_t size) {
 			int tries = 0;
 			timerOn(fd);
 			addrlen = sizeof(addr);

@@ -58,7 +58,7 @@ class TCPServer : public Server {
 			close(fdcopy);
 		}
 
-		char *getData(size_t size) {
+		char *getData(ssize_t size) {
 			int tries = 0;
 			timerOn(fdcopy);
 			memset(buffer, 0, sizeof(buffer));
@@ -82,7 +82,8 @@ class TCPServer : public Server {
 		void getFileData(string path, size_t size) {
 			timerOn(fdcopy);
 			memset(buffer, 0, sizeof(buffer));
-			int written = 0, tries = 0, to_read = COMMAND_SIZE;
+			int tries = 0, to_read = COMMAND_SIZE;
+			size_t written = 0;
 			ofstream file(path, std::ios_base::binary);
 			if(size < COMMAND_SIZE){
 				to_read = size;
