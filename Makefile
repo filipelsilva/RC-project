@@ -7,20 +7,20 @@ CFLAGS_DEBUG=-g
 all: DS user
 
 DS: server/ds.cpp
-	$(CC) $(CFLAGS) $< -o bin/$@
+	$(CC) $(CFLAGS) $< -o $@
 
 user: client/user.cpp
-	$(CC) $(CFLAGS) $< -o bin/$@
+	$(CC) $(CFLAGS) $< -o $@
 
 debug: server/ds.cpp client/user.cpp
-	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) server/ds.cpp -o bin/DS
-	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) client/user.cpp -o bin/user
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) server/ds.cpp -o DS
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) client/user.cpp -o user
 
 clean:
-	find bin/ -maxdepth 1 -type f ! -iname ".*" -delete
+	rm ./DS ./user
 
 clean_data:
-	rm -r bin/USERS/* bin/GROUPS/*
+	rm -r USERS/* GROUPS/*
 
 format:
 	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
