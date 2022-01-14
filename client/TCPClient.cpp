@@ -39,7 +39,7 @@ class TCPClient : public Client {
 
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
-		while ((nread = read(fd, ptr, size)) != 0 && n < size){
+		while ((nread = read(fd, buffer, size)) != 0 && n < size){
 			if(nread == -1){
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
 				exit(1);
@@ -51,7 +51,6 @@ class TCPClient : public Client {
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
-		return buffer;
 	}
 
 	void getFileData(string path, size_t size) {
