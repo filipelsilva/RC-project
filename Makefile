@@ -1,4 +1,4 @@
-.PHONY: all DS user debug clean clean_data format todo zip
+.PHONY: all DS user debug clean clean_data todo zip
 
 CC=g++
 CFLAGS=-Wall -Wextra
@@ -21,9 +21,6 @@ clean:
 
 clean_data:
 	rm -r USERS/* GROUPS/*
-
-format:
-	clang-format -style="{IndentWidth: 4, TabWidth: 4, UseTab: AlignWithSpaces}" -i **/*.cpp **/*.hpp
 
 todo:
 	grep --line-number --colour=always -r -i --include=\*.cpp --include=\*.hpp "todo"
