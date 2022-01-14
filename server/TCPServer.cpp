@@ -59,6 +59,7 @@ class TCPServer : public Server {
 		}
 
 		char *getData(size_t size) {
+			timerOn(fdcopy);
 			memset(buffer, 0, sizeof(buffer));
 			while ((n = read(fdcopy, buffer, size)) != 0 && n < size) {
 				if (n == -1) {
@@ -68,10 +69,12 @@ class TCPServer : public Server {
 			}
 			ptr = &buffer[0];
 			write(1, ptr, n);
+			timerOff(fdcopy);
 			return buffer;
 		}
 
 		void getFileData(string path, size_t size) {
+			timerOn(fdcopy);
 			memset(buffer, 0, sizeof(buffer));
 			int written = 0;
 			ofstream file(path, std::ios_base::binary);
@@ -98,6 +101,7 @@ class TCPServer : public Server {
 			file.write(buffer, n);
 			write(1, ptr, n);
 			file.close();
+			timerOff(fdcopy);
 		}
 
 		void sendData(const char *message, size_t size) {
@@ -111,6 +115,7 @@ class TCPServer : public Server {
 			// fdcopy = dup(newfd);
 			//write(1, "Message to send: ",  strlen("Message to send: "));
 			//write(1, message, size);
+			timerOn(newfd);
 			n = size;
 			while (n > 0) {
 				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
@@ -136,6 +141,7 @@ class TCPServer : public Server {
 			// write(1, "BEFORE DUP\n", strlen("BEFORE DUP\n"));
 			// dup2(newfd, newfd);
 			// write(1, "DUP\n", strlen("DUP\n"));
+			timerOff(newfd);
 		}
 
 		~TCPServer() {

@@ -27,11 +27,8 @@ class UDPServer : public Server {
 			}
 		}
 
-		void closeConnection(){
-			close(fd);
-		}
-
 		char *getData(size_t size) {
+			timerOn(fd);
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 
@@ -42,15 +39,18 @@ class UDPServer : public Server {
 
 			printPrompt();
 			write(1, buffer, n);
+			timerOff(fd);
 
 			return buffer;
 		}
 
 		void sendData(const char *message, size_t size) {
+			timerOn(fd);
 			if ((n = sendto(fd, message, size, 0, (struct sockaddr*)&addr, addrlen)) == -1) {
 				fprintf(stderr, "Error: sendto: %s\n", strerror(n));
 				exit(1);
 			}
+			timerOff(fd);
 		}
 
 		~UDPServer() {

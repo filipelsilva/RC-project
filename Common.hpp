@@ -185,7 +185,7 @@ inline string getFileData(string path){
 }
 
 /* Start timer for socket */
-inline int TimerON(int sd) {
+inline int timerOn(int sd) {
 	struct timeval tmout;
 	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
 	tmout.tv_sec=SOCKET_TIMEOUT;
@@ -194,7 +194,7 @@ inline int TimerON(int sd) {
 }
 
 /* Stop timer for socket */
-inline int TimerOFF(int sd) {
+inline int timerOff(int sd) {
 	struct timeval tmout;
 	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
 	return(setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO,
