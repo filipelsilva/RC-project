@@ -39,6 +39,23 @@ class TCPClient : public Client {
 
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
+
+		ptr = buffer;
+		while ((nread = read(fd, ptr, size)) > 0){
+			if(nread == -1){
+				fprintf(stderr, "Error: read: %s\n", strerror(nread));
+				exit(1);
+			}
+			ptr += nread;
+		}
+
+		//write(1, "Server: ", 8);
+		//write(1, buffer, nread);
+		return buffer;
+	}
+
+	char *getDataRetrieve(size_t size) {
+		memset(buffer, 0, sizeof(buffer));
 		while ((nread = read(fd, buffer, size)) != 0 && n < size){
 			if(nread == -1){
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
@@ -46,7 +63,6 @@ class TCPClient : public Client {
 			}
 		}
 		ptr = &buffer[0];
-		write(1, ptr, n);
 		return buffer;
 
 		//write(1, "Server: ", 8);
@@ -69,7 +85,6 @@ class TCPClient : public Client {
 			written += n;
 			ptr = &buffer[0];
 			file.write(buffer, n);
-			write(1, ptr, n);
 			memset(buffer, 0, sizeof(buffer));
 			to_read = size - written;
 			if(to_read > COMMAND_SIZE){
@@ -78,7 +93,6 @@ class TCPClient : public Client {
 		}
 		ptr = &buffer[0];
 		file.write(buffer, n);
-		write(1, ptr, n);
 		file.close();
 	}
 

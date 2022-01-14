@@ -417,7 +417,7 @@ void retrieve(string remaining, TCPClient &tcp){
             }
 
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
-            bool found_bar = false;
+            bool found_bar = true;
             for(int i = stoi(N); i > 0; i--){
                 if(!found_bar){
                     MID.assign(tcp.getData(3));
