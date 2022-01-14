@@ -56,8 +56,6 @@ class TCPClient : public Client {
 			ptr += nread;
 		}
 
-		//write(1, "Server: ", 8);
-		//write(1, buffer, nread);
 		timerOff(fd);
 		return buffer;
 	}
@@ -81,12 +79,8 @@ class TCPClient : public Client {
 			ptr += nread;
 		}
 		ptr = &buffer[0];
-		//write(1, ptr, nread);
 		timerOff(fd);
 		return buffer;
-
-		//write(1, "Server: ", 8);
-		//write(1, buffer, nread);
 	}
 
 	void getFileData(string path, size_t size) {
@@ -111,7 +105,6 @@ class TCPClient : public Client {
 			written += n;
 			ptr = &buffer[0];
 			file.write(buffer, n);
-			//write(1, ptr, n);
 			memset(buffer, 0, sizeof(buffer));
 			to_read = size - written;
 			if(to_read > COMMAND_SIZE){
@@ -120,15 +113,12 @@ class TCPClient : public Client {
 		}
 		ptr = &buffer[0];
 		file.write(buffer, n);
-		//write(1, ptr, n);
 		file.close();
 		timerOff(fd);
 	}
 
 
 	void sendData(const char *message, size_t size) {
-		// createSocketAndConnect();
-
 		int tries = 0;
 		timerOn(fd);
 		nleft = size;

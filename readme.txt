@@ -1,9 +1,8 @@
 # Computer Networks Project, 2021/2022
 
 This is a simple client/server application, implementing a prototype of a
-centralized messaging service. In order to test it, simply run `make` in the
-main folder. Then, run `cd bin`, as the executables and necessary folders are
-located there.
+centralized messaging service. In order to test it, simply run `make` in this
+folder. The executables and necessary folders will be placed there.
 
 As stated before, this project is split in two parts:
 
