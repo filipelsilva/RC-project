@@ -115,22 +115,11 @@ class TCPServer : public Server {
 		}
 
 		void sendData(const char *message, size_t size) {
-			// addrlen = sizeof(addr);
-			//
-			// if ((newfd = accept(fd, (struct sockaddr*)&addr, &addrlen)) == -1) {
-			// 	fprintf(stderr, "Error: accept: %s\n", strerror(newfd));
-			// 	exit(1);
-			// }
-
-			// fdcopy = dup(newfd);
-			//write(1, "Message to send: ",  strlen("Message to send: "));
-			//write(1, message, size);
 			timerOn(newfd);
 			n = size;
 			ptr = &message[0];
 			int tries = 0;
 			while (n > 0) {
-				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
 				while ((nw = write(newfd, ptr, n)) == -1) {
 					tries++;
 					if (tries == 3) {
@@ -140,24 +129,9 @@ class TCPServer : public Server {
 					nw = write(newfd, message, n);
 				}
 				tries = 0;
-				// for (char *i = ptr; i < ptr + nw; i++) {
-				// 	if (*i == '\n' && (i == ptr + nw - 1 || *(i+1) == '\0')) {
-				// 		flag = 1;
-				// 	}
-				// }
-				// if (flag) {
-				// 	flag = 0;
-				// 	break;
-				// }
-				//write(1, "IT WROTE\n", strlen("IT WROTE\n"));
 				n -= nw;
 				ptr += nw;
 			}
-			// close(newfd);
-			// close(fdcopy);
-			// write(1, "BEFORE DUP\n", strlen("BEFORE DUP\n"));
-			// dup2(newfd, newfd);
-			// write(1, "DUP\n", strlen("DUP\n"));
 			timerOff(newfd);
 		}
 

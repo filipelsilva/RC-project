@@ -3,6 +3,7 @@
 class UDPServer : public Server {
 	public:
 		UDPServer(const char *port, int verbose) {
+			// Server setup
 			this->verbose = verbose;
 			this->port = port;
 

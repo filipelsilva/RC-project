@@ -55,9 +55,6 @@ class UDPClient : public Client {
 			}
 		}
 
-		//write(1, "Server: ", 8);
-		//write(1, buffer, n);
-
 		timerOff(fd);
 		return buffer;
 	}
