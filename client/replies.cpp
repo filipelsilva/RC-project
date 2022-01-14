@@ -478,7 +478,6 @@ void retrieve(string remaining, TCPClient &tcp){
 
                 space.assign(tcp.getDataRetrieve(1));
                 if(space.compare("\n") == 0){
-                    cout << "i: " << i << " " << space << "adad" << endl;
                     return;
                 }
             }
