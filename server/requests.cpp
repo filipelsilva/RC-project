@@ -13,21 +13,21 @@ void printVerbose(string UID, string GID) {
 	cout << endl;
 }
 
-/*Verifies if a User password is valid (8 alphanumerical characters).*/
+/*Returns true if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
 	if (pass.length()==PASS_LENGTH && isAlNum(pass))
 		return true;
 	return false;
 }
 
-/*Verifies if a User ID is valid. (5-digit number)*/
+/*Returns true if a User ID is valid. (5-digit number)*/
 bool validUID(string UID){
 	if (UID.length()==UID_LENGTH && isNumber(UID))
 		return true;
 	return false;
 }
 
-/*Verifies if there isn't an equal User ID already registered.*/
+/*Returns true if there isn't an equal User ID already registered.*/
 bool UID_free(string UID){
 	string path = "USERS";
 	DIR *dir;
@@ -49,7 +49,7 @@ bool UID_free(string UID){
 	return true;
 }
 
-/*Verifies if the given password is the one registered for the given UID.*/
+/*Returns true if the given password is the one registered for the given UID.*/
 bool correct_pass(string UID, string pass){
 	string path="USERS/";
 	path.append(UID);
@@ -94,7 +94,7 @@ int numberOfGroups(string path){
 	return i;
 }
 
-/*Verifies if the given group already exists.*/
+/*Returns true if the given group already exists.*/
 bool groupExists(string GID){
 	string path = "GROUPS";
 	DIR *dir;
@@ -116,7 +116,7 @@ bool groupExists(string GID){
 	return false;	
 }
 
-/*Verifies if the given Group ID is valid (2-digit number) 
+/*Returns true if the given Group ID is valid (2-digit number) 
 and if the group exists.*/
 bool validGID(string GID){
 	if(GID.length() == GID_LENGTH && isNumber(GID))
@@ -125,7 +125,7 @@ bool validGID(string GID){
 	return false;
 }
 
-/*Verifies if the given Message ID is valid (4-digit number) 
+/*Returns true if the given Message ID is valid (4-digit number) 
 and if the group exists.*/
 bool validMID(string MID){
 	if(MID.length() == MID_LENGTH && isNumber(MID) && MID != "0000")
@@ -133,7 +133,7 @@ bool validMID(string MID){
 	return false;
 }
 
-/*Verifies if the name of the group with given GID
+/*Returns true if the name of the group with given GID
 is the same as the given Gname.*/
 bool existingGroupName(string GID, string GName){
 	string path = "GROUPS/";
@@ -157,7 +157,7 @@ bool existingGroupName(string GID, string GName){
 
 }
 
-/*Verifies if given group name is valid (total of 
+/*Returns true if given group name is valid (total of 
 24 alphanumerical characters plus '-' and '_').*/
 bool validGroupName(string GName){
 	int i;
@@ -234,7 +234,7 @@ string get_MID(string GID){
 	return MID;	
 }
 
-/*Verifies if the user with the given UID is logged in.*/
+/*Returns true if the user with the given UID is logged in.*/
 bool user_logon(string UID){
 	string path = "USERS/";
 	string loginFile = "_login.txt";	
@@ -262,7 +262,7 @@ bool user_logon(string UID){
 	return false;	
 }
 
-/*Verifies if the user with the given UID is subscribed to the group with
+/*Returns true if the user with the given UID is subscribed to the group with
 the given GID.*/
 bool UID_in_group(string UID, string GID){
 	string path = "GROUPS/";
@@ -352,7 +352,7 @@ string post_text(string UID, string GID, string text){
 	return new_MID;
 }
 
-/*Verifies if the given file name (maximum of 24 alphanumerical characters
+/*Returns true if the given file name (maximum of 24 alphanumerical characters
 (plus '-', '_' and '.') including the 3 letter extension) and the given
 file size (which field has at most 10 digits) are valid.*/
 bool validFileInfo(string Fname, string Fsize){
@@ -435,21 +435,15 @@ string reg(string command){
 		return reply;
 	}
 	
-	/*Provavelmente pode tornanr-se num && uma vez que a exceção é a mesma nos dois casos*/
 	if (validUID(UID)){
-
-		/*verifica se NÃO existe uma diretoria com o mesmso UID, FALTA DAR RETURN*/
 		if(!UID_free(UID)){
 			cout << "DUP: UID used already" << endl;
 			reply = "RRG DUP\n";
 		}
 		else{
-			/*Cria o ficheiro com a passe*/ 
 			if(validPass(pass)){
 
 				path.append("/"); path.append(UID);
-
-				/*Cria nova diretoria*/
 				mkdir(path.c_str(), 0777);
 				path.append("/");
 

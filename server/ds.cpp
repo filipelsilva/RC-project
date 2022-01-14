@@ -3,6 +3,7 @@
 #include "./UDPServer.cpp"
 #include "./requests.cpp"
 
+/*Calls the function to execute the command sent by the client(UDP).*/
 string functionCaller(string command){
 	stringstream ss;
 	string cmd;
@@ -31,6 +32,7 @@ string functionCaller(string command){
 	return "ERR\n";
 }
 
+/*Calls the function to execute the command sent by the client(TCP).*/
 void functionCallerTCP(string command, TCPServer &tcp){
 	if(command.compare("ULS") == 0){
 		uls(tcp);

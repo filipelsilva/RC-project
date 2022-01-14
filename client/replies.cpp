@@ -1,8 +1,10 @@
 #include "../Common.hpp"
 
+/*Variables that save the current user's info*/
 string selected_UID, selected_GID, sent_GName, password;
 bool logged_in = false;
 
+/*Current user asks to 'login', returns the formated command to send to the server.*/
 string save_login(string remaining){
     stringstream ss;
 	ss << remaining;
@@ -13,11 +15,14 @@ string save_login(string remaining){
     return remaining;
 }
 
+/*Current user asks to 'logout', returns the formated command to send to the server.*/
 string save_logout(string remaining){
     remaining += selected_UID + " " + password;
     return remaining;
 }
 
+/*Current user asks to 'subscribe' to a given group, returns the formated command
+ to send to the server.*/
 string save_subscribe(string remaining){
     stringstream ss;
     string GID, GName;
@@ -37,6 +42,8 @@ string save_subscribe(string remaining){
     return selected_UID + " " + GID + " " + GName;
 }
 
+/*Current user asks to 'unsubscribe' to a given group, returns the formated command
+ to send to the server.*/
 string save_unsubscribe(string remaining){
     string GID = remaining;
     switch (GID.length()) {
@@ -51,17 +58,21 @@ string save_unsubscribe(string remaining){
     return selected_UID + " " + GID;
 }
 
+/*Current user asks to see the groups he is currently subscribed to ('my_groups'),
+ returns the formated command to seend to the server.*/
 string save_my_groups(string remaining){
     return selected_UID + remaining;
 }
 
+/*Current user asks to show hid UID ('showuid'), returns message to show to the user.*/
 string showuid(){
     if(selected_UID.empty()){
         return "You are not logged in\n";
     }
     return "Your UID is " + selected_UID + "\n";
 }
-
+/*Current user asks to show the GID of the group that is currently selected ('showgid'),
+ returns message to show to the user.*/
 string showgid(){
     if(selected_GID.empty()){
         return "You have not selected an active group\n";
@@ -69,6 +80,8 @@ string showgid(){
     return "Group " + selected_GID + " is the active group\n";
 }
 
+/*Current user asks to select the group with the given GID, returns message to
+ show to the user.*/
 string select_GID(string GID){
     if(!logged_in){
 		return "User not logged in\n";
@@ -88,6 +101,8 @@ string select_GID(string GID){
     return reply;
 }
 
+/*Returns message to show to the user about the registration request status
+ returned by the server.*/
 string rrg(string command){
     if(command.compare("RRG OK\n") == 0){
         return "User successfully registered\n";
@@ -101,6 +116,8 @@ string rrg(string command){
     return "Something went wrong\n";
 }
 
+/*Returns message to show to the user about the unregistration request status
+ returned by the server.*/
 string run(string command){
     if(command.compare("RUN OK\n") == 0){
         return "User successfully unregistered\n";
@@ -111,6 +128,8 @@ string run(string command){
     return "Something went wrong\n";
 }
 
+/*Returns message to show to the user about the login request status
+ returned by the server.*/
 string rlo(string command){
     if(command.compare("RLO OK\n") == 0){
         logged_in = true;
@@ -126,6 +145,8 @@ string rlo(string command){
     return "Something went wrong\n";
 }
 
+/*Returns message to show to the user about the logout request status
+ returned by the server.*/
 string rou(string command){
     if(command.compare("ROU OK\n") == 0){
         selected_UID = "";
@@ -139,6 +160,7 @@ string rou(string command){
     return "Something went wrong\n";
 }
 
+/*Returns the existing groups after the user requests them to the server('ulist').*/
 string rgl(string command){
     stringstream ss;
     string cmd, N, GID, GName, MID, reply = "";
@@ -163,6 +185,8 @@ string rgl(string command){
     return "Something went wrong\n";
 }
 
+/*Returns message to show to the user about the susbcribe request status
+ returned by the server.*/
 string rgs(string command){
     stringstream ss;
     string cmd, status, GID;
@@ -197,6 +221,8 @@ string rgs(string command){
     return "Something went wrong\n";
 }
 
+/*Returns message to show to the user about the unsubscribe request status
+ returned by the server.*/
 string rgu(string command){
     if(command.compare("RGU OK\n") == 0){
         return "User unsubscribed from group\n";
@@ -213,6 +239,9 @@ string rgu(string command){
     return "Something went wrong\n";
 }
 
+/*Returns the list of groups subscribed by the user after the user
+ requests them to the server('my_groups') or returns a message about the
+ request status returned by the server.*/
 string rgm(string command){
     stringstream ss;
     string cmd, N, GID, GName, MID, reply = "";
@@ -240,6 +269,8 @@ string rgm(string command){
     return "Something went wrong\n";
 }
 
+/*Returns the list of users subscribed to the group that is requested by the current user
+ or returns a message about the request status returned by the server.*/
 void ulist(string remaining, TCPClient &tcp){
     string request, reply;
     if(!logged_in){
@@ -298,6 +329,8 @@ void ulist(string remaining, TCPClient &tcp){
     return;
 }
 
+/*Sends a message to the group selected by the user (could contain a file or not),
+ returns the request status returned by the server.*/
 string post(string remaining, TCPClient &tcp){
     string request, reply;
     stringstream ss;
@@ -385,6 +418,9 @@ string post(string remaining, TCPClient &tcp){
     return "";
 }
 
+/*Retrieves up to 20 messages from the group selected by the user, starting from the one
+also chosen by the user. Can also return a message to the user about the request status
+returned by the server.*/
 void retrieve(string remaining, TCPClient &tcp){
     string MID = remaining;
     string request;

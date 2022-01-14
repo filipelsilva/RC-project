@@ -3,6 +3,7 @@
 #include "./UDPClient.cpp"
 #include "./replies.cpp"
 
+/*Processes the command given by the user(UDP).*/
 string processUDPCommand(const char *message) {
 	string cmd, remaining;
 	stringstream ss;
@@ -39,6 +40,7 @@ string processUDPCommand(const char *message) {
 	}
 }
 
+/*Processes the command given by the user(TCP).*/
 string processTCPCommand(const char *message, TCPClient &tcp){
 	string cmd, remaining;
 	stringstream ss;
@@ -65,6 +67,7 @@ string processTCPCommand(const char *message, TCPClient &tcp){
 	return "ERR";
 }
 
+/*Processes the command given by the user(Local variables).*/
 string processLocalCommand(string command){
 	stringstream ss;
 	string reply = "ERR";
@@ -85,6 +88,7 @@ string processLocalCommand(string command){
 	return reply;
 }
 
+/*Returns true if the given command by the user is supported by a TCP protocol.*/
 bool isTCP(string input){
 	string command;
 	stringstream ss;
@@ -102,6 +106,7 @@ bool isTCP(string input){
 	return false;
 }
 
+/*Returns true if the given command by the user is supported by a UDP protocol.*/
 bool isUDP(string input){
 	string command;
 	stringstream ss;
@@ -119,6 +124,7 @@ bool isUDP(string input){
 	return false;
 }
 
+/*Calls the function to execute the command given by the user.*/
 string functionCaller(string command){
 	string cmd = command.substr(0, 3);
 	if(cmd.compare("RRG") == 0)
@@ -175,6 +181,7 @@ int main(int argc, char **argv) {
 
 	printf("DSIP: %s\nDSport: %s\n", DSIP, DSport);
 
+	//Input cycle
 	while(1){
 		write(1, "> ", strlen("> "));
 		char input[COMMAND_SIZE];
@@ -191,7 +198,6 @@ int main(int argc, char **argv) {
 			cmd = processTCPCommand(input, tcp);
 
 			if(cmd.compare("ERR") == 0){
-				// write(1, cmd.c_str(), strlen(cmd.c_str()));
 				fprintf(stderr, "Error: invalid command or something went wrong\n");
 			}
 			else{
@@ -203,7 +209,6 @@ int main(int argc, char **argv) {
 			cmd = processUDPCommand(input);
 
 			if(cmd.compare("ERR") != 0){
-				// write(1, cmd.c_str(), strlen(cmd.c_str()));
 				udp.sendData(cmd.c_str(), cmd.length());
 				cmd = udp.getData(COMMAND_SIZE);
 				reply = functionCaller(cmd);
@@ -218,7 +223,6 @@ int main(int argc, char **argv) {
 			reply = processLocalCommand(cmd);
 
 			if(reply.compare("ERR") != 0){
-				// write(1, cmd.c_str(), strlen(cmd.c_str()));
 				fprintf(stdout, "%s", reply.c_str());
 			}
 			else{
