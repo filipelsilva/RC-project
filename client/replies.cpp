@@ -393,73 +393,90 @@ void retrieve(string remaining, TCPClient &tcp){
     }
     string request = "RTV " + selected_UID + " " + selected_GID + " " + MID + "\n";
     tcp.sendData(request.c_str(), request.length());
-    string reply = tcp.getData(COMMAND_SIZE);
-    stringstream ss;
-    string cmd, status, N, UID, Tsize, bar, Fname, Fsize;
-    ss << reply;
-	getline(ss, cmd, ' ');
-	getline(ss, status, ' ');
-    getline(ss, N, ' ');
+    
+    string space, cmd, status, N, UID, Tsize, text, bar, Fname, Fsize;
+
+    cmd.assign(tcp.getData(3));
+	space.assign(tcp.getData(1));
+
+    status.assign(tcp.getData(2));
+	space.assign(tcp.getData(1));
+    if(space.compare(" ") != 0){
+        status += space;
+        space.assign(tcp.getData(1));
+    }
+
     if(cmd.compare("RRT") == 0){
         if(status.compare("OK") == 0){
-            fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
-            for(int i = stoi(N); i > 0; i--){
-                reply = tcp.getData(COMMAND_SIZE);
-                ss.clear();
-                ss.str("");
-                ss << reply;
-                getline(ss, MID, ' ');
-                getline(ss, UID, ' ');
-                getline(ss, Tsize, ' ');
 
-                char c;
-                string text;
-                for (int i = 0; i < stoi(Tsize); i++){
-                    ss.get(c);
-                    text += c;
+            N.assign(tcp.getData(1));
+            space.assign(tcp.getData(1));
+            if(space.compare(" ") != 0){
+                N += space;
+                space.assign(tcp.getData(1));
+            }
+
+            fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
+            bool found_bar = false;
+            for(int i = stoi(N); i > 0; i--){
+                if(!found_bar){
+                    MID.assign(tcp.getData(3));
+                    MID = bar + MID;
+                    space.assign(tcp.getData(1));
                 }
+                else{
+                    MID.assign(tcp.getData(4));
+                    space.assign(tcp.getData(1));
+                    found_bar = false;
+                }
+                
+
+                UID.assign(tcp.getData(5));
+                space.assign(tcp.getData(1));
+
+                Tsize.assign(tcp.getData(1));
+                space.assign(tcp.getData(1));
+                while(space.compare(" ") != 0){
+                    Tsize += space;
+                    space.assign(tcp.getData(1));
+                }
+
+                text.assign(tcp.getData(stoi(Tsize)), stoi(Tsize));
                 fprintf(stdout, "%s - \"%s\";", MID.c_str(), text.c_str());
 
-                reply = tcp.getData(COMMAND_SIZE);
-                ss.clear();
-                ss.str("");
-                ss << reply;
-                ss.get(c);
-                if(c == '\n'){
+                space.assign(tcp.getData(1));
+                if(space.compare("\n") == 0){
                     fprintf(stdout, "\n");
                     return;
                 }
-                getline(ss, bar, ' ');
-                if(bar != "/"){
+
+                bar.assign(tcp.getData(1));
+                if(bar.compare("/") != 0){
                     fprintf(stdout, "\n");
                     continue;
                 }
-                getline(ss, Fname, ' ');
-                getline(ss, Fsize, ' ');
-
-                int written = 0;
-                const char *received;
-                ofstream file(Fname, std::ios_base::binary);
-                while(written < stoi(Fsize)){
-                    received = tcp.getData(COMMAND_SIZE);
-                    for(int i = 0; i < COMMAND_SIZE; i++){
-                        file.write(&received[i], 1);
-                        written += 1;
-                        if(written == stoi(Fsize)){
-                            break;
-                        }
-                    }
+                
+                Fname.assign(tcp.getData(1));
+                space.assign(tcp.getData(1));
+                while(space.compare(" ") != 0){
+                    Fname += space;
+                    space.assign(tcp.getData(1));
                 }
-                file.close();
+
+                Fsize.assign(tcp.getData(1));
+                space.assign(tcp.getData(1));
+                while(space.compare(" ") != 0){
+                    Fsize += space;
+                    space.assign(tcp.getData(1));
+                }
+
+                ofstream file(Fname, std::ios_base::binary);
+                tcp.getFileData(Fname, stoi(Fsize)), stoi(Fsize);
 
                 fprintf(stdout, " file stored: %s\n", Fname.c_str());
 
-                reply = tcp.getData(COMMAND_SIZE);
-                ss.clear();
-                ss.str("");
-                ss << reply;
-                ss.get(c);
-                if(c == '\n'){
+                space.assign(tcp.getData(1));
+                if(space.compare("\n") == 0){
                     return;
                 }
             }

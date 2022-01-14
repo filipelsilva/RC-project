@@ -3,7 +3,6 @@
 class TCPServer : public Server {
 	public:
 		int flag = 0;
-		int written = 0;
 		TCPServer(const char *port, int verbose) {
 			// Handling of SIGPIPE signal
 			memset(&act, 0, sizeof(act));
@@ -74,7 +73,7 @@ class TCPServer : public Server {
 
 		void getFileData(string path, size_t size) {
 			memset(buffer, 0, sizeof(buffer));
-			written = 0;
+			int written = 0;
 			ofstream file(path, std::ios_base::binary);
 			int to_read = COMMAND_SIZE;
 			if(size < COMMAND_SIZE){

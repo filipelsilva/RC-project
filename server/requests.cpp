@@ -1102,20 +1102,20 @@ void pst(TCPServer &tcp){
 /*List of messages(max 20) from the group with the given GID
 with MID greater or equal than the given MID, to the subscribed user with
 the given UID.*/
-void rtv(string command, TCPServer &tcp){
-	stringstream ss;
+void rtv(TCPServer &tcp){
 	string reply = "RRT NOK\n";
-	string cmd, UID, GID, MID;
-	ss << command;
-	getline(ss, cmd, ' ');
-	getline(ss, UID, ' ');
-	getline(ss, GID, ' ');
-	getline(ss, MID);
-	if(cmd.compare("RTV") != 0){
-		fprintf(stderr, "ERR\n");
-		tcp.sendData("ERR\n", strlen("ERR\n"));
-		return;
-	}
+	string space, UID, GID, MID;
+	space.assign(tcp.getData(1));
+	
+	UID.assign(tcp.getData(5));
+	space.assign(tcp.getData(1));
+	
+	GID.assign(tcp.getData(2));
+	space.assign(tcp.getData(1));
+
+	MID.assign(tcp.getData(4), 4);
+	space.assign(tcp.getData(1));
+
 	if(UID.empty() || GID.empty() || MID.empty()){
 		fprintf(stderr, "ERR: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
@@ -1184,7 +1184,6 @@ void rtv(string command, TCPServer &tcp){
 		Fname = getFileName(msg_path);
 		i++;
 		if(Fname.empty()){
-			cout << "here: "+currentMID << endl;
 			reply = currentMID + " " + currentUID + " " + Tsize + " " + text;
 			tcp.sendData(reply.c_str(), reply.length());
 			if(i != N){

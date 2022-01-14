@@ -39,20 +39,48 @@ class TCPClient : public Client {
 
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
-
-		ptr = buffer;
-		while ((nread = read(fd, ptr, size)) > 0){
+		while ((nread = read(fd, ptr, size)) != 0 && n < size){
 			if(nread == -1){
-
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
 				exit(1);
 			}
-			ptr += nread;
 		}
+		ptr = &buffer[0];
+		write(1, ptr, n);
+		return buffer;
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
 		return buffer;
+	}
+
+	void getFileData(string path, size_t size) {
+		memset(buffer, 0, sizeof(buffer));
+		int written = 0;
+		ofstream file(path, std::ios_base::binary);
+		int to_read = COMMAND_SIZE;
+		if(size < COMMAND_SIZE){
+			to_read = size;
+		}
+		while ((n = read(fd, buffer, to_read)) != 0 && written < size) {
+			if (n == -1) {
+				fprintf(stderr, "Error: read: %s\n", strerror(n));
+				exit(1);
+			}
+			written += n;
+			ptr = &buffer[0];
+			file.write(buffer, n);
+			write(1, ptr, n);
+			memset(buffer, 0, sizeof(buffer));
+			to_read = size - written;
+			if(to_read > COMMAND_SIZE){
+				to_read = COMMAND_SIZE;
+			}
+		}
+		ptr = &buffer[0];
+		file.write(buffer, n);
+		write(1, ptr, n);
+		file.close();
 	}
 
 

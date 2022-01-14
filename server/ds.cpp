@@ -41,7 +41,7 @@ void functionCallerTCP(string command, TCPServer &tcp){
 		return;
 	}
 	else if(command.compare("RTV") == 0){
-		rtv(command, tcp);
+		rtv(tcp);
 		return;
 	}
 	tcp.sendData("ERR\n", strlen("ERR\n"));
