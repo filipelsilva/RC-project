@@ -38,6 +38,7 @@ using namespace std;
 #define TSIZE_LENGTH 240
 #define FNAME_LENGTH 24
 #define FSIZE_LENGTH 10
+#define SOCKET_TIMEOUT 60
 
 static map<string, string> commands = {
 	{"showuid", "showuid"},
@@ -183,4 +184,20 @@ inline string getFileData(string path){
 	return ss.str();
 }
 
+/* Start timer for socket */
+inline int TimerON(int sd) {
+	struct timeval tmout;
+	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
+	tmout.tv_sec=SOCKET_TIMEOUT;
+	return(setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO,
+				(struct timeval *)&tmout,sizeof(struct timeval)));
+}
+
+/* Stop timer for socket */
+inline int TimerOFF(int sd) {
+	struct timeval tmout;
+	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
+	return(setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO,
+				(struct timeval *)&tmout,sizeof(struct timeval)));
+}
 #endif
