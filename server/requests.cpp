@@ -900,30 +900,27 @@ string glm(string command){
 }
 
 /*List of users subscribed to a group with the given GID.*/
-void uls(string command, TCPServer &tcp){
-	stringstream ss;
+void uls(TCPServer &tcp){
 	string reply = "RUL NOK\n";
-	string cmd, GID;
+	string space, GID;
 	DIR *dir;
 	struct dirent *diread;
 	string path = "GROUPS/";	
 	vector<string> list;
 	size_t i;
-	ss << command;
-	getline(ss, cmd, ' ');
-	getline(ss, GID);
-	if(cmd.compare("ULS") != 0){
-		fprintf(stderr, "ERR\n");
-		tcp.sendData("ERR\n", strlen("ERR\n"));
-		return;
-	}
+
+	space.assign(tcp.getData(1));
+
+	GID.assign(tcp.getData(2));
+	space.assign(tcp.getData(1));
+
 	if(GID.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
 		tcp.sendData(reply.c_str(), reply.length());
 		return;
 	}
 
-	if(validGID(GID)){
+	if(validGID(GID) && space.compare("\n") == 0){
 			
 		path.append(GID);
 
@@ -985,7 +982,6 @@ on the group with the given GID. It can include a file with the given name (Fnam
 given size (Fsize) and given data.*/
 void pst(TCPServer &tcp){
 	string request;
-	stringstream ss;
 	string reply = "RPT NOK\n";
 	string space, UID, GID, Tsize, text, Fname, Fsize, data;	
 	string status;

@@ -33,7 +33,7 @@ string functionCaller(string command){
 
 void functionCallerTCP(string command, TCPServer &tcp){
 	if(command.compare("ULS") == 0){
-		uls(command, tcp);
+		uls(tcp);
 		return;
 	}
 	else if(command.compare("PST") == 0){

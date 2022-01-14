@@ -40,7 +40,17 @@ string save_subscribe(string remaining){
 }
 
 string save_unsubscribe(string remaining){
-    return selected_UID + " " + remaining;
+    string GID = remaining;
+    switch (GID.length()) {
+        case 1:
+            GID = "0" + GID;
+            break;
+        case 2:
+            break;
+        default:
+            break;
+    }
+    return selected_UID + " " + GID;
 }
 
 string save_my_groups(string remaining){
