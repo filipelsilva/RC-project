@@ -40,21 +40,15 @@ class TCPClient : public Client {
 	char *getData(size_t size) {
 		memset(buffer, 0, sizeof(buffer));
 
-		nleft = size;
 		ptr = buffer;
-		while (nleft > 0){
-			nread = read(fd, ptr, nleft);
+		while ((nread = read(fd, ptr, size)) > 0){
 			if(nread == -1){
 
 				fprintf(stderr, "Error: read: %s\n", strerror(nread));
 				exit(1);
 			}
-			else if (nread == 0) break;
-			nleft -= nread;
 			ptr += nread;
 		}
-
-		nread = nbytes - nleft;
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);

@@ -983,16 +983,28 @@ void uls(string command, TCPServer &tcp){
 /*The user with the given UID posts a given message (text, which size is Tsize)
 on the group with the given GID. It can include a file with the given name (Fname),
 given size (Fsize) and given data.*/
-void pst(string command, TCPServer &tcp){
+void pst(TCPServer &tcp){
 	string request;
 	stringstream ss;
 	string reply = "RPT NOK\n";
-	string cmd, UID, GID, Tsize, text, Fname, Fsize, data;
-	ss << command;
-	getline(ss, cmd, ' ');
-	getline(ss, UID, ' ');
-	getline(ss, GID, ' ');
-	getline(ss, Tsize, ' ');
+	string space, UID, GID, Tsize, text, Fname, Fsize, data;	
+	string status;
+	
+	
+	space.assign(tcp.getData(1));
+	
+	UID.assign(tcp.getData(5));
+	space.assign(tcp.getData(1));
+	
+	GID.assign(tcp.getData(2));
+	space.assign(tcp.getData(1));
+	
+	Tsize.assign(tcp.getData(1));
+	space.assign(tcp.getData(1));
+	while(space.compare(" ") != 0){
+		Tsize += space;
+		space.assign(tcp.getData(1));
+	}
 
 	if(UID.empty() || GID.empty() || Tsize.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
@@ -1000,14 +1012,7 @@ void pst(string command, TCPServer &tcp){
 		return;
 	}
 
-	char c;
-
-	for (int i = 0; i < stoi(Tsize); i++){
-		ss.get(c);
-		text += c;
-	}
-	
-	ss.get(c);
+	text.assign(tcp.getData(stoi(Tsize)), stoi(Tsize));
 
 	if(text.empty()){
 		fprintf(stderr, "NOK: Missing argument(s)\n");
@@ -1015,22 +1020,25 @@ void pst(string command, TCPServer &tcp){
 		return;
 	}
 
-	if(c != '\n'){
-		getline(ss, Fname, ' ');
-		getline(ss, Fsize, ' ');
+	space.assign(tcp.getData(1));
+	
+	if(space.compare("\n") != 0){
+		Fname.assign(tcp.getData(1));
+		space.assign(tcp.getData(1));
+		while(space.compare(" ") != 0){
+			Fname += space;
+			space.assign(tcp.getData(1));
+		}
+
+		Fsize.assign(tcp.getData(1));
+		space.assign(tcp.getData(1));
+		while(space.compare(" ") != 0){
+			Fsize += space;
+			space.assign(tcp.getData(1));
+		}
 	}
 
-	string path = "GROUPS/";	
-	string status;
-
-	if(cmd.compare("PST") != 0){
-		fprintf(stderr, "ERR\n");
-		tcp.sendData("ERR\n", strlen("ERR\n"));
-		return;
-	}
-
-
-	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID,GID)){
+	if(validUID(UID) && !UID_free(UID) && validGID(GID) && UID_in_group(UID, GID)){
 		if(validTextSize(Tsize)){
 			if(Fname.empty()){
 				if(max_MID(GID) == 9999){
@@ -1042,8 +1050,10 @@ void pst(string command, TCPServer &tcp){
 					status = post_text(UID, GID, text);
 					cout << "RPT " << status << endl;
 					reply = "RPT " + status + "\n";
-					tcp.sendData(reply.c_str(), reply.length());
-					return;
+					if(space.compare("\n") == 0){
+						tcp.sendData(reply.c_str(), reply.length());
+						return;
+					}
 				}
 
 			}
@@ -1056,53 +1066,18 @@ void pst(string command, TCPServer &tcp){
 					}
 					else{
 						status = post_text(UID, GID, text);
-
 						string path = "GROUPS/";
-					    path.append(GID); path.append("/MSG/");
-					    path.append(status); path.append("/");
-					    path.append(Fname);
+						path.append(GID); path.append("/MSG/");
+						path.append(status); path.append("/");
+						path.append(Fname);
 
-					    string received;
-					    ofstream file(path, std::ios_base::binary);
-					    int bro = 0;
-					    for (int i = 0; i < stoi(Fsize); i++){
-					        char c;
-					        ss.get(c);
-					        if(ss.tellg() == -1){
-					        	received.assign(tcp.getData(COMMAND_SIZE), COMMAND_SIZE);
-					   
-					        	ss.clear();
-					            ss << received;
-					            i--;
-					              
-					        }
-					        else{
-					       		file.write(&c, 1);
-					        }
-					        
-					   	}
-					    file.close();
-					      //tcp.getData(COMMAND_SIZE);
-						/*int bytes_read = 0;
-					    for (int i = 0; i < stoi(Fsize); i++){
-					       	char c;
-					       	ss.get(c);
-					       	//cout << c << endl;
-					    	if(ss.tellg() == -1){
-					        	break;
-					       	}
-					    
-					       	data += c;
-					       	bytes_read++;
-					    }
-					    cout << data << endl; 
-					    cout << bytes_read << endl;
-						post_file(Fname, GID, status, data, bytes_read, stoi(Fsize), tcp);
-						//tcp.getData(COMMAND_SIZE);*/
+						tcp.getFileData(path, stoi(Fsize)), stoi(Fsize);
 						cout << "RPT " << status << endl;
 						reply = "RPT " + status + "\n";
-						tcp.sendData(reply.c_str(), reply.length());
-						return;
+						if(space.compare("\n") == 0){
+							tcp.sendData(reply.c_str(), reply.length());
+							return;
+						}
 					}
 				}
 				else{

@@ -40,7 +40,7 @@ class UDPServer : public Server {
 				exit(1);
 			}
 
-			printPrompt(verbose);
+			printPrompt();
 			write(1, buffer, n);
 
 			return buffer;

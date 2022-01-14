@@ -7,7 +7,7 @@ class Client {
 	protected:
 		struct sigaction act;
 		int fd, errcode;
-		ssize_t n, nbytes, nleft, nwritten, nread;
+		ssize_t n, nleft, nwritten, nread;
 		socklen_t addrlen;
 		struct addrinfo hints, *res;
 		struct sockaddr_in addr;

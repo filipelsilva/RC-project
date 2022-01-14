@@ -334,7 +334,7 @@ string post(string remaining, TCPClient &tcp){
             fileFile.read(data, COMMAND_SIZE);
             tcp.sendData(data, COMMAND_SIZE);
             if(fileFile.tellg() == -1){
-                //tcp.sendData("\n", 1);
+                tcp.sendData("\n", 1);
                 break;
             }
         }

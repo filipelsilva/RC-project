@@ -61,40 +61,41 @@ class TCPServer : public Server {
 
 		char *getData(size_t size) {
 			memset(buffer, 0, sizeof(buffer));
-
-			printPrompt(verbose);
-			//write(1, "BEFORE IT READ\n", strlen("BEFORE IT READ\n"));
-			while ((n = read(fdcopy, buffer, size)) != 0 && n != size) {
+			while ((n = read(fdcopy, buffer, size)) != 0 && n < size) {
 				if (n == -1) {
 					fprintf(stderr, "Error: read: %s\n", strerror(n));
 					exit(1);
 				}
-				ptr = &buffer[0];
-
-
-
-
-
-				/*for (size_t i = 0; i < strlen(buffer); i++) {
-					if (buffer[i] == '\n' && (i == strlen(buffer) - 1 || buffer[i+1] == '\0')) {
-						flag = 1;
-					}
-				}
-				if (flag) {
-					flag = 0;
-					break;
-				}*/
-				//write(1, "IT READ\n", strlen("IT READ\n"));
 			}
-			//write(1, buffer, n);
-			// dup2(fdcopy, fdcopy);
-			/*for(int i = 0; i < size; i++){
-				if(buffer[i] == '\n')
- 					cout << "\n\nTCPS:" << written <<  "\n\n";
- 				written++;
-			}*/
-			// close(fdcopy);
+			ptr = &buffer[0];
+			write(1, ptr, n);
 			return buffer;
+		}
+
+		void getFileData(string path, size_t size) {
+			memset(buffer, 0, sizeof(buffer));
+			written = 0;
+			ofstream file(path, std::ios_base::binary);
+			int to_read = COMMAND_SIZE;
+			while ((n = read(fdcopy, buffer, to_read)) != 0 && written < size) {
+				if (n == -1) {
+					fprintf(stderr, "Error: read: %s\n", strerror(n));
+					exit(1);
+				}
+				written += n;
+				ptr = &buffer[0];
+				file.write(buffer, n);
+				write(1, ptr, n);
+				memset(buffer, 0, sizeof(buffer));
+				to_read = size - written;
+				if(to_read > COMMAND_SIZE){
+					to_read = COMMAND_SIZE;
+				}
+			}
+			ptr = &buffer[0];
+			file.write(buffer, n);
+			write(1, ptr, n);
+			file.close();
 		}
 
 		void sendData(const char *message, size_t size) {
@@ -106,8 +107,8 @@ class TCPServer : public Server {
 			// }
 
 			// fdcopy = dup(newfd);
-			write(1, "Message to send: ",  strlen("Message to send: "));
-			write(1, message, size);
+			//write(1, "Message to send: ",  strlen("Message to send: "));
+			//write(1, message, size);
 			n = size;
 			while (n > 0) {
 				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
@@ -124,7 +125,7 @@ class TCPServer : public Server {
 				// 	flag = 0;
 				// 	break;
 				// }
-				write(1, "IT WROTE\n", strlen("IT WROTE\n"));
+				//write(1, "IT WROTE\n", strlen("IT WROTE\n"));
 				n -= nw;
 				ptr += nw;
 			}

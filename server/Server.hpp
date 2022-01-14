@@ -17,7 +17,7 @@ class Server {
 	public:
 		int fd;
 
-		void printPrompt(int verbose) {
+		void printPrompt() {
 			if ((errcode = getnameinfo((struct sockaddr *)&addr, addrlen, host,
 							sizeof(host), service, sizeof(service), 0)) != 0) {
 				fprintf(stderr, "error: getnameinfo: %s\n", gai_strerror(errcode));

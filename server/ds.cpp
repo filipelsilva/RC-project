@@ -32,22 +32,15 @@ string functionCaller(string command){
 }
 
 void functionCallerTCP(string command, TCPServer &tcp){
-	stringstream ss;
-	string cmd;
-	ss << command;
-	getline(ss, cmd, ' ');
-	if(command.compare(cmd) == 0){
-		command = remove_new_line(command);
-	}
-	if(cmd.compare("ULS") == 0){
+	if(command.compare("ULS") == 0){
 		uls(command, tcp);
 		return;
 	}
-	else if(cmd.compare("PST") == 0){
-		pst(command, tcp);
+	else if(command.compare("PST") == 0){
+		pst(tcp);
 		return;
 	}
-	else if(cmd.compare("RTV") == 0){
+	else if(command.compare("RTV") == 0){
 		rtv(command, tcp);
 		return;
 	}
@@ -116,8 +109,9 @@ int main(int argc, char **argv) {
 		// TODO: in verbose mode, output UID and GID if not empty
 		if (FD_ISSET(tcp.fd, &mask)) {
 			tcp.acceptConnection();
-			request = tcp.getData(COMMAND_SIZE);
-			functionCallerTCP(command.assign(request, COMMAND_SIZE), tcp);
+			tcp.printPrompt();
+			request = tcp.getData(3);
+			functionCallerTCP(command.assign(request, 3), tcp);
 			tcp.closeConnection();
 		}
 
