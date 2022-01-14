@@ -128,6 +128,13 @@ class TCPServer : public Server {
 			timerOn(newfd);
 			n = size;
 			ptr = &message[0];
+<<<<<<< Updated upstream
+			while (n > 0) {
+				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
+				if ((nw = write(newfd, ptr, n)) == -1) {
+					fprintf(stderr, "Error: write %s\n", strerror(nw));
+					exit(1);
+=======
 			int tries = 0;
 			while (n > 0) {
 				//write(1, "BEFORE IT WROTE\n", strlen("BEFORE IT WROTE\n"));
@@ -138,6 +145,7 @@ class TCPServer : public Server {
 						exit(1);
 					}
 					nw = write(newfd, message, n);
+>>>>>>> Stashed changes
 				}
 				tries = 0;
 				// for (char *i = ptr; i < ptr + nw; i++) {

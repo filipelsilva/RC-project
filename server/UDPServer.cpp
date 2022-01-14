@@ -28,14 +28,19 @@ class UDPServer : public Server {
 		}
 
 		char *getData(size_t size) {
+			int tries = 0;
 			timerOn(fd);
 			addrlen = sizeof(addr);
 			memset(buffer, 0, sizeof(buffer));
 
-			if ((n = recvfrom(fd, buffer, size, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
-				fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
-				exit(1);
+			while ((n = recvfrom(fd, buffer, size, 0, (struct sockaddr*)&addr, &addrlen)) == -1) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: recvfrom: %s\n", strerror(n));
+					exit(1);
+				}
 			}
+			tries = 0;
 
 			printPrompt();
 			write(1, buffer, n);
@@ -45,11 +50,16 @@ class UDPServer : public Server {
 		}
 
 		void sendData(const char *message, size_t size) {
+			int tries = 0;
 			timerOn(fd);
-			if ((n = sendto(fd, message, size, 0, (struct sockaddr*)&addr, addrlen)) == -1) {
-				fprintf(stderr, "Error: sendto: %s\n", strerror(n));
-				exit(1);
+			while ((n = sendto(fd, message, size, 0, (struct sockaddr*)&addr, addrlen)) == -1) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: sendto: %s\n", strerror(n));
+					exit(1);
+				}
 			}
+			tries = 0;
 			timerOff(fd);
 		}
 

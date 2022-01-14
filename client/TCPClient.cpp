@@ -40,13 +40,19 @@ class TCPClient : public Client {
 	char *getData(size_t size) {
 		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
+		int tries = 0;
 
 		ptr = buffer;
 		while ((nread = read(fd, ptr, size)) > 0){
-			if(nread == -1){
-				fprintf(stderr, "Error: read: %s\n", strerror(nread));
-				exit(1);
+			while (nread == -1) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: read: %s\n", strerror(nread));
+					exit(1);
+				}
+				nread = read(fd, ptr, size);
 			}
+			tries = 0;
 			ptr += nread;
 		}
 
@@ -60,12 +66,18 @@ class TCPClient : public Client {
 		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 
+		int tries = 0;
 		ptr = buffer;
 		while ((nread = read(fd, ptr, size)) != 0 && nread < size){
-			if(nread == -1){
-				fprintf(stderr, "Error: read: %s\n", strerror(nread));
-				exit(1);
+			while (nread == -1) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: read: %s\n", strerror(nread));
+					exit(1);
+				}
+				nread = read(fd, ptr, size);
 			}
+			tries = 0;
 			ptr += nread;
 		}
 		ptr = &buffer[0];
@@ -80,17 +92,22 @@ class TCPClient : public Client {
 	void getFileData(string path, size_t size) {
 		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
-		int written = 0;
+		int written = 0, tries = 0;
 		ofstream file(path, std::ios_base::binary);
 		int to_read = COMMAND_SIZE;
 		if(size < COMMAND_SIZE){
 			to_read = size;
 		}
 		while ((n = read(fd, buffer, to_read)) != 0 && written < size) {
-			if (n == -1) {
-				fprintf(stderr, "Error: read: %s\n", strerror(n));
-				exit(1);
+			while (n == -1) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: read: %s\n", strerror(n));
+					exit(1);
+				}
+				n = read(fd, buffer, to_read);
 			}
+			tries = 0;
 			written += n;
 			ptr = &buffer[0];
 			file.write(buffer, n);
@@ -112,15 +129,19 @@ class TCPClient : public Client {
 	void sendData(const char *message, size_t size) {
 		// createSocketAndConnect();
 
+		int tries = 0;
 		timerOn(fd);
 		nleft = size;
 		while (nleft > 0) {
-			nwritten = write(fd, message, nleft);
-			if (nwritten <= 0){
-				fprintf(stderr, "Error: write: %s\n", strerror(nwritten));
-			 	exit(1);
-
+			while ((nwritten = write(fd, message, nleft)) <= 0) {
+				tries++;
+				if (tries == 3) {
+					fprintf(stderr, "Error: write: %s\n", strerror(nwritten));
+					exit(1);
+				}
+				nwritten = write(fd, message, nleft);
 			}
+			tries = 0;
 			nleft -= nwritten;
 			message += nwritten;
 		}
