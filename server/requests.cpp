@@ -368,7 +368,7 @@ bool validFileInfo(string Fname, string Fsize){
 			return false;
 
 		for(i=0; name[i] != '\0'; i++){
-			if(!isalpha(name[i]) || i > 2)
+			if(!isalnum(name[i]) || i > 2)
 				return false;
 		}
 
