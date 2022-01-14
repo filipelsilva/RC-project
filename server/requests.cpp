@@ -1,6 +1,17 @@
 #include "../Common.hpp"
 
 // TODO: save selected uid, gid and GName; remove possible \n bugs with incomplete commands in requests.cpp
+int verbose = 0;
+
+void printVerbose(string UID, string GID) {
+	if (!UID.empty()) {
+		cout << "[UID=" << UID << "]";
+	}
+	if (!GID.empty()) {
+		cout << "[GID=" << GID << "]";
+	}
+	cout << endl;
+}
 
 /*Verifies if a User password is valid (8 alphanumerical characters).*/
 bool validPass(string pass){
@@ -72,7 +83,7 @@ int numberOfGroups(string path){
 
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name)>2)
+		if(strlen(diread->d_name)>GID_LENGTH)
 			continue;
 
 		i++;
@@ -94,7 +105,7 @@ bool groupExists(string GID){
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name)>2)
+		if(strlen(diread->d_name)>GID_LENGTH)
 			continue;
 		if(diread->d_name == GID){
 			closedir(dir);
@@ -108,7 +119,7 @@ bool groupExists(string GID){
 /*Verifies if the given Group ID is valid (2-digit number) 
 and if the group exists.*/
 bool validGID(string GID){
-	if(GID.length() == 2 && isNumber(GID))
+	if(GID.length() == GID_LENGTH && isNumber(GID))
 		if(GID == "00" || groupExists(GID))
 			return true;
 	return false;
@@ -117,7 +128,7 @@ bool validGID(string GID){
 /*Verifies if the given Message ID is valid (4-digit number) 
 and if the group exists.*/
 bool validMID(string MID){
-	if(MID.length() == 4 && isNumber(MID) && MID != "0000")
+	if(MID.length() == MID_LENGTH && isNumber(MID) && MID != "0000")
 		return true;
 	return false;
 }
@@ -152,7 +163,7 @@ bool validGroupName(string GName){
 	int i;
 
 	for (i=0; GName[i] != '\0'; i++)
-		if ((!isalnum(GName[i]) && GName[i] != '-' && GName[i] != '_') || i >= 24)
+		if ((!isalnum(GName[i]) && GName[i] != '-' && GName[i] != '_') || i >= GNAME_LENGTH)
 				return false;
 	if(i == 0)
 		return false;	
@@ -170,7 +181,7 @@ void unsubscribe_groups(string UID){
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name)>2)
+		if(strlen(diread->d_name)>GID_LENGTH)
 			continue;
 
 		string new_path = path;
@@ -213,7 +224,7 @@ string get_MID(string GID){
 	while((diread = readdir(dir))!= nullptr){
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name)>4)
+		if(strlen(diread->d_name)>MID_LENGTH)
 			continue;
 
 		if(atoi(MID.c_str()) < atoi(diread->d_name))
@@ -292,7 +303,7 @@ int max_MID(string GID){
 		if(diread->d_name[0]=='.')
 			continue;
 
-		if(strlen(diread->d_name) != 4)
+		if(strlen(diread->d_name) != MID_LENGTH)
 			continue;
 
 		i++;
@@ -316,7 +327,7 @@ string post_text(string UID, string GID, string text){
 	i++;
 	new_MID = to_string(i);
 
-	while(strlen(new_MID.c_str()) != 4)
+	while(strlen(new_MID.c_str()) != MID_LENGTH)
 		new_MID.insert(0, "0");
 
 	path.append("/"); path.append(new_MID);
@@ -351,7 +362,7 @@ bool validFileInfo(string Fname, string Fsize){
 	locale loc;
 	int toBeSure = 0;
 
-	if(strlen(Fname.c_str()) <= 24){
+	if(strlen(Fname.c_str()) <= FNAME_LENGTH){
 		for (i=0; Fname[i] != '\0'; i++)
 			if (!isalnum(Fname[i]) && Fname[i] != '-' && Fname[i] != '_' && Fname[i] != '.')
 				return false;
@@ -368,11 +379,11 @@ bool validFileInfo(string Fname, string Fsize){
 			return false;
 
 		for(i=0; name[i] != '\0'; i++){
-			if(!isalnum(name[i]) || i > 2)
+			if(!isalnum(name[i]) || i > GID_LENGTH)
 				return false;
 		}
 
-		if(strlen(Fsize.c_str()) >= 10 || strlen(Fsize.c_str()) == 0)
+		if(strlen(Fsize.c_str()) >= FSIZE_LENGTH || strlen(Fsize.c_str()) == 0)
 			return false;
 
 		return true;
@@ -616,6 +627,9 @@ string out(string command){
 		cout << "NOK: Incorrect UID or password" << endl;
 		reply = "ROU NOK\n";
 	}
+	if (verbose) {
+		printVerbose(UID, "");
+	}
 	return reply;
 }
 
@@ -643,7 +657,7 @@ string gls(string command){
 
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name)>2)
+		if(strlen(diread->d_name)>GID_LENGTH)
 			continue;
 
 		gid = diread->d_name;
@@ -777,6 +791,9 @@ string gsr(string command){
 		cout << "E_USR: Invalid UID\n";
 		reply = "RGS E_USR\n";
 	}
+	if (verbose) {
+		printVerbose(UID, GID);
+	}
 	return reply;
 }
 
@@ -826,6 +843,9 @@ string gur(string command){
 		cout << "E_USR: Invalid UID.\n";
 		reply = "RGU E_USR\n";
 	}
+	if (verbose) {
+		printVerbose(UID, GID);
+	}
 	return reply;
 }
 
@@ -863,7 +883,7 @@ string glm(string command){
 
 			if(diread->d_name[0]=='.')
 				continue;
-			if(strlen(diread->d_name)>2)
+			if(strlen(diread->d_name)>GID_LENGTH)
 				continue;
 			
 			if(UID_in_group(UID, diread->d_name)){
@@ -896,6 +916,9 @@ string glm(string command){
 		cout << "E_USR: Invalid  UID or user isn't logged in.\n";
 		reply = "RGM E_USR\n";
 	}
+	if (verbose) {
+		printVerbose(UID, "");
+	}
 	return reply;
 }
 
@@ -911,7 +934,7 @@ void uls(TCPServer &tcp){
 
 	space.assign(tcp.getData(1));
 
-	GID.assign(tcp.getData(2));
+	GID.assign(tcp.getData(GID_LENGTH));
 	space.assign(tcp.getData(1));
 
 	if(GID.empty()){
@@ -938,7 +961,7 @@ void uls(TCPServer &tcp){
 
 			/*Removing '.txt'*/
 			string is_uid = diread->d_name;
-			is_uid.erase(5, 4);
+			is_uid.erase(UID_LENGTH, MID_LENGTH);
 
 			if(validUID(is_uid) && !UID_free(is_uid)){
 				uid = is_uid;
@@ -989,10 +1012,10 @@ void pst(TCPServer &tcp){
 	
 	space.assign(tcp.getData(1));
 	
-	UID.assign(tcp.getData(5));
+	UID.assign(tcp.getData(UID_LENGTH));
 	space.assign(tcp.getData(1));
 	
-	GID.assign(tcp.getData(2));
+	GID.assign(tcp.getData(GID_LENGTH));
 	space.assign(tcp.getData(1));
 	
 	Tsize.assign(tcp.getData(1));
@@ -1096,6 +1119,9 @@ void pst(TCPServer &tcp){
 		return;
 	}
 	tcp.sendData(reply.c_str(), reply.length());
+	if (verbose) {
+		printVerbose(UID, GID);
+	}
 	return;
 }
 
@@ -1107,13 +1133,13 @@ void rtv(TCPServer &tcp){
 	string space, UID, GID, MID;
 	space.assign(tcp.getData(1));
 	
-	UID.assign(tcp.getData(5));
+	UID.assign(tcp.getData(UID_LENGTH));
 	space.assign(tcp.getData(1));
 	
-	GID.assign(tcp.getData(2));
+	GID.assign(tcp.getData(GID_LENGTH));
 	space.assign(tcp.getData(1));
 
-	MID.assign(tcp.getData(4), 4);
+	MID.assign(tcp.getData(MID_LENGTH), MID_LENGTH);
 	space.assign(tcp.getData(1));
 
 	if(UID.empty() || GID.empty() || MID.empty()){
@@ -1150,7 +1176,7 @@ void rtv(TCPServer &tcp){
 	while((diread = readdir(dir))!= nullptr && i < N){
 		if(diread->d_name[0]=='.')
 			continue;
-		if(strlen(diread->d_name) != 4)
+		if(strlen(diread->d_name) != MID_LENGTH)
 			continue;
 		if(stoi(diread->d_name) < stoi(MID))
 			continue;
@@ -1223,6 +1249,9 @@ void rtv(TCPServer &tcp){
 		}
 	}
 	closedir(dir);
+	if (verbose) {
+		printVerbose(UID, GID);
+	}
 	return;
 }
 

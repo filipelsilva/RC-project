@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
 		"\t-v\t\tVerbose mode: outputs description of the received requests\n";
 
 	// Default initialization of variables and flags
-	int verbose = 0;
 	char flag;
 	const char *DSport = DSPORT_DEFAULT;
 

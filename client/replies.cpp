@@ -268,14 +268,14 @@ void ulist(string remaining, TCPClient &tcp){
                         UID = prev_UID + UID;
                         prev_UID = "";
                     }
-                    if(UID.length() == 5){
+                    if(UID.length() == UID_LENGTH){
                         fprintf(stdout, "%s\n", UID.c_str());
                     }
                     else if(UID.length() == 6){
                         fprintf(stdout, "%s", UID.c_str());
                         return;
                     }
-                    else if(UID.length() < 5){
+                    else if(UID.length() < UID_LENGTH){
                         prev_UID = UID;
                     }
                 }
@@ -399,7 +399,7 @@ void retrieve(string remaining, TCPClient &tcp){
     cmd.assign(tcp.getDataRetrieve(3));
 	space.assign(tcp.getDataRetrieve(1));
 
-    status.assign(tcp.getDataRetrieve(2));
+    status.assign(tcp.getDataRetrieve(GID_LENGTH));
 	space.assign(tcp.getDataRetrieve(1));
     if(space.compare(" ") != 0){
         status += space;
@@ -426,12 +426,12 @@ void retrieve(string remaining, TCPClient &tcp){
                     space.assign(tcp.getDataRetrieve(1));
                 }
                 else{
-                    MID.assign(tcp.getDataRetrieve(4));
+                    MID.assign(tcp.getDataRetrieve(MID_LENGTH));
                     space.assign(tcp.getDataRetrieve(1));
                 }
                 
 
-                UID.assign(tcp.getDataRetrieve(5));
+                UID.assign(tcp.getDataRetrieve(UID_LENGTH));
                 space.assign(tcp.getDataRetrieve(1));
 
                 Tsize.assign(tcp.getDataRetrieve(1));
