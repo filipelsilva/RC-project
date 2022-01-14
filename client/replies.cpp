@@ -396,78 +396,78 @@ void retrieve(string remaining, TCPClient &tcp){
     
     string space, cmd, status, N, UID, Tsize, text, bar, Fname, Fsize;
 
-    cmd.assign(tcp.getData(3));
-	space.assign(tcp.getData(1));
+    cmd.assign(tcp.getDataRetrieve(3));
+	space.assign(tcp.getDataRetrieve(1));
 
-    status.assign(tcp.getData(2));
-	space.assign(tcp.getData(1));
+    status.assign(tcp.getDataRetrieve(2));
+	space.assign(tcp.getDataRetrieve(1));
     if(space.compare(" ") != 0){
         status += space;
-        space.assign(tcp.getData(1));
+        space.assign(tcp.getDataRetrieve(1));
     }
 
     if(cmd.compare("RRT") == 0){
         if(status.compare("OK") == 0){
 
-            N.assign(tcp.getData(1));
-            space.assign(tcp.getData(1));
+            N.assign(tcp.getDataRetrieve(1));
+            space.assign(tcp.getDataRetrieve(1));
             if(space.compare(" ") != 0){
                 N += space;
-                space.assign(tcp.getData(1));
+                space.assign(tcp.getDataRetrieve(1));
             }
 
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
             bool found_bar = true;
             for(int i = stoi(N); i > 0; i--){
                 if(!found_bar){
-                    MID.assign(tcp.getData(3));
+                    MID.assign(tcp.getDataRetrieve(3));
                     MID = bar + MID;
-                    space.assign(tcp.getData(1));
+                    space.assign(tcp.getDataRetrieve(1));
                 }
                 else{
-                    MID.assign(tcp.getData(4));
-                    space.assign(tcp.getData(1));
+                    MID.assign(tcp.getDataRetrieve(4));
+                    space.assign(tcp.getDataRetrieve(1));
                     found_bar = false;
                 }
                 
 
-                UID.assign(tcp.getData(5));
-                space.assign(tcp.getData(1));
+                UID.assign(tcp.getDataRetrieve(5));
+                space.assign(tcp.getDataRetrieve(1));
 
-                Tsize.assign(tcp.getData(1));
-                space.assign(tcp.getData(1));
+                Tsize.assign(tcp.getDataRetrieve(1));
+                space.assign(tcp.getDataRetrieve(1));
                 while(space.compare(" ") != 0){
                     Tsize += space;
-                    space.assign(tcp.getData(1));
+                    space.assign(tcp.getDataRetrieve(1));
                 }
 
-                text.assign(tcp.getData(stoi(Tsize)), stoi(Tsize));
+                text.assign(tcp.getDataRetrieve(stoi(Tsize)), stoi(Tsize));
                 fprintf(stdout, "%s - \"%s\";", MID.c_str(), text.c_str());
 
-                space.assign(tcp.getData(1));
+                space.assign(tcp.getDataRetrieve(1));
                 if(space.compare("\n") == 0){
                     fprintf(stdout, "\n");
                     return;
                 }
 
-                bar.assign(tcp.getData(1));
+                bar.assign(tcp.getDataRetrieve(1));
                 if(bar.compare("/") != 0){
                     fprintf(stdout, "\n");
                     continue;
                 }
                 
-                Fname.assign(tcp.getData(1));
-                space.assign(tcp.getData(1));
+                Fname.assign(tcp.getDataRetrieve(1));
+                space.assign(tcp.getDataRetrieve(1));
                 while(space.compare(" ") != 0){
                     Fname += space;
-                    space.assign(tcp.getData(1));
+                    space.assign(tcp.getDataRetrieve(1));
                 }
 
-                Fsize.assign(tcp.getData(1));
-                space.assign(tcp.getData(1));
+                Fsize.assign(tcp.getDataRetrieve(1));
+                space.assign(tcp.getDataRetrieve(1));
                 while(space.compare(" ") != 0){
                     Fsize += space;
-                    space.assign(tcp.getData(1));
+                    space.assign(tcp.getDataRetrieve(1));
                 }
 
                 ofstream file(Fname, std::ios_base::binary);
@@ -475,7 +475,7 @@ void retrieve(string remaining, TCPClient &tcp){
 
                 fprintf(stdout, " file stored: %s\n", Fname.c_str());
 
-                space.assign(tcp.getData(1));
+                space.assign(tcp.getDataRetrieve(1));
                 if(space.compare("\n") == 0){
                     return;
                 }
