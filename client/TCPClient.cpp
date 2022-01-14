@@ -63,6 +63,7 @@ class TCPClient : public Client {
 			}
 		}
 		ptr = &buffer[0];
+		write(1, ptr, n);
 		return buffer;
 
 		//write(1, "Server: ", 8);

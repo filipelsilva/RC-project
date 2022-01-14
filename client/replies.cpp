@@ -427,7 +427,6 @@ void retrieve(string remaining, TCPClient &tcp){
                 else{
                     MID.assign(tcp.getDataRetrieve(4));
                     space.assign(tcp.getDataRetrieve(1));
-                    found_bar = false;
                 }
                 
 
@@ -451,11 +450,14 @@ void retrieve(string remaining, TCPClient &tcp){
                 }
 
                 bar.assign(tcp.getDataRetrieve(1));
+                found_bar = true;
                 if(bar.compare("/") != 0){
                     fprintf(stdout, "\n");
+                    found_bar = false;
                     continue;
                 }
                 
+                space.assign(tcp.getDataRetrieve(1));
                 Fname.assign(tcp.getDataRetrieve(1));
                 space.assign(tcp.getDataRetrieve(1));
                 while(space.compare(" ") != 0){
@@ -470,13 +472,13 @@ void retrieve(string remaining, TCPClient &tcp){
                     space.assign(tcp.getDataRetrieve(1));
                 }
 
-                ofstream file(Fname, std::ios_base::binary);
-                tcp.getFileData(Fname, stoi(Fsize)), stoi(Fsize);
+                tcp.getFileData(Fname, stoi(Fsize));
 
                 fprintf(stdout, " file stored: %s\n", Fname.c_str());
 
                 space.assign(tcp.getDataRetrieve(1));
                 if(space.compare("\n") == 0){
+                    cout << "i: " << i << " " << space << "adad" << endl;
                     return;
                 }
             }
