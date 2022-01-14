@@ -419,7 +419,7 @@ void retrieve(string remaining, TCPClient &tcp){
             fprintf(stdout, "%s message(s) retrieved:\n", N.c_str());
             bool found_bar = true;
             for(int i = stoi(N); i > 0; i--){
-                cout << tcp->buffer << endl;
+                // cout << tcp.buffer << endl;
                 if(!found_bar){
                     MID.assign(tcp.getDataRetrieve(3));
                     MID = bar + MID;
