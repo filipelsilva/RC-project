@@ -2,6 +2,8 @@
 *.yaml
 *.pptx
 *.zip
+./DS
+./user
 .vscode/
 
 ### C
