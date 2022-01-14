@@ -331,7 +331,13 @@ string post(string remaining, TCPClient &tcp){
     }
     
     Tsize = to_string(text.length());
-    request = "PST " + selected_UID + " " + selected_GID + " " + Tsize + " " + text;
+
+    if(selected_UID.compare("") == 0 || selected_GID.compare("") == 0){
+        request = "PST\n";
+    }
+    else{
+        request = "PST " + selected_UID + " " + selected_GID + " " + Tsize + " " + text;
+    }
     if(Fname.empty()){
         request += "\n";
     }
@@ -381,6 +387,7 @@ string post(string remaining, TCPClient &tcp){
 
 void retrieve(string remaining, TCPClient &tcp){
     string MID = remaining;
+    string request;
     switch (MID.length()) {
         case 1:
             MID = "000" + MID;
@@ -394,7 +401,12 @@ void retrieve(string remaining, TCPClient &tcp){
         default:
             break;
     }
-    string request = "RTV " + selected_UID + " " + selected_GID + " " + MID + "\n";
+    if(selected_UID.compare("") == 0 || selected_GID.compare("") == 0 || MID.compare("") == 0){
+        request = "RTV\n";
+    }
+    else{
+        request = "RTV " + selected_UID + " " + selected_GID + " " + MID + "\n";
+    }
     tcp.sendData(request.c_str(), request.length());
     
     string space, cmd, status, N, UID, Tsize, text, bar, Fname, Fsize;

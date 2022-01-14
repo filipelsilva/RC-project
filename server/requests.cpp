@@ -1016,6 +1016,11 @@ void pst(TCPServer &tcp){
 	
 	
 	space.assign(tcp.getData(1));
+	if(space.compare("\n") == 0){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		tcp.sendData(reply.c_str(), reply.length());
+		return;
+	}
 	
 	UID.assign(tcp.getData(UID_LENGTH));
 	space.assign(tcp.getData(1));
@@ -1136,7 +1141,13 @@ the given UID.*/
 void rtv(TCPServer &tcp){
 	string reply = "RRT NOK\n";
 	string space, UID, GID, MID;
+	
 	space.assign(tcp.getData(1));
+	if(space.compare("\n") == 0){
+		fprintf(stderr, "NOK: Missing argument(s)\n");
+		tcp.sendData(reply.c_str(), reply.length());
+		return;
+	}
 	
 	UID.assign(tcp.getData(UID_LENGTH));
 	space.assign(tcp.getData(1));
