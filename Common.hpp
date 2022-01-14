@@ -38,6 +38,7 @@ using namespace std;
 #define TSIZE_LENGTH 240
 #define FNAME_LENGTH 24
 #define FSIZE_LENGTH 10
+#define SOCKET_TIMEOUT 60
 
 static map<string, string> commands = {
 	{"showuid", "showuid"},
@@ -183,4 +184,28 @@ inline string getFileData(string path){
 	return ss.str();
 }
 
+/* Start timer for socket */
+inline int timerOn(int sd) {
+	int errcode;
+	struct timeval tmout;
+	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
+	tmout.tv_sec=SOCKET_TIMEOUT;
+	if ((errcode = setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (struct timeval*)&tmout,sizeof(struct timeval))) != 0) {
+		fprintf(stderr, "Error: setsockopt: %s\n", strerror(errcode));
+		exit(1);
+	}
+	return errcode;
+}
+
+/* Stop timer for socket */
+inline int timerOff(int sd) {
+	int errcode;
+	struct timeval tmout;
+	memset((char *)&tmout,0,sizeof(tmout)); /* clear time structure */
+	if ((errcode = setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (struct timeval*)&tmout,sizeof(struct timeval))) != 0) {
+		fprintf(stderr, "Error: setsockopt: %s\n", strerror(errcode));
+		exit(1);
+	}
+	return errcode;
+}
 #endif

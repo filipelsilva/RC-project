@@ -26,14 +26,17 @@ class UDPClient : public Client {
 	}
 
 	void sendData(const char *message, size_t size){
+		timerOn(fd);
 		if ((n = sendto(fd, message, size, 0, res->ai_addr,
 						res->ai_addrlen)) == -1) {
 			fprintf(stderr, "Error: sendto: %s\n", strerror(n));
 			exit(1);
 		}
+		timerOff(fd);
 	}
 
 	char *getData(size_t size) {
+		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 
 		addrlen = sizeof(addr);
@@ -46,6 +49,7 @@ class UDPClient : public Client {
 		//write(1, "Server: ", 8);
 		//write(1, buffer, n);
 
+		timerOff(fd);
 		return buffer;
 	}
 

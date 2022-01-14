@@ -38,6 +38,7 @@ class TCPClient : public Client {
 	}
 
 	char *getData(size_t size) {
+		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 
 		ptr = buffer;
@@ -51,10 +52,12 @@ class TCPClient : public Client {
 
 		//write(1, "Server: ", 8);
 		//write(1, buffer, nread);
+		timerOff(fd);
 		return buffer;
 	}
 
 	char *getDataRetrieve(size_t size) {
+		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 
 		ptr = buffer;
@@ -67,6 +70,7 @@ class TCPClient : public Client {
 		}
 		ptr = &buffer[0];
 		//write(1, ptr, nread);
+		timerOff(fd);
 		return buffer;
 
 		//write(1, "Server: ", 8);
@@ -74,6 +78,7 @@ class TCPClient : public Client {
 	}
 
 	void getFileData(string path, size_t size) {
+		timerOn(fd);
 		memset(buffer, 0, sizeof(buffer));
 		int written = 0;
 		ofstream file(path, std::ios_base::binary);
@@ -100,12 +105,14 @@ class TCPClient : public Client {
 		file.write(buffer, n);
 		//write(1, ptr, n);
 		file.close();
+		timerOff(fd);
 	}
 
 
 	void sendData(const char *message, size_t size) {
 		// createSocketAndConnect();
 
+		timerOn(fd);
 		nleft = size;
 		while (nleft > 0) {
 			nwritten = write(fd, message, nleft);
@@ -117,6 +124,7 @@ class TCPClient : public Client {
 			nleft -= nwritten;
 			message += nwritten;
 		}
+		timerOff(fd);
 	}
 
 	~TCPClient() {
