@@ -737,7 +737,7 @@ string gsr(string command){
 						reply = "RGS NEW " + newGID + "\n";	
 					}
 					else{
-						cout << "E_FULL: Number of groups has reached it's limit...\n";
+						cout << "E_FULL: Number of groups has reached its limit...\n";
 						reply = "RGS E_FULL\n";
 					}
 				}
